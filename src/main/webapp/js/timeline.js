@@ -486,7 +486,9 @@ Docs at http://horizontal-timeline.ycodetech.co.uk
 				yearDisplay = display == "year",
 				// Find .events for the date display
 				$eventDateDisplay = self.$element.find('.events'),
-				dateLink = '<a href="" data-horizontal-timeline=\'{"date": "'+ dataDate +'"}\'>';
+				dateLink = '<a href="" onclick="showtest()" data-horizontal-timeline=\'{"date": "'+ dataDate +'"}\'>';
+                //La linea de arriba fue modificada por victor anaya, agrega **onclick="showtest()"** para poder mandar a llamar una funcion
+                //esto con la finalidad de poder mandar a llamar una funcion que muestre/recupere de la BD los archivos espaciales
 
 				// For use with the addEvent public method.
 				// If arrangementDate isn't undefined or null...
