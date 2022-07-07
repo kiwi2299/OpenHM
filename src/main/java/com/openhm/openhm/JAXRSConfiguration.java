@@ -9,5 +9,8 @@ import javax.ws.rs.core.Application;
  */
 @ApplicationPath("resources")
 public class JAXRSConfiguration extends Application {
+    public static void main(String[] args) {
+        System.out.println("Hello WOrld");
+    }
     
 }
