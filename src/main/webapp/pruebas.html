@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/css/ol.css" type="text/css">
+    <link rel="stylesheet" href="styles/styles.css">
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/build/ol.js"></script>
+    
+    <link rel="stylesheet" type="text/css" href="styles/timeline.css">
+
+    <!-- // Add jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+    <script src="js/timeline.js"></script>
+
+    <title>Open History Mapper</title>
+</head>
+
+<body>
+    <h1>Open History Mapper pruebas</h1>
+    <div id="map" class="map"></div>
+    <div class="horizontal-timeline" id="example">
+        <div class="events-content">
+            <ol>
+                <li class="selected" data-horizontal-timeline='{"date": "01/01/1300"}'></li>
+                <li data-horizontal-timeline='{"date": "01/01/1400"}'></li>
+                <li data-horizontal-timeline='{"date": "01/01/1500"}'></li>
+                <li data-horizontal-timeline='{"date": "01/01/1600"}'></li>
+                <li data-horizontal-timeline='{"date": "01/01/1700"}'></li>
+                <li data-horizontal-timeline='{"date": "01/01/1800"}'></li>
+                <li data-horizontal-timeline='{"date": "01/01/1900"}'></li>
+                <li data-horizontal-timeline='{"date": "01/01/2000"}'></li>
+                <li data-horizontal-timeline='{"date": "01/01/2022"}'></li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="js/mapaOL.js"></script>
+
+    <script>
+        $('#example').horizontalTimeline({
+            dateDisplay: "year"
+        });
+
+    </script>
+
+    <script>
+        // esta pedazo de codigo mandara a llamar la funcion para recuperar
+        function showtest(){
+            alert("Mostrar las capas de vectores referentes a esta fecha");
+        }
+    </script>
+    <script>
+        const queryString = window.location.search;
+        console.log(queryString);
+
+        const urlParams = new URLSearchParams(queryString);
+        const product = urlParams.get('params');
+        console.log(product);
+        alert(product);
+    </script>
+</body>
+
+</html>

@@ -14,6 +14,7 @@ package com.openhm.openhm;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -24,9 +25,13 @@ import org.geotools.data.FeatureSource;
 
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
+import org.geotools.data.Query;
 import org.geotools.data.postgis.PostgisNGDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
@@ -40,7 +45,14 @@ import org.geotools.swing.table.FeatureCollectionTableModel;
 import org.geotools.swing.wizard.JWizard;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.spatial.BBOX;
+import org.opengis.geometry.BoundingBox;
+import org.opengis.geometry.Geometry;
+import org.locationtech.jts.geom.LineString;
 
 /**
  * Prompts the user for a shapefile and displays the contents on the screen in a map frame.
@@ -94,14 +106,29 @@ public class Quickstart {
                 System.out.println("Could not connect - check parameters");
         }
         
-        String[] typeName = dataStore.getTypeNames();
+        /*String[] typeName = dataStore.getTypeNames();
         System.out.println(typeName[0]);
         SimpleFeatureSource source = dataStore.getFeatureSource(typeName[0]);
+        
+        FeatureType schema = source.getSchema();
+        String name = schema.getGeometryDescriptor().getLocalName();
+        System.out.println(name);
         Filter filter = CQL.toFilter("name = 'Arizona-Arkansas'");
+        Query query = new Query(typeName[0], filter, new String[] {name});
+        System.out.println(query.toString());
+        String[] properties = query.getPropertyNames();
+        for(int i = 0; i < properties.length;i++){
+            System.out.println(properties[i]);
+        }*/
+        /*Filter filter = CQL.toFilter("name = 'Arizona-Arkansas'");
         SimpleFeatureCollection features = source.getFeatures(filter);
         System.out.println(features.size());
+        if(filter.evaluate(feature)){
+            System.out.println("Selected "+ feature.getId();
+        }
         Object[] contenido = features.toArray();
-        System.out.println(contenido[0].toString());
+        System.out.println(contenido.length);
+        System.out.println(contenido[0].toString());*/
         
         //table model
         /*FeatureCollectionTableModel model = new FeatureCollectionTableModel(features);
@@ -110,15 +137,38 @@ public class Quickstart {
         model.ge*/
         
         
-        /*String inputTypeName = "pruebagis";
+        String inputTypeName = "pruebagis";
         SimpleFeatureType inputType = dataStore.getSchema(inputTypeName);
-
+        int attributeCount = inputType.getAttributeCount();
+        System.out.println(attributeCount);
+        
+        
         FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(inputTypeName);
-        
-        Filter filter = bbox(property("geom"),bbox);
-        System.out.println(inputType.getName());
-        System.out.println(source.getFeatures(filter));*/
-        
+        FeatureCollection<SimpleFeatureType, SimpleFeature> features = source.getFeatures();
+//        String id = features.getID();
+//        System.out.println(id);
+        FeatureIterator<SimpleFeature> iterator = features.features();
+        while(iterator.hasNext()){
+            SimpleFeature feature = iterator.next();
+            List<Object> attributes = feature.getAttributes();
+            String id = feature.getID();System.out.println(id);
+            for (int i = 0; i < attributes.size(); i++) {
+                Object arg = attributes.get(i);
+                System.out.println(arg.toString());
+            }
+            //LineString geom = (LineString) feature.getDefaultGeometry();
+            //System.out.println(geom.toString());
+            //GeometryCollection a
+        }
+        /*FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(null);
+        BoundingBox bbox = null;
+        //bbox.
+        Filter filter = ff.bbox(ff.property("geom"), ff.property("id"));
+        // write results
+        SimpleFeatureCollection features = (SimpleFeatureCollection) source.getFeatures(filter);
+        System.out.println(features.getID());
+        //System.out.println(source.getFeatures(filter));
+         */
         
     }
     
