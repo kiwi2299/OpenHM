@@ -3,8 +3,15 @@ body{
     margin: 0px;
 }
 
+.topnav{
+    display: flex;
+    width: 100%;
+}
 h1{
+    font-size: medium;
     text-align: center;
+    display: inline;
+    width: 100%;
 }
 
 .map {
