@@ -7,8 +7,11 @@
         href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/css/ol.css" type="text/css">
     <link rel="stylesheet" href="styles/styles.css">
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/build/ol.js"></script>
-    
+
     <link rel="stylesheet" type="text/css" href="styles/timeline.css">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 
     <!-- // Add jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
@@ -20,8 +23,22 @@
 
 <body>
     <div class="topnav">
-        <button onclick="myFunction()">Iniciar sesion</button>
-        <h1>Open History Mapper</h1>
+        <button onclick="myFunction()" class="nav-item">Iniciar sesion</button>
+        <h1 class="nav-item">Open History Mapper</h1>
+    </div>
+    <div id="myDIV" style="display: none;">
+        <form action="" class="form">
+            <h3 class="h3 mb-3 fw-normal">Iniciar sesion</h3>
+            <div class="form-floating">
+                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                <label for="floatingInput">Email address</label>
+            </div>
+
+            <div class="form-floating">
+                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                <label for="floatingPassword">Password</label>
+            </div>
+        </form>
     </div>
     <div id="map" class="map"></div>
     <div class="horizontal-timeline" id="example">
@@ -51,10 +68,12 @@
 
     <script>
         // esta pedazo de codigo mandara a llamar la funcion para recuperar
-        function showtest(){
+        function showtest() {
             alert("Mostrar las capas de vectores referentes a esta fecha");
         }
     </script>
+    <script src="js/main.js"></script>
+
 </body>
 
 </html>
