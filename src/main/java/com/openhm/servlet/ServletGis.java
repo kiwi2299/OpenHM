@@ -5,6 +5,7 @@
  */
 package com.openhm.servlet;
 
+import com.openhm.modelo.entidades.Geometry;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -80,26 +81,39 @@ public class ServletGis extends HttpServlet {
             out.println("<h1>Servlet ServletGis at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
-            String paramses = null;
-            List<Object> attributes;
+            //String paramses = null;
+            List<Object> attributes = null;
+            
+            List<Geometry> listGeom = null;
             FeatureIterator<SimpleFeature> iterator = features.features();
             while(iterator.hasNext()){
+                Geometry geom = null;
                 SimpleFeature feature = iterator.next();
                 attributes = feature.getAttributes();
                 String id = feature.getID();
+                int foo = Integer.parseInt(id);
+                geom.setId(foo);
                 System.out.println(id);
                 out.println("<h1>" + id + "</h1>");
+                
+                geom.setName(attributes.get(0).toString());
+                //geom.setGeom(attributes.get(1).toString());
                 for (int i = 0; i < attributes.size(); i++) {
                     Object arg = attributes.get(i);
                     System.out.println(arg.toString());
                     out.println("<h1>" + arg.toString() + "</h1>");
-                    paramses += "param"+i+"='"+arg.toString()+"'&";
+                    //paramses += "param"+i+"='"+arg.toString()+"'&";
                 }
-
+                listGeom.add(geom);
             }
             
+            //List lista = dao.readAll();
+            request.setAttribute("listaGeom", listGeom);
+            RequestDispatcher rd = request.getRequestDispatcher("display.jsp");
+            rd.forward(request, response);
+            
             //RequestDispatcher rd = request.getRequestDispatcher("pruebas.html?params='"+paramses+"'");
-            response.sendRedirect("pruebas.html?"+paramses);
+            //response.sendRedirect("pruebas.html?"+paramses);
             //rd.forward(request, response);
             
         }
