@@ -6,8 +6,8 @@
 package com.openhm.modelo.dao;
 
 
-import com.openhm.modelo.dto.GeometryDTO;
-import com.openhm.modelo.entidades.Geometry;
+import com.openhm.modelo.dto.UserDTO;
+import com.openhm.modelo.entidades.User;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -17,17 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.postgis.LineString;
-import org.postgis.PGgeometry;
 
-public class GeometryDAO {
 
+public class UserDAO {
     
-    private static final String SQL_INSERT="insert into pruebagis (name, geom) values(?,?)";
-    private static final String SQL_UPDATE="update pruebagis set name = ?, geom = ? where id = ?";
-    private static final String SQL_DELETE="delete from pruebagis where id = ?";
-    private static final String SQL_READ="select * from pruebagis where id = ?";
-    private static final String SQL_READ_ALL="select * from pruebagis";
+    private static final String SQL_INSERT="insert into usuarios (name, password) values(?,?)";
+    private static final String SQL_UPDATE="update usuarios set name = ?, password = ? where id = ?";
+    private static final String SQL_DELETE="delete from usuarios where id = ?";
+    private static final String SQL_READ="select * from usuarios where name = ?, password = ?";
+    private static final String SQL_READ_ALL="select * from usuarios";
 
     private Connection con;
     public Connection ObtenerConexion(){
@@ -36,27 +34,22 @@ public class GeometryDAO {
        String driver = "org.postgresql.Driver";
         String url = "jdbc:postgresql://localhost:5432/postgres";
         
-//         String usr = "ecearivvtixipv";
-//        String pwd = "76a9b556592cf93833352d30ca2a94228441d0f80f76a08736a66db72c397f28";
-//        String driver = "org.postgresql.Driver";
-//        String url = "jdbc:postgresql://ec2-3-220-98-137.compute-1.amazonaws.com:5432/dfdfl4fv7smte5";
-        //?sslmode=required
         try{
             Class.forName(driver);
             con = DriverManager.getConnection(url,usr,pwd);
         } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(GeometryDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return con;
     }
     
-    public void create(GeometryDTO dto) throws SQLException{
+    public void create(UserDTO dto) throws SQLException{
         ObtenerConexion();
         PreparedStatement cs = null;
         try {
             cs = con.prepareStatement(SQL_INSERT);
             cs.setString(1, dto.getEntidad().getName());
-            cs.setString(2, dto.getEntidad().getGeom());
+            cs.setString(2, dto.getEntidad().getPassword());
             cs.executeUpdate();
         } finally {
             if(cs != null){
@@ -69,13 +62,13 @@ public class GeometryDAO {
     }
     
     
-    public void update(GeometryDTO dto) throws SQLException{
+    public void update(UserDTO dto) throws SQLException{
         ObtenerConexion();
         PreparedStatement cs = null; //Callablestatement es para stock procedures
         try {
             cs = con.prepareStatement(SQL_UPDATE);
             cs.setString(1, dto.getEntidad().getName());
-            cs.setString(2, dto.getEntidad().getGeom());
+            cs.setString(2, dto.getEntidad().getPassword());
             cs.setInt(3, dto.getEntidad().getId());
             cs.executeUpdate();
         } finally {
@@ -88,7 +81,7 @@ public class GeometryDAO {
         }
     }
     
-    public void delete(GeometryDTO dto) throws SQLException{
+    public void delete(UserDTO dto) throws SQLException{
         ObtenerConexion();
         PreparedStatement cs = null;
         try {
@@ -105,17 +98,18 @@ public class GeometryDAO {
         }
     }
     
-    public GeometryDTO read(GeometryDTO dto) throws SQLException{
+    public UserDTO read(UserDTO dto) throws SQLException{
         ObtenerConexion();
         PreparedStatement cs = null;
         ResultSet rs =null;
         try {
             cs = con.prepareStatement(SQL_READ);
-            cs.setInt(1, dto.getEntidad().getId());
+            cs.setString(1, dto.getEntidad().getName());
+            cs.setString(2, dto.getEntidad().getPassword());
             rs = cs.executeQuery();
             List resultados = obtenerResultados(rs);
             if (resultados.size() > 0) {
-                return (GeometryDTO) resultados.get(0);
+                return (UserDTO) resultados.get(0);
             }else{
                 return null;
             }
@@ -161,28 +155,28 @@ public class GeometryDAO {
     private List obtenerResultados(ResultSet rs) throws SQLException{
         List resultados = new ArrayList();
         while (rs.next()) {            
-            GeometryDTO dto = new GeometryDTO();
+            UserDTO dto = new UserDTO();
             dto.getEntidad().setId(rs.getInt("id"));
             dto.getEntidad().setName(rs.getString("name"));
-            dto.getEntidad().setGeom((PGgeometry)rs.getObject("geom"));
+            dto.getEntidad().setPassword(rs.getString("password"));
             resultados.add(dto);
         }
         return resultados;
     }
     
     public static void main(String[] args) {
-        GeometryDAO dao = new GeometryDAO();
-        GeometryDTO dto = new GeometryDTO();
-        Geometry entidad = new Geometry();
-        entidad.setId(0);
+        UserDAO dao = new UserDAO();
+        UserDTO dto = new UserDTO();
+        User entidad = new User();
+        entidad.setId(1);
         dto.setEntidad(entidad);
         try {
             
             dto = dao.read(dto);
-            System.out.println(dto.getEntidad().getGeom());
+            System.out.println(dto.getEntidad().getName());
             System.out.println(dao.readAll());
         } catch (SQLException ex) {
-            Logger.getLogger(GeometryDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

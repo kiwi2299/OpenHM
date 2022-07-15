@@ -26,7 +26,7 @@
 </head>
 
 <body>
-    
+    <jsp:include page="${menu}"/>
     <div>
         <table class="table table-stripef">
                 <thead>
