@@ -22,22 +22,28 @@
 </head>
 
 <body>
+    <div></div>
     <div class="topnav">
         <button onclick="myFunction()" class="nav-item">Iniciar sesion</button>
         <h1 class="nav-item">Open History Mapper</h1>
     </div>
     <div id="myDIV" style="display: none;">
-        <form action="" class="form">
+        <form action="Login?accion=verificar" class="form" method="post">
             <h3 class="h3 mb-3 fw-normal">Iniciar sesion</h3>
             <div class="form-floating">
-                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                <label for="floatingInput">Email address</label>
+                <input type="text" class="form-control" name="userName" id="userName" required>
+                <label for="userName">Nombre de usuario</label>
             </div>
 
             <div class="form-floating">
-                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                <label for="floatingPassword">Password</label>
+                <input type="password" class="form-control" id="userPass" name="userPass" placeholder="Password" required>
+                <label for="userPass">Password</label>
             </div>
+            <div class="form-floating">
+                <button type="submit">Ingresar</button>
+                
+            </div>
+            
         </form>
     </div>
     <div id="map" class="map"></div>

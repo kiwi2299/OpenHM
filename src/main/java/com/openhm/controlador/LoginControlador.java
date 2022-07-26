@@ -38,10 +38,10 @@ public class LoginControlador extends HttpServlet {
                     case "cerrar":
                         cerrarSession(request, response);
                     default:
-                        response.sendRedirect("identificar.jsp");
+                        response.sendRedirect("index.html");
                 }
             } else {
-                response.sendRedirect("identificar.jsp");
+                response.sendRedirect("index.html");
             }
         } catch (Exception e) {
             try {
@@ -100,15 +100,16 @@ public class LoginControlador extends HttpServlet {
         dto = this.obtenerUsuario(request);
         dao = new UserDAO();
         dto = dao.read(dto);
+        //System.out.println(dto.getEntidad().getName());
         if (dto != null) {
             sesion = request.getSession();
             sesion.setAttribute("dto", dto);
             request.setAttribute("msje", "Bienvenido al sistema");
             //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
-            response.sendRedirect("views/display.jsp");
+            response.sendRedirect("display.jsp");
         }else{
             request.setAttribute("msje", "Credenciales Incorrectas");
-            request.getRequestDispatcher("identificar.jsp").forward(request, response);
+            request.getRequestDispatcher("index.html").forward(request, response);
         }
             
     }
@@ -117,15 +118,15 @@ public class LoginControlador extends HttpServlet {
         HttpSession sesion = request.getSession();
         sesion.setAttribute("dto", null);
         sesion.invalidate();
-        response.sendRedirect("identificar.jsp");
+        response.sendRedirect("index.html");
         
     }
 
     private UserDTO obtenerUsuario(HttpServletRequest request) {
         UserDTO dto = new UserDTO();
         User u = new User();
-        u.setName(request.getParameter("txtUsu"));
-        u.setPassword(request.getParameter("txtPass"));
+        u.setName(request.getParameter("userName"));
+        u.setPassword(request.getParameter("userPass"));
         dto.setEntidad(u);
         return dto;
     }

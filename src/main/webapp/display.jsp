@@ -25,7 +25,7 @@
 
     <script src="js/timeline.js"></script>
 
-    <title>Open History Mapper</title>
+    <title>Open History Mapper for Mapper</title>
 </head>
 
 <body>

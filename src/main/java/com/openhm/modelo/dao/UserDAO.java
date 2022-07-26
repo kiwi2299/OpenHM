@@ -175,8 +175,11 @@ public class UserDAO {
         try {
             
             dto = dao.read(dto);
-            System.out.println(dto.getEntidad().getName());
-            System.out.println(dao.readAll());
+            if(dto != null){
+                System.out.println(dto.getEntidad().getName());
+            }
+            
+            //System.out.println(dao.readAll());
         } catch (SQLException ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
