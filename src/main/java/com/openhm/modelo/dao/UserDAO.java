@@ -24,7 +24,7 @@ public class UserDAO {
     private static final String SQL_INSERT="insert into usuarios (name, password) values(?,?)";
     private static final String SQL_UPDATE="update usuarios set name = ?, password = ? where id = ?";
     private static final String SQL_DELETE="delete from usuarios where id = ?";
-    private static final String SQL_READ="select * from usuarios where name = ?, password = ?";
+    private static final String SQL_READ="select * from usuarios where name = ? and password = ?";
     private static final String SQL_READ_ALL="select * from usuarios";
 
     private Connection con;
@@ -168,7 +168,9 @@ public class UserDAO {
         UserDAO dao = new UserDAO();
         UserDTO dto = new UserDTO();
         User entidad = new User();
-        entidad.setId(1);
+        
+        entidad.setName("kiwir");
+        entidad.setPassword("kiwir");
         dto.setEntidad(entidad);
         try {
             

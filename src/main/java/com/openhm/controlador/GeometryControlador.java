@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.openhm.servlet;
+package com.openhm.controlador;
 
 import com.openhm.modelo.dao.GeometryDAO;
 import java.io.IOException;
