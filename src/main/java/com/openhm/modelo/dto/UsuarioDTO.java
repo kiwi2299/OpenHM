@@ -7,21 +7,21 @@ package com.openhm.modelo.dto;
  */
 
 
-import com.openhm.modelo.entidades.User;
+import com.openhm.modelo.entidades.Usuario;
 import java.io.Serializable;
 
-public class UserDTO implements Serializable{
-    private User entidad;
+public class UsuarioDTO implements Serializable{
+    private Usuario entidad;
 
-    public UserDTO() {
-        entidad = new User();
+    public UsuarioDTO() {
+        entidad = new Usuario();
     }
 
-    public User getEntidad() {
+    public Usuario getEntidad() {
         return entidad;
     }
 
-    public void setEntidad(User entidad) {
+    public void setEntidad(Usuario entidad) {
         this.entidad = entidad;
     }
 
@@ -31,6 +31,7 @@ public class UserDTO implements Serializable{
         sb.append("Id: ").append(getEntidad().getId()).append("\n");
         sb.append("name: ").append(getEntidad().getName()).append("\n");
         sb.append("pwd: ").append(getEntidad().getPassword()).append("\n");
+        sb.append("email: ").append(getEntidad().getEmail()).append("\n");
         return sb.toString();
     }
 }

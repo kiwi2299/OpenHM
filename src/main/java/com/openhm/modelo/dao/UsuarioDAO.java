@@ -6,8 +6,8 @@
 package com.openhm.modelo.dao;
 
 
-import com.openhm.modelo.dto.UserDTO;
-import com.openhm.modelo.entidades.User;
+import com.openhm.modelo.dto.UsuarioDTO;
+import com.openhm.modelo.entidades.Usuario;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -19,10 +19,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class UserDAO {
+public class UsuarioDAO {
     
-    private static final String SQL_INSERT="insert into usuarios (name, password) values(?,?)";
-    private static final String SQL_UPDATE="update usuarios set name = ?, password = ? where id = ?";
+    private static final String SQL_INSERT="insert into usuarios (name, password, email) values(?,?,?)";
+    private static final String SQL_UPDATE="update usuarios set name = ?, password = ?, email = ? where id = ?";
     private static final String SQL_DELETE="delete from usuarios where id = ?";
     private static final String SQL_READ="select * from usuarios where name = ? and password = ?";
     private static final String SQL_READ_ALL="select * from usuarios";
@@ -38,12 +38,12 @@ public class UserDAO {
             Class.forName(driver);
             con = DriverManager.getConnection(url,usr,pwd);
         } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return con;
     }
     
-    public void create(UserDTO dto) throws SQLException{
+    public void create(UsuarioDTO dto) throws SQLException{
         ObtenerConexion();
         PreparedStatement cs = null;
         try {
@@ -62,14 +62,15 @@ public class UserDAO {
     }
     
     
-    public void update(UserDTO dto) throws SQLException{
+    public void update(UsuarioDTO dto) throws SQLException{
         ObtenerConexion();
         PreparedStatement cs = null; //Callablestatement es para stock procedures
         try {
             cs = con.prepareStatement(SQL_UPDATE);
             cs.setString(1, dto.getEntidad().getName());
             cs.setString(2, dto.getEntidad().getPassword());
-            cs.setInt(3, dto.getEntidad().getId());
+            cs.setString(3, dto.getEntidad().getEmail());
+            cs.setInt(4, dto.getEntidad().getId());
             cs.executeUpdate();
         } finally {
             if(cs != null){
@@ -81,7 +82,7 @@ public class UserDAO {
         }
     }
     
-    public void delete(UserDTO dto) throws SQLException{
+    public void delete(UsuarioDTO dto) throws SQLException{
         ObtenerConexion();
         PreparedStatement cs = null;
         try {
@@ -98,7 +99,7 @@ public class UserDAO {
         }
     }
     
-    public UserDTO read(UserDTO dto) throws SQLException{
+    public UsuarioDTO read(UsuarioDTO dto) throws SQLException{
         ObtenerConexion();
         PreparedStatement cs = null;
         ResultSet rs =null;
@@ -106,10 +107,11 @@ public class UserDAO {
             cs = con.prepareStatement(SQL_READ);
             cs.setString(1, dto.getEntidad().getName());
             cs.setString(2, dto.getEntidad().getPassword());
+            //cs.setString(3, dto.getEntidad().getEmail());
             rs = cs.executeQuery();
             List resultados = obtenerResultados(rs);
             if (resultados.size() > 0) {
-                return (UserDTO) resultados.get(0);
+                return (UsuarioDTO) resultados.get(0);
             }else{
                 return null;
             }
@@ -155,33 +157,38 @@ public class UserDAO {
     private List obtenerResultados(ResultSet rs) throws SQLException{
         List resultados = new ArrayList();
         while (rs.next()) {            
-            UserDTO dto = new UserDTO();
+            UsuarioDTO dto = new UsuarioDTO();
             dto.getEntidad().setId(rs.getInt("id"));
             dto.getEntidad().setName(rs.getString("name"));
             dto.getEntidad().setPassword(rs.getString("password"));
+            dto.getEntidad().setEmail(rs.getString("email"));
             resultados.add(dto);
         }
         return resultados;
     }
     
     public static void main(String[] args) {
-        UserDAO dao = new UserDAO();
-        UserDTO dto = new UserDTO();
-        User entidad = new User();
+        UsuarioDAO dao = new UsuarioDAO();
+        UsuarioDTO dto = new UsuarioDTO();
+        Usuario entidad = new Usuario();
         
         entidad.setName("kiwir");
         entidad.setPassword("kiwir");
+        entidad.setEmail("rafakiwi99@gmail.com");
+        entidad.setId(1);
         dto.setEntidad(entidad);
+        
         try {
-            
+            dao.update(dto);
             dto = dao.read(dto);
+            
             if(dto != null){
-                System.out.println(dto.getEntidad().getName());
+                System.out.println(dto.getEntidad().getEmail());
             }
             
             //System.out.println(dao.readAll());
         } catch (SQLException ex) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

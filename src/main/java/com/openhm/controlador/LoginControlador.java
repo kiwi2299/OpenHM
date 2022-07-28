@@ -5,9 +5,9 @@
  */
 package com.openhm.controlador;
 
-import com.openhm.modelo.dao.UserDAO;
-import com.openhm.modelo.dto.UserDTO;
-import com.openhm.modelo.entidades.User;
+import com.openhm.modelo.dao.UsuarioDAO;
+import com.openhm.modelo.dto.UsuarioDTO;
+import com.openhm.modelo.entidades.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -95,10 +95,10 @@ public class LoginControlador extends HttpServlet {
 
     private void verificar(HttpServletRequest request, HttpServletResponse response) throws Exception{
         HttpSession sesion;
-        UserDAO dao;
-        UserDTO dto;
+        UsuarioDAO dao;
+        UsuarioDTO dto;
         dto = this.obtenerUsuario(request);
-        dao = new UserDAO();
+        dao = new UsuarioDAO();
         dto = dao.read(dto);
         //System.out.println(dto.getEntidad().getName());
         if (dto != null) {
@@ -122,12 +122,12 @@ public class LoginControlador extends HttpServlet {
         
     }
 
-    private UserDTO obtenerUsuario(HttpServletRequest request) {
-        UserDTO dto = new UserDTO();
-        User u = new User();
-        u.setName(request.getParameter("userName"));
-        u.setPassword(request.getParameter("userPass"));
-        dto.setEntidad(u);
+    private UsuarioDTO obtenerUsuario(HttpServletRequest request) {
+        UsuarioDTO dto = new UsuarioDTO();
+        
+        dto.getEntidad().setName(request.getParameter("userName"));
+        dto.getEntidad().setPassword(request.getParameter("userPass"));
+        
         return dto;
     }
 
