@@ -45,6 +45,7 @@ public class LoginControlador extends HttpServlet {
             }
         } catch (Exception e) {
             try {
+                request.setAttribute("msje", "Error try-switch");
                 this.getServletConfig().getServletContext().getRequestDispatcher("/mensaje.jsp").forward(request, response);
 
             } catch (Exception ex) {
