@@ -5,11 +5,14 @@
  */
 package com.openhm.controlador;
 
+import com.openhm.modelo.dao.MapaDAO;
 import com.openhm.modelo.dao.UsuarioDAO;
+import com.openhm.modelo.dto.MapaDTO;
 import com.openhm.modelo.dto.UsuarioDTO;
 import com.openhm.modelo.entidades.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -96,6 +99,8 @@ public class LoginControlador extends HttpServlet {
 
     private void verificar(HttpServletRequest request, HttpServletResponse response) throws Exception{
         HttpSession sesion;
+        MapaDAO mdao = new MapaDAO();
+        MapaDTO mdto = new MapaDTO(); 
         UsuarioDAO dao;
         UsuarioDTO dto;
         dto = this.obtenerUsuario(request);
@@ -104,6 +109,9 @@ public class LoginControlador extends HttpServlet {
         //System.out.println(dto.getEntidad().getName());
         if (dto != null) {
             sesion = request.getSession();
+            List listaMapas = mdao.readAll();
+            
+            sesion.setAttribute("listaMapas",listaMapas);
             sesion.setAttribute("dto", dto);
             request.setAttribute("msje", "Bienvenido al sistema");
             //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
