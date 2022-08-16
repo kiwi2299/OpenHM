@@ -172,18 +172,18 @@ public class UsuarioDAO {
         UsuarioDTO dto = new UsuarioDTO();
         Usuario entidad = new Usuario();
         
-        entidad.setName("kiwir");
-        entidad.setPassword("kiwir");
-        entidad.setEmail("rafakiwi99@gmail.com");
-        entidad.setId(1);
-        dto.setEntidad(entidad);
+        //entidad.setName("kiwir");
+        //entidad.setPassword("kiwir");
+       // entidad.setEmail("rafakiwi99@gmail.com");
+        //entidad.setId(1);
+       // dto.setEntidad(entidad);
         
         try {
-            dao.update(dto);
-            dto = dao.read(dto);
+           // dao.update(dto);
             
+            System.out.println(dao.readAll());
             if(dto != null){
-                System.out.println(dto.getEntidad().getEmail());
+                
             }
             
             //System.out.println(dao.readAll());

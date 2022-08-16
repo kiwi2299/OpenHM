@@ -48,7 +48,7 @@
         </form>
     </div>
     <div>
-        <p>${listaMapas[1].entidad.map}</p>
+        <p>${listaMapas[2].entidad.map}</p>
         <input type='hidden' id='geojson' name="geojson" value="${listaMapas[1].entidad.map}">
         
     </div>
@@ -80,7 +80,7 @@
 	var mylayer = new ol.layer.Tile({
 		source: new ol.source.OSM()
 	})
-    const geojsonObject = ${listaMapas[1].entidad.map};
+    const geojsonObject = ${listaMapas[2].entidad.map};
     console.log(geojsonObject);
 		//const geojsonObject = {"type":"GeometryCollection","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"geometries":[{"type":"Polygon","coordinates":[[[645740.014953,1986139.742962],[1350183.667629,2671015.516397],[1448023.063834,1516510.641178],[645740.014953,1986139.742962]]]}]};
 		//const geojsonObject2 = {"type":"GeometryCollection","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"geometries":[{"type":"Polygon","coordinates":[[[645740.014953,1986139.742962],[1350183.667629,2671015.516397],[1448023.063834,1516510.641178],[645740.014953,1986139.742962]]]}]};
