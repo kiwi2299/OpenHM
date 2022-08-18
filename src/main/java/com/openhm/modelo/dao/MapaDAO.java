@@ -36,10 +36,10 @@ public class MapaDAO {
        String driver = "org.postgresql.Driver";
         String url = "jdbc:postgresql://tt2-2021-b023.ci6bwbdlosva.us-west-1.rds.amazonaws.com:5432/openhm";
         
-//         String usr = "ecearivvtixipv";
-//        String pwd = "76a9b556592cf93833352d30ca2a94228441d0f80f76a08736a66db72c397f28";
-//        String driver = "org.postgresql.Driver";
-//        String url = "jdbc:postgresql://ec2-3-220-98-137.compute-1.amazonaws.com:5432/dfdfl4fv7smte5";
+        // String usr = "postgres";
+       // String pwd = "postgres";
+        //String driver = "org.postgresql.Driver";
+        //String url = "jdbc:postgresql://localhost:5432/postgres";
         //?sslmode=required
         try{
             Class.forName(driver);
