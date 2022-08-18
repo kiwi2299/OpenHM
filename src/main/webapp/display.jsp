@@ -48,7 +48,7 @@
         </form>
     </div>
     <div>
-        <p>${listaMapas[2].entidad.map}</p>
+        <p>${size}</p>
         <input type='hidden' id='geojson' name="geojson" value="${listaMapas[1].entidad.map}">
         
     </div>
@@ -75,31 +75,40 @@
 	var myview = new ol.View({
 		center: [981546161170.347, 2496866.115180862],
           zoom: 4
-	})
+	});
 	
 	var mylayer = new ol.layer.Tile({
-		source: new ol.source.OSM()
-	})
-    const geojsonObject = ${listaMapas[2].entidad.map};
-    console.log(geojsonObject);
+            source:  new ol.source.XYZ({
+                url: 'http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}'
+            })
+	});
+    
+    
 		//const geojsonObject = {"type":"GeometryCollection","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"geometries":[{"type":"Polygon","coordinates":[[[645740.014953,1986139.742962],[1350183.667629,2671015.516397],[1448023.063834,1516510.641178],[645740.014953,1986139.742962]]]}]};
-		//const geojsonObject2 = {"type":"GeometryCollection","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"geometries":[{"type":"Polygon","coordinates":[[[645740.014953,1986139.742962],[1350183.667629,2671015.516397],[1448023.063834,1516510.641178],[645740.014953,1986139.742962]]]}]};
+    
+	//var geoJsonFeatures = new ol.Feature;
 	
 	
-	const vectorSource = new ol.source.Vector({
-            features: new ol.format.GeoJSON().readFeatures(geojsonObject), 
-          });
+          
+       
+        var layer = [mylayer];
+	
+        console.log(${size});
+      
+       <c:forEach items="${listaMapas}" var="mapa" varStatus="status"> 
+            layer.push(new ol.layer.Vector({
+                    source: new ol.source.Vector({
+                        features: new ol.format.GeoJSON().readFeatures(${mapa.entidad.map})
+                    })
+                })
+            );
+        console.log(${mapa.entidad.map});
+        </c:forEach> 
+       
+
 
 	
-
-        const vectorLayer = new ol.layer.Vector({
-            source: vectorSource
-
-          });
-
-
 	
-	var layer = [mylayer,vectorLayer]
 	
 	var map = new ol.Map({
             target: 'map',

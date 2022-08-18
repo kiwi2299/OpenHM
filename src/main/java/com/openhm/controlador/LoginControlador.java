@@ -110,6 +110,7 @@ public class LoginControlador extends HttpServlet {
         if (dto != null) {
             sesion = request.getSession();
             List listaMapas = mdao.readAll();
+            sesion.setAttribute("size",listaMapas.size());
             
             sesion.setAttribute("listaMapas",listaMapas);
             sesion.setAttribute("dto", dto);
