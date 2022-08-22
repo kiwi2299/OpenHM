@@ -111,34 +111,34 @@ public class UsuarioControlador extends HttpServlet {
     private void insertar(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UsuarioDTO dto = new UsuarioDTO();
         UsuarioDAO dao = new UsuarioDAO();
-        dto.getEntidad().setName(request.getParameter("userName"));
-        dto.getEntidad().setPassword(request.getParameter("userPass"));
-        dto.getEntidad().setEmail(request.getParameter("userEmail"));
+        dto.getEntidad().setName(request.getParameter("name"));
+        dto.getEntidad().setPassword(request.getParameter("password"));
+        dto.getEntidad().setEmail(request.getParameter("email"));
         /*
         TODO user, correo repetido
         */
-        if (!request.getParameter("userId").isEmpty() || !request.getParameter("userId").equals("0")) {
-            dto.getEntidad().setId(Integer.parseInt(request.getParameter("userId")));
-            try {
-                dao.update(dto);
-            } catch (SQLException ex) {
-                Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
-            }finally{
-                request.setAttribute("msj","Usuario actualizado");
-                request.setAttribute("dto", dto);
-                response.sendRedirect("menuUsuario.jsp");
-            }
-        } else {
+//        if (!request.getParameter("userId").isEmpty() || !request.getParameter("userId").equals("0")) {
+//            dto.getEntidad().setId(Integer.parseInt(request.getParameter("userId")));
+//            try {
+//                dao.update(dto);
+//            } catch (SQLException ex) {
+//                Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
+//            }finally{
+//                request.setAttribute("msj","Usuario actualizado");
+//                request.setAttribute("dto", dto);
+//                response.sendRedirect("menuUsuario.jsp");
+//            }
+//        } else {
             try {
             dao.create(dto);
             } catch (SQLException ex) {
                 Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
             }finally{
-                 request.setAttribute("msj","Usuario creado");
+                request.setAttribute("msj","Usuario creado");
                 request.setAttribute("dto", dto);
-                response.sendRedirect("menuUsuario.jsp");
+                response.sendRedirect("display.jsp");
             }
-        }             
+      //  }             
     }
 
     private void seleccionar(HttpServletRequest request, HttpServletResponse response) throws IOException {

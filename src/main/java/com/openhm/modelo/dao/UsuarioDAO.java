@@ -55,6 +55,7 @@ public class UsuarioDAO {
             cs = con.prepareStatement(SQL_INSERT);
             cs.setString(1, dto.getEntidad().getName());
             cs.setString(2, dto.getEntidad().getPassword());
+            cs.setString(3, dto.getEntidad().getEmail());
             cs.executeUpdate();
         } finally {
             if(cs != null){

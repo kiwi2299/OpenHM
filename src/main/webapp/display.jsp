@@ -48,7 +48,7 @@
         </form>
     </div>
     <div>
-        <p>${size}</p>
+        <p>${msj}</p>
         <input type='hidden' id='geojson' name="geojson" value="${listaMapas[1].entidad.map}">
         
     </div>

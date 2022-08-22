@@ -13,7 +13,7 @@
     </head>
     <body>
         <h1>Hello World!</h1>
-        <form action="">
+        <form action="Usuario?accion=insertar" method="post">
             <input type="text" name="name" id="name" required>
             <label for="name">Nombre</label>
             <input type="password" name="password" id="password" required>
