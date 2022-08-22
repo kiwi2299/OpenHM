@@ -41,27 +41,28 @@ public class UsuarioControlador extends HttpServlet {
             if (accion != null) {
                 switch (accion) {
                     case "menu":
-                        response.sendRedirect("menuCrearUsuario.jsp");
+                        response.sendRedirect("menuUsuario.jsp");
                         break;
-                    case "crear":
-                        crear(request, response);
+                    case "insertar":
+                        insertar(request, response);
                         break;
-                    case "modificar":
-                        modificar(request, response);
+                    case "seleccionar":
+                        seleccionar(request, response);
+                        break;
                     case "borrar":
                         borrar(request, response);
-                    
+                        break;
                     default:
-                        response.sendRedirect("menuCrearUsuario.jsp");
+                        response.sendRedirect("menuUsuario.jsp");
                 }
             } else {
                 response.sendRedirect("index.html");
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             try {
                 this.getServletConfig().getServletContext().getRequestDispatcher("/mensaje.jsp").forward(request, response);
 
-            } catch (Exception ex) {
+            } catch (IOException | ServletException ex) {
                 System.out.println("Error" + e.getMessage());
             }
         }
@@ -107,7 +108,7 @@ public class UsuarioControlador extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void crear(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void insertar(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UsuarioDTO dto = new UsuarioDTO();
         UsuarioDAO dao = new UsuarioDAO();
         dto.getEntidad().setName(request.getParameter("userName"));
@@ -140,7 +141,7 @@ public class UsuarioControlador extends HttpServlet {
         }             
     }
 
-    private void modificar(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void seleccionar(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UsuarioDTO dto = new UsuarioDTO();
         UsuarioDAO dao = new UsuarioDAO();
         dto.getEntidad().setId(Integer.parseInt(request.getParameter("userId")));
@@ -151,7 +152,7 @@ public class UsuarioControlador extends HttpServlet {
         }finally{
             request.setAttribute("dto",dto);
             
-            response.sendRedirect("menuCrearUsuario.jsp");
+            response.sendRedirect("menuUsuario.jsp");
         }
         
         
@@ -167,7 +168,7 @@ public class UsuarioControlador extends HttpServlet {
             Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
             request.setAttribute("msj","Usuario borrado");
-            response.sendRedirect("menuCrearUsuario.jsp");
+            response.sendRedirect("menuUsuario.jsp");
         }
     }
 
