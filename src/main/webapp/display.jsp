@@ -10,10 +10,16 @@
 
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/css/ol.css" type="text/css">
-    <link rel="stylesheet" href="styles/styles.css">
-    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/build/ol.js"></script>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/css/ol.css" type="text/css">
+    <style>
+      .map {
+        height: 800px;
+        width: 100%;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/build/ol.js"></script>
+    
 
     <link rel="stylesheet" type="text/css" href="styles/timeline.css">
     <!-- CSS only 
@@ -48,7 +54,7 @@
         </form>
     </div>
     <div>
-        <p>${msj}</p>
+        <p>Bienvenido ${dto.entidad.name}</p>
         <input type='hidden' id='geojson' name="geojson" value="${listaMapas[1].entidad.map}">
         
     </div>

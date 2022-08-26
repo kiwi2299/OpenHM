@@ -130,7 +130,7 @@ public class UsuarioControlador extends HttpServlet {
 //            }
 //        } else {
             try {
-            dao.create(dto);
+                dao.create(dto);
             } catch (SQLException ex) {
                 Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
             }finally{

@@ -21,17 +21,22 @@ public class PruebaDB {
         UsuarioDTO dto = new UsuarioDTO();
         UsuarioDAO dao = new UsuarioDAO();
         
-        dto.getEntidad().setName("victor");
+        dto.getEntidad().setName("v");
         dto.getEntidad().setPassword("victor");
         dto.getEntidad().setEmail("victor@victor.com");
-        System.out.println(dto.toString());
+        //System.out.println(dto.toString());
         
         try {
-            dao.create(dto);
+            dto = dao.read(dto);
+            if(dto != null){
+                System.out.println(dto.getEntidad().getName());
+            }else{
+                System.out.println("No hay usuario con ese nombre");
+            }
         } catch (SQLException ex) {
             Logger.getLogger(PruebaDB.class.getName()).log(Level.SEVERE, null, ex);
         } finally{
-            System.out.println("Usuario insertado");
+            
         }
     }
     
