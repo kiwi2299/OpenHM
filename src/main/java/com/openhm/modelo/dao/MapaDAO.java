@@ -23,7 +23,7 @@ import org.postgis.PGgeometry;
 public class MapaDAO {
 
     /*TODO */
-    private static final String SQL_INSERT="insert into mapa (name, map) values(?,?)";
+    private static final String SQL_INSERT="insert into mapa (name, map) values(?,ST_GeomFromText(?))";
     private static final String SQL_UPDATE="update mapa set name = ?, map = ? where id = ?";
     private static final String SQL_DELETE="delete from mapa where id = ?";
     private static final String SQL_READ="select id, name, ST_AsGeoJSON(map) from mapa where id = ?";

@@ -9,7 +9,7 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
+    
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/css/ol.css" type="text/css">
     <style>
@@ -37,6 +37,7 @@
 <body>
     <div class="topnav">
         <button onclick="myFunction()" class="nav-item">Iniciar sesion</button>
+        <a href="draw.jsp" >Draw</a>
         <h1 class="nav-item">Open History Mapper</h1>
     </div>
     <div id="myDIV" style="display: none;">

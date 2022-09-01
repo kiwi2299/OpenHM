@@ -13,12 +13,17 @@ import com.openhm.modelo.entidades.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import static org.apache.commons.lang3.StringUtils.join;
+import static org.apache.commons.lang3.StringUtils.split;
 
 /**
  *
@@ -59,13 +64,10 @@ public class MapaControlador extends HttpServlet {
             } else {
                 response.sendRedirect("index.html");
             }
-        } catch (Exception e) {
-            try {
-                this.getServletConfig().getServletContext().getRequestDispatcher("/mensaje.jsp").forward(request, response);
-
-            } catch (Exception ex) {
+        } catch (IOException e) {
+            
                 System.out.println("Error" + e.getMessage());
-            }
+            
         }
         
     }
@@ -110,36 +112,53 @@ public class MapaControlador extends HttpServlet {
     }// </editor-fold>
 
     private void crear(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        UsuarioDTO dto = new UsuarioDTO();
-        UsuarioDAO dao = new UsuarioDAO();
-        dto.getEntidad().setName(request.getParameter("userName"));
-        dto.getEntidad().setPassword(request.getParameter("userPass"));
-        dto.getEntidad().setEmail(request.getParameter("userEmail"));
-        /*
-        TODO user, correo repetido
-        */
-        if (!request.getParameter("userId").isEmpty() || !request.getParameter("userId").equals("0")) {
-            dto.getEntidad().setId(Integer.parseInt(request.getParameter("userId")));
-            try {
-                dao.update(dto);
-            } catch (SQLException ex) {
-                Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
-            }finally{
-                request.setAttribute("msj","Usuario actualizado");
-                request.setAttribute("dto", dto);
-                response.sendRedirect("menuUsuario.jsp");
-            }
-        } else {
-            try {
-            dao.create(dto);
-            } catch (SQLException ex) {
-                Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
-            }finally{
-                 request.setAttribute("msj","Usuario creado");
-                request.setAttribute("dto", dto);
-                response.sendRedirect("menuUsuario.jsp");
-            }
-        }             
+//        UsuarioDTO dto = new UsuarioDTO();
+//        UsuarioDAO dao = new UsuarioDAO();
+//        dto.getEntidad().setName(request.getParameter("userName"));
+//        dto.getEntidad().setPassword(request.getParameter("userPass"));
+//        dto.getEntidad().setEmail(request.getParameter("userEmail"));
+        HttpSession sesion = request.getSession();
+        String q = request.getParameter("geometry");
+        
+        String[] se = split(q,',');
+        ArrayList<String> jn = new ArrayList<>();
+        String aux = "";
+        for (int i = 0; i < se.length; i++) {
+            //System.out.println(se[i-1]);  
+            aux += se[i]+" "; 
+            if(i%2 == 1){
+                jn.add(aux);
+                aux = "";
+            }       
+        }
+       
+        String geo = join(jn,',');
+        System.out.println(geo);
+        String type = request.getParameter("type");
+         String map = "";
+        if(type.equals("Point")){
+             map = "GEOMETRYCOLLECTION("+type+"("+geo+"))";
+        }else{
+             map = "GEOMETRYCOLLECTION("+type+"(("+geo+")))";
+        }
+            
+        
+        System.out.println(map);
+        MapaDAO mdao = new MapaDAO();
+        MapaDTO mdto = new MapaDTO();
+        mdto.getEntidad().setMap(map);
+        mdto.getEntidad().setName(request.getParameter("name"));
+        try {
+            mdao.create(mdto);
+            List listaMapas = mdao.readAll();
+            sesion.setAttribute("size",listaMapas.size());
+            
+            sesion.setAttribute("listaMapas",listaMapas);
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            response.sendRedirect("display.jsp");
+        }
     }
 
     private void modificar(HttpServletRequest request, HttpServletResponse response) throws IOException {
