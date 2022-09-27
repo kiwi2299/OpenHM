@@ -23,11 +23,11 @@ import org.postgis.PGgeometry;
 public class MapaDAO {
 
     /*TODO */
-    private static final String SQL_INSERT="insert into mapa (name, map) values(?,ST_GeomFromText(?))";
+    private static final String SQL_INSERT="insert into mapa (name,user_id,year,view,map,description,source,insert_date) values(?,?,?,true,ST_GeomFromText(?),?,?,CURRENT_DATE)";
     private static final String SQL_UPDATE="update mapa set name = ?, map = ? where id = ?";
     private static final String SQL_DELETE="delete from mapa where id = ?";
-    private static final String SQL_READ="select id, name, ST_AsGeoJSON(map) from mapa where id = ?";
-    private static final String SQL_READ_ALL="select id, name, ST_AsGeoJSON(map) from mapa";
+    private static final String SQL_READ="select id, name,user_id,year,view, ST_AsGeoJSON(map),description,source,insert_date from mapa where id = ?";
+    private static final String SQL_READ_ALL="select id, name,user_id,year,view, ST_AsGeoJSON(map),description,source,insert_date from mapa";
 
     private Connection con;
     public Connection ObtenerConexion(){
@@ -36,10 +36,10 @@ public class MapaDAO {
        String driver = "org.postgresql.Driver";
         String url = "jdbc:postgresql://tt2-2021-b023.ci6bwbdlosva.us-west-1.rds.amazonaws.com:5432/openhm";
         
-        // String usr = "postgres";
-       // String pwd = "postgres";
-        //String driver = "org.postgresql.Driver";
-        //String url = "jdbc:postgresql://localhost:5432/postgres";
+//         String usr = "postgres";
+//        String pwd = "postgres";
+//        String driver = "org.postgresql.Driver";
+//        String url = "jdbc:postgresql://localhost:5432/postgres";
         //?sslmode=required
         try{
             Class.forName(driver);
@@ -56,7 +56,11 @@ public class MapaDAO {
         try {
             cs = con.prepareStatement(SQL_INSERT);
             cs.setString(1, dto.getEntidad().getName());
-            cs.setString(2, dto.getEntidad().getMap());
+            cs.setInt(2, dto.getEntidad().getUser_id());
+            cs.setInt(3, dto.getEntidad().getYear());
+            cs.setString(5, dto.getEntidad().getMap());
+            cs.setString(6, dto.getEntidad().getDescription());
+            cs.setString(7, dto.getEntidad().getSource());
             cs.executeUpdate();
         } finally {
             if(cs != null){
@@ -164,7 +168,14 @@ public class MapaDAO {
             MapaDTO dto = new MapaDTO();
             dto.getEntidad().setId(rs.getInt("id"));
             dto.getEntidad().setName(rs.getString("name"));
+            dto.getEntidad().setUser_id(rs.getInt("user_id"));
+            dto.getEntidad().setYear(rs.getInt("year"));
+            dto.getEntidad().setView(rs.getBoolean("view"));
             dto.getEntidad().setMap(rs.getString("ST_AsGeoJSON"));
+            dto.getEntidad().setDescription(rs.getString("description"));
+            dto.getEntidad().setSource(rs.getString("source"));
+            dto.getEntidad().setInsert_date(rs.getString("insert_date"));
+            
             resultados.add(dto);
         }
         return resultados;
