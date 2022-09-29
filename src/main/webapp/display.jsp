@@ -12,23 +12,15 @@
     
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/css/ol.css" type="text/css">
-    <style>
-      .map {
-        height: 800px;
-        width: 100%;
-      }
-    </style>
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/build/ol.js"></script>
-    
-
     <link rel="stylesheet" type="text/css" href="styles/timeline.css">
+    <link rel="stylesheet" type="text/css" href="styles/styles.css">
     <!-- CSS only 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     -->
     <!-- // Add jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-
     <script src="js/timeline.js"></script>
 
     <title>Open History Mapper for Mapper</title>
@@ -60,6 +52,12 @@
         
     </div>
     <div id="map" class="map"></div>
+    <!--  pop up de informacion  -->
+    <div id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div>
+    </div>
+    <!--  fin pop up de informacion  -->
     <div class="horizontal-timeline" id="example">
         <div class="events-content">
             <ol>
@@ -105,7 +103,10 @@
        <c:forEach items="${listaMapas}" var="mapa" varStatus="status"> 
             layer.push(new ol.layer.Vector({
                     source: new ol.source.Vector({
-                        features: new ol.format.GeoJSON().readFeatures(${mapa.entidad.map})
+                        features:  new ol.format.GeoJSON().readFeatures(${mapa.entidad.map}),
+                            
+                        
+                                
                     })
                 })
             );
@@ -113,15 +114,50 @@
         </c:forEach> 
        
 
-
-	
-	
-	
 	var map = new ol.Map({
             target: 'map',
             layers: layer,
             view: myview
 	});
+        
+        var container = document.getElementById('popup');
+        var content = document.getElementById('popup-content');
+        var closer = document.getElementById('popup-closer');
+        
+        var popup = new ol.Overlay({
+            element: container, 
+            autoPan: true,
+            autoPanAnimation: {
+                duration: 250,
+            },
+        });
+        
+        map.addOverlay(popup);
+        closer.onclick = function(){
+            popup.setPosition(undefined);
+            closer.blur();
+            return false;
+        };
+        
+        map.on('click', function(evt){
+            var feature = map.forEachFeatureAtPixel(evt.pixel,
+              function(feature, layer) {
+                return feature;
+              });
+            if (feature) {
+                console.log(feature);
+                var geometry = feature.getGeometry();
+                var coord = geometry.getCoordinates();
+
+                var content = '<h3>' + feature.get('name') + '</h3>';
+                
+
+                content_element.innerHTML = content;
+                popup.setPosition(coord);
+
+                console.info(feature.getProperties());
+            }
+        });
     </script>
     <script>
         $('#example').horizontalTimeline({
