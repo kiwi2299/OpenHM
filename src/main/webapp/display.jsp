@@ -90,8 +90,10 @@
     
     
 		//const geojsonObject = {"type":"GeometryCollection","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"geometries":[{"type":"Polygon","coordinates":[[[645740.014953,1986139.742962],[1350183.667629,2671015.516397],[1448023.063834,1516510.641178],[645740.014953,1986139.742962]]]}]};
-    
-	//var geoJsonFeatures = new ol.Feature;
+     // {"type":"GeometryCollection","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"geometries":[{"type":"Polygon","coordinates":[[[-15556556.862994775,10772535.8838538],[-13615177.357247386,6284066.466565839],[-10338128.751545794,6454907.863071609],[-8753963.074855926,5585169.844496779],[-6936831.85747637,5911321.601462341],[-7464887.08303966,8567128.765324768],[-9577107.985292818,11238466.965233175],[-15556556.862994775,10772535.8838538]]]}]}
+     // {"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[146.9, -2], [146.7, -2], [146.6, -2], [146.7, -2.2], [146.8, -2.2], [146.9, -2.2], [147.2, -2.2], [147.3, -2], [147.1, -2], [146.9, -2]]]}, "id": 135, "properties": {"ECO_NAME": "Admiralty Islands lowland rain forests", "BIOME_NAME": "Tropical & Subtropical Moist Broadleaf Forests", "REALM": "Australasia", "NNH": 2, "NNH_NAME": "Nature Could Reach Half Protected", "COLOR": "#70A800", "COLOR_BIO": "#38A700", "COLOR_NNH": "#7BC141"}}
+     //
+//var geoJsonFeatures = new ol.Feature;
 	
 	
           
@@ -103,15 +105,14 @@
        <c:forEach items="${listaMapas}" var="mapa" varStatus="status"> 
             layer.push(new ol.layer.Vector({
                     source: new ol.source.Vector({
-                        features:  new ol.format.GeoJSON().readFeatures(${mapa.entidad.map}),
-                            
-                        
-                                
+                        features:  new ol.format.GeoJSON().readFeatures(${mapa.entidad.map}),                                            
                     })
                 })
             );
         console.log(${mapa.entidad.map});
         </c:forEach> 
+            
+        
        
 
 	var map = new ol.Map({
@@ -126,36 +127,44 @@
         
         var popup = new ol.Overlay({
             element: container, 
-            autoPan: true,
-            autoPanAnimation: {
-                duration: 250,
+            autoPan: {
+                animation: {
+                    duration: 250,
+                },  
             },
         });
         
-        map.addOverlay(popup);
+        
         closer.onclick = function(){
             popup.setPosition(undefined);
             closer.blur();
             return false;
         };
         
-        map.on('click', function(evt){
+        map.addOverlay(popup);
+        
+       
+        
+        map.on('singleclick', function(evt){
+            //var feature = new ol.Feature;
             var feature = map.forEachFeatureAtPixel(evt.pixel,
-              function(feature, layer) {
+              function(feature) {
                 return feature;
               });
             if (feature) {
-                console.log(feature);
-                var geometry = feature.getGeometry();
-                var coord = geometry.getCoordinates();
-
-                var content = '<h3>' + feature.get('name') + '</h3>';
+                console.log(evt.coordinate);
+                
+                 
+                //var coord = feature.getGeometry().flatCoordinates;
+                var props = feature.getProperties();
+                console.log(props);
+                var cont = '<h3>' + feature.get('ECO_NAME') + '</h3>';
                 
 
-                content_element.innerHTML = content;
-                popup.setPosition(coord);
+                content.innerHTML = cont;
+                popup.setPosition(evt.coordinate);
 
-                console.info(feature.getProperties());
+                //console.info(feature.getProperties());
             }
         });
     </script>
