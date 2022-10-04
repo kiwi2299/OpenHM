@@ -10,13 +10,17 @@ import com.openhm.modelo.dao.UsuarioDAO;
 import com.openhm.modelo.dto.MapaDTO;
 import com.openhm.modelo.dto.UsuarioDTO;
 import com.openhm.modelo.entidades.Usuario;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +56,9 @@ public class MapaControlador extends HttpServlet {
                         break;
                     case "crear":
                         crear(request, response);
+                        break;
+                    case "geojson":
+                        geojsonFile();
                         break;
                     case "modificar":
                         modificar(request, response);
@@ -137,9 +144,9 @@ public class MapaControlador extends HttpServlet {
         String type = request.getParameter("type");
          String map = "";
         if(type.equals("Point")){
-             map = "GEOMETRYCOLLECTION("+type+"("+geo+"))";
+             map = type+"("+geo+")";
         }else{
-             map = "GEOMETRYCOLLECTION("+type+"(("+geo+")))";
+             map = type+"(("+geo+"))";
         }
             
         
@@ -148,11 +155,16 @@ public class MapaControlador extends HttpServlet {
         MapaDTO mdto = new MapaDTO();
         mdto.getEntidad().setMap(map);
         mdto.getEntidad().setName(request.getParameter("name"));
+        mdto.getEntidad().setDescription("desc");
+        mdto.getEntidad().setSource("source");
+        mdto.getEntidad().setUser_id(1);
+        mdto.getEntidad().setYear(2022);
+        String geojsonString = geojson(mdto);
         try {
             mdao.create(mdto);
             List listaMapas = mdao.readAll();
             sesion.setAttribute("size",listaMapas.size());
-            
+            sesion.setAttribute("geojsonString", geojsonString);
             sesion.setAttribute("listaMapas",listaMapas);
         } catch (SQLException ex) {
             Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
@@ -203,6 +215,44 @@ public class MapaControlador extends HttpServlet {
         }finally{
             request.setAttribute("mapaGeoJson",dto.getEntidad().getMap());
             response.sendRedirect("index.jsp");
+        }
+    }
+     
+    //generar string geojson con feature collection
+    private String geojson(MapaDTO mdto){
+        // 
+        String geojsonString = "";
+        
+        return geojsonString;
+    }
+    
+    //Intentar crear un archivo para que ol consulte
+    //no funciona
+    private void geojsonFile(){
+        
+         String filename = "/geojson/mapa.geojson";
+        
+        ServletContext context = getServletContext();
+        String path = this.getServletContext().getRealPath(filename);
+        
+        
+        System.out.println(path);
+        //InputStream is = context.getResourceAsStream(filename);
+         try {
+            File myObj = new File(path);
+            if (myObj.createNewFile()) {
+              System.out.println("File created: " + myObj.getName());
+            } else {
+              System.out.println("File already exists.");
+            }
+            
+             try (FileWriter myWriter = new FileWriter(path)) {
+                 myWriter.write("Files in Java might be tricky, but it is fun enough!");
+             }
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
         }
     }
 

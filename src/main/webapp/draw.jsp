@@ -31,6 +31,7 @@
         <option value="Point">Point</option>
         <option value="LineString">LineString</option>
         <option value="Polygon">Polygon</option>
+        <option value="MultiPolygon">MultiPolygon</option>
         <option value="Circle">Circle</option>
         <option value="None">None</option>
       </select>
@@ -40,6 +41,12 @@
       <label for="name">Nombre</label>
       <input  type="text" id="name" name="name" required>
       <input class="form-control mr-2 mb-2 mt-2" type="submit" value="submit" id="submit">
+    </form>
+    
+    <form class="form-inline" action="Mapa?accion=geojson" method="post">
+      
+      
+      <input class="form-control mr-2 mb-2 mt-2" type="submit" value="GeoJSON" id="submit">
     </form>
     <!-- Pointer events polyfill for old browsers, see https://caniuse.com/#feat=pointer -->
     <script src="https://unpkg.com/elm-pep@1.0.6/dist/elm-pep.js"></script>
@@ -109,15 +116,17 @@
         document.getElementById('save').addEventListener('click', function () {
             
             var features = source.getFeatures();
+            var geoString = "";
             //let feature = new ol.Feature;
             for (var i = 0; i < features.length; i++) {
                var feature = new ol.Feature;
                feature = features[i];
                console.log(feature.getGeometry());
-               document.getElementById("geometry").value = feature.getGeometry().flatCoordinates;
+               geoString += feature.getGeometry().flatCoordinates;
                
             }
             
+            document.getElementById("geometry").value = geoString;
                 
                 
             

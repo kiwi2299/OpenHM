@@ -91,7 +91,7 @@
     
 		//const geojsonObject = {"type":"GeometryCollection","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"geometries":[{"type":"Polygon","coordinates":[[[645740.014953,1986139.742962],[1350183.667629,2671015.516397],[1448023.063834,1516510.641178],[645740.014953,1986139.742962]]]}]};
      // {"type":"GeometryCollection","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"geometries":[{"type":"Polygon","coordinates":[[[-15556556.862994775,10772535.8838538],[-13615177.357247386,6284066.466565839],[-10338128.751545794,6454907.863071609],[-8753963.074855926,5585169.844496779],[-6936831.85747637,5911321.601462341],[-7464887.08303966,8567128.765324768],[-9577107.985292818,11238466.965233175],[-15556556.862994775,10772535.8838538]]]}]}
-     // {"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[146.9, -2], [146.7, -2], [146.6, -2], [146.7, -2.2], [146.8, -2.2], [146.9, -2.2], [147.2, -2.2], [147.3, -2], [147.1, -2], [146.9, -2]]]}, "id": 135, "properties": {"ECO_NAME": "Admiralty Islands lowland rain forests", "BIOME_NAME": "Tropical & Subtropical Moist Broadleaf Forests", "REALM": "Australasia", "NNH": 2, "NNH_NAME": "Nature Could Reach Half Protected", "COLOR": "#70A800", "COLOR_BIO": "#38A700", "COLOR_NNH": "#7BC141"}}
+     
      //
 //var geoJsonFeatures = new ol.Feature;
 	
