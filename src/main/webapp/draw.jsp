@@ -32,7 +32,7 @@
         <option value="LineString">LineString</option>
         <option value="Polygon">Polygon</option>
         <option value="MultiPolygon">MultiPolygon</option>
-        <option value="Circle">Circle</option>
+<!--        <option value="Circle">Circle</option>-->
         <option value="None">None</option>
       </select>
       <input class="form-control mr-2 mb-2 mt-2" type="button" value="Undo" id="undo">
@@ -43,15 +43,15 @@
         <label for="name">Nombre</label>
       </div>
       <div class="row">
-        <input  type="text" id="desc" name="desc" required>
+        <input  type="text" id="desc" name="desc" >
         <label for="desc">Descripción</label>
       </div>
       <div class="row">
-        <input  type="text" id="year" name="year" required>
+        <input  type="text" id="year" name="year" >
         <label for="year">Año</label>
       </div>
       <div class="row">
-        <input  type="text" id="src" name="src" required>
+        <input  type="text" id="src" name="src" >
         <label for="src">Fuente</label>
       </div>
       
@@ -133,12 +133,22 @@
             
             var features = source.getFeatures();
             var geoString = "";
+            console.log(features.length);
             //let feature = new ol.Feature;
             for (var i = 0; i < features.length; i++) {
                var feature = new ol.Feature;
                feature = features[i];
                console.log(feature.getGeometry());
-               geoString += feature.getGeometry().flatCoordinates;
+               
+               
+               if(i>0){
+                   console.log("div");
+                   geoString += " | "+feature.getGeometry().flatCoordinates;
+               }else{
+                   geoString = feature.getGeometry().flatCoordinates;
+               }
+                   
+               
                
             }
             

@@ -126,40 +126,77 @@ public class MapaControlador extends HttpServlet {
 //        dto.getEntidad().setEmail(request.getParameter("userEmail"));
         HttpSession sesion = request.getSession();
         String q = request.getParameter("geometry");
-        
-        String[] se = split(q,',');
-        ArrayList<String> jn = new ArrayList<>();
-        String aux = "";
-        for (int i = 0; i < se.length; i++) {
-            //System.out.println(se[i-1]);  
-            aux += se[i]+" "; 
-            if(i%2 == 1){
-                jn.add(aux);
-                aux = "";
-            }       
-        }
-       
-        String geo = join(jn,',');
-        //System.out.println(geo);
         String type = request.getParameter("type");
-         String map = "";
-        if(type.equals("Point")){
-             map = type+"("+geo+")";
+        String map = "";
+        if(type.equals("MultiPolygon")){
+            String[] div = split(q,'|');
+            String parent = "";
+            for (int i = 0; i < div.length; i++) {
+                
+                if(i>0){
+                    parent += ",("+div[i]+")";
+                }else{
+                    parent += "("+div[i]+")";
+                }
+                   
+            }
+            System.out.println(parent);
+            String[] se = split(parent,',');
+            ArrayList<String> jn = new ArrayList<>();
+            String aux = "";
+            for (int i = 0; i < se.length; i++) {
+                //System.out.println(se[i-1]);  
+                aux += se[i]+" "; 
+                if(i%2 == 1){
+                    jn.add(aux);
+                    aux = "";
+                }       
+            }
+
+            String geo = join(jn,',');
+            map = type+"(("+geo+"))";
         }else{
-             map = type+"(("+geo+"))";
+            String[] se = split(q,',');
+            ArrayList<String> jn = new ArrayList<>();
+            String aux = "";
+            for (int i = 0; i < se.length; i++) {
+                //System.out.println(se[i-1]);  
+                aux += se[i]+" "; 
+                if(i%2 == 1){
+                    jn.add(aux);
+                    aux = "";
+                }       
+            }
+
+            String geo = join(jn,',');
+            //System.out.println(geo);
+
+             
+            if(type.equals("Point") || type.equals("LineString")){
+                 map = type+"("+geo+")";
+            }else if(type.equals("Polygon")){
+                 map = type+"(("+geo+"))";
+            }else if(type.equals("Circle")){
+                System.out.println("todo");
+            }
         }
             
         
+            
         
+        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
         MapaDAO mdao = new MapaDAO();
         MapaDTO mdto = new MapaDTO();
         mdto.getEntidad().setMap(map);
         mdto.getEntidad().setName(request.getParameter("name"));
         mdto.getEntidad().setDescription(request.getParameter("desc"));
         mdto.getEntidad().setSource(request.getParameter("src"));
-        mdto.getEntidad().setUser_id(1);
-        mdto.getEntidad().setYear(Integer.parseInt(request.getParameter("year")));
-        
+        mdto.getEntidad().setUser_id(dto.getEntidad().getId());
+        if(request.getParameter("year").equals("")){
+            mdto.getEntidad().setYear(2022);
+        }else{
+            mdto.getEntidad().setYear(Integer.parseInt(request.getParameter("year")));
+        }
         try {
             mdao.create(mdto);
             List listaMapas = mdao.readAll();
