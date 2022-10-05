@@ -30,15 +30,15 @@ public class MapaDAO {
 
     private Connection con;
     public Connection ObtenerConexion(){
-//       String usr = "postgres";
-//       String pwd = "adminadmin";
-//       String driver = "org.postgresql.Driver";
-//        String url = "jdbc:postgresql://tt2-2021-b023.ci6bwbdlosva.us-west-1.rds.amazonaws.com:5432/openhm";
+       String usr = "postgres";
+       String pwd = "adminadmin";
+       String driver = "org.postgresql.Driver";
+        String url = "jdbc:postgresql://tt2-2021-b023.ci6bwbdlosva.us-west-1.rds.amazonaws.com:5432/openhm";
 //        
-         String usr = "postgres";
-        String pwd = "postgres";
-        String driver = "org.postgresql.Driver";
-        String url = "jdbc:postgresql://localhost:5432/postgres";
+//         String usr = "postgres";
+//        String pwd = "postgres";
+//        String driver = "org.postgresql.Driver";
+//        String url = "jdbc:postgresql://localhost:5432/postgres";
         //?sslmode=required
         try{
             Class.forName(driver);
