@@ -38,16 +38,32 @@
       <input class="form-control mr-2 mb-2 mt-2" type="button" value="Undo" id="undo">
       <input class="form-control mr-2 mb-2 mt-2" type="button" value="Save" id="save">
       <input  type="text" id="geometry" name="geometry" readonly>
-      <label for="name">Nombre</label>
-      <input  type="text" id="name" name="name" required>
+      <div class="row">
+        <input  type="text" id="name" name="name" required>
+        <label for="name">Nombre</label>
+      </div>
+      <div class="row">
+        <input  type="text" id="desc" name="desc" required>
+        <label for="desc">Descripción</label>
+      </div>
+      <div class="row">
+        <input  type="text" id="year" name="year" required>
+        <label for="year">Año</label>
+      </div>
+      <div class="row">
+        <input  type="text" id="src" name="src" required>
+        <label for="src">Fuente</label>
+      </div>
+      
+      
       <input class="form-control mr-2 mb-2 mt-2" type="submit" value="submit" id="submit">
     </form>
     
-    <form class="form-inline" action="Mapa?accion=geojson" method="post">
+<!--    <form class="form-inline" action="Mapa?accion=geojson" method="post">
       
       
       <input class="form-control mr-2 mb-2 mt-2" type="submit" value="GeoJSON" id="submit">
-    </form>
+    </form>-->
     <!-- Pointer events polyfill for old browsers, see https://caniuse.com/#feat=pointer -->
     <script src="https://unpkg.com/elm-pep@1.0.6/dist/elm-pep.js"></script>
     

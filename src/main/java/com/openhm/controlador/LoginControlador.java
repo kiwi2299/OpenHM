@@ -110,6 +110,9 @@ public class LoginControlador extends HttpServlet {
         if (dto != null) {
             sesion = request.getSession();
             List listaMapas = mdao.readAll();
+            String geojsonString = geojson(listaMapas);
+            //System.out.println(geojsonString);
+            sesion.setAttribute("geojsonString",geojsonString);
             sesion.setAttribute("size",listaMapas.size());
             
             sesion.setAttribute("listaMapas",listaMapas);
@@ -139,6 +142,27 @@ public class LoginControlador extends HttpServlet {
         dto.getEntidad().setPassword(request.getParameter("userPass"));
         
         return dto;
+    }
+    
+    //generar string geojson con feature collection
+    private String geojson(List<MapaDTO> listaMapas){
+        // 
+        String geojsonString = "{'type':'FeatureCollection','features':"
+                + "[";
+        for (MapaDTO mapa : listaMapas) {
+            geojsonString += "{'type':'Feature','geometry':"+mapa.getEntidad().getMap()+","
+                    + "'id':"+mapa.getEntidad().getId()+","
+                    + "'properties':{"
+                        + "'COUNTRY_NAME':'"+mapa.getEntidad().getName()+"',"
+                        + "'DESCRIPTION':'"+mapa.getEntidad().getDescription()+"',"
+                        + "'SOURCE':'"+mapa.getEntidad().getSource()+"',"
+                        + "'YEAR':'"+mapa.getEntidad().getYear()+"'"
+                        + "}"
+                    + "},";
+        }
+        geojsonString += "]}";
+        
+        return geojsonString;
     }
 
 }

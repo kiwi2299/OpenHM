@@ -155,10 +155,10 @@ public class MapaControlador extends HttpServlet {
         MapaDTO mdto = new MapaDTO();
         mdto.getEntidad().setMap(map);
         mdto.getEntidad().setName(request.getParameter("name"));
-        mdto.getEntidad().setDescription("desc");
-        mdto.getEntidad().setSource("source");
+        mdto.getEntidad().setDescription(request.getParameter("desc"));
+        mdto.getEntidad().setSource(request.getParameter("src"));
         mdto.getEntidad().setUser_id(1);
-        mdto.getEntidad().setYear(2022);
+        mdto.getEntidad().setYear(Integer.parseInt(request.getParameter("year")));
         
         try {
             mdao.create(mdto);
