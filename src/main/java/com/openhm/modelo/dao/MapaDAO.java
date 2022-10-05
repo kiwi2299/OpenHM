@@ -25,8 +25,8 @@ public class MapaDAO {
     private static final String SQL_INSERT="insert into mapa (name,user_id,year,view,map,description,source,insert_date) values(?,?,?,true,ST_GeomFromText(?),?,?,CURRENT_DATE)";
     private static final String SQL_UPDATE="update mapa set name = ?, map = ? where id = ?";
     private static final String SQL_DELETE="delete from mapa where id = ?";
-    private static final String SQL_READ="select id, name,user_id,year,view, ST_AsText(map),description,source,insert_date from mapa where id = ?";
-    private static final String SQL_READ_ALL="select id, name,user_id,year,view, ST_AsText(map),description,source,insert_date from mapa";
+    private static final String SQL_READ="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where id = ?";
+    private static final String SQL_READ_ALL="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa";
 
     private Connection con;
     public Connection ObtenerConexion(){
@@ -170,7 +170,7 @@ public class MapaDAO {
             dto.getEntidad().setUser_id(rs.getInt("user_id"));
             dto.getEntidad().setYear(rs.getInt("year"));
             dto.getEntidad().setView(rs.getBoolean("view"));
-            dto.getEntidad().setMap(rs.getString("ST_AsText"));
+            dto.getEntidad().setMap(rs.getString("ST_AsGeoJson"));
             dto.getEntidad().setDescription(rs.getString("description"));
             dto.getEntidad().setSource(rs.getString("source"));
             dto.getEntidad().setInsert_date(rs.getString("insert_date"));

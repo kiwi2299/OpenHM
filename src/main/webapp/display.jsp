@@ -102,15 +102,15 @@
 	
         console.log(${size});
       
-       <c:forEach items="${listaMapas}" var="mapa" varStatus="status"> 
+      
             layer.push(new ol.layer.Vector({
                     source: new ol.source.Vector({
-                        features:  new ol.format.GeoJSON().readFeatures(${mapa.entidad.map}),                                            
+                        features:  new ol.format.GeoJSON().readFeatures(${geojsonString}),                                            
                     })
                 })
             );
-        console.log(${mapa.entidad.map});
-        </c:forEach> 
+        
+        
             
         
        
@@ -158,8 +158,8 @@
                 //var coord = feature.getGeometry().flatCoordinates;
                 var props = feature.getProperties();
                 console.log(props);
-                var cont = '<h3>' + feature.get('ECO_NAME') + '</h3>';
-                
+                var cont = '<h3>NOMBRE: ' + feature.get('COUNTRY_NAME') + '</h3>';
+                cont += '<h3>DESC: ' + feature.get('DESCRIPTION') + '</h3>';
 
                 content.innerHTML = cont;
                 popup.setPosition(evt.coordinate);

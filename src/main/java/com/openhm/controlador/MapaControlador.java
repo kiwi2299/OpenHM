@@ -140,7 +140,7 @@ public class MapaControlador extends HttpServlet {
         }
        
         String geo = join(jn,',');
-        System.out.println(geo);
+        //System.out.println(geo);
         String type = request.getParameter("type");
          String map = "";
         if(type.equals("Point")){
@@ -150,7 +150,7 @@ public class MapaControlador extends HttpServlet {
         }
             
         
-        System.out.println(map);
+        
         MapaDAO mdao = new MapaDAO();
         MapaDTO mdto = new MapaDTO();
         mdto.getEntidad().setMap(map);
@@ -159,10 +159,13 @@ public class MapaControlador extends HttpServlet {
         mdto.getEntidad().setSource("source");
         mdto.getEntidad().setUser_id(1);
         mdto.getEntidad().setYear(2022);
-        String geojsonString = geojson(mdto);
+        
         try {
             mdao.create(mdto);
             List listaMapas = mdao.readAll();
+            String geojsonString = geojson(listaMapas);
+            System.out.println(geojsonString);
+            sesion.setAttribute("geojsonString",geojsonString);
             sesion.setAttribute("size",listaMapas.size());
             sesion.setAttribute("geojsonString", geojsonString);
             sesion.setAttribute("listaMapas",listaMapas);
@@ -219,9 +222,22 @@ public class MapaControlador extends HttpServlet {
     }
      
     //generar string geojson con feature collection
-    private String geojson(MapaDTO mdto){
+    private String geojson(List<MapaDTO> listaMapas){
         // 
-        String geojsonString = "";
+        String geojsonString = "{'type':'FeatureCollection','features':"
+                + "[";
+        for (MapaDTO mapa : listaMapas) {
+            geojsonString += "{'type':'Feature','geometry':"+mapa.getEntidad().getMap()+","
+                    + "'id':"+mapa.getEntidad().getId()+","
+                    + "'properties':{"
+                        + "'COUNTRY_NAME':'"+mapa.getEntidad().getName()+"',"
+                        + "'DESCRIPTION':'"+mapa.getEntidad().getDescription()+"',"
+                        + "'SOURCE':'"+mapa.getEntidad().getSource()+"',"
+                        + "'YEAR':'"+mapa.getEntidad().getYear()+"'"
+                        + "}"
+                    + "},";
+        }
+        geojsonString += "]}";
         
         return geojsonString;
     }
