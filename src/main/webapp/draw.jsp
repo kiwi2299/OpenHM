@@ -11,7 +11,7 @@
     <meta charset="UTF-8">
     
     <title>Draw Features</title>
-    <meta charset="utf-8">
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/css/ol.css" type="text/css">
     <style>
       .map {

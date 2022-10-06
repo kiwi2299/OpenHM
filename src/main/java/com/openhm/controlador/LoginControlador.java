@@ -12,7 +12,10 @@ import com.openhm.modelo.dto.UsuarioDTO;
 import com.openhm.modelo.entidades.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -47,13 +50,9 @@ public class LoginControlador extends HttpServlet {
                 response.sendRedirect("index.html");
             }
         } catch (Exception e) {
-            try {
-                request.setAttribute("msje", "Error try-switch");
-                this.getServletConfig().getServletContext().getRequestDispatcher("/mensaje.jsp").forward(request, response);
-
-            } catch (Exception ex) {
-                System.out.println("Error" + e.getMessage());
-            }
+                
+                response.sendRedirect("mensaje.jsp");
+                
         }
 
     }
@@ -97,7 +96,7 @@ public class LoginControlador extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void verificar(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    private void verificar(HttpServletRequest request, HttpServletResponse response) {
         HttpSession sesion;
         MapaDAO mdao = new MapaDAO();
         MapaDTO mdto = new MapaDTO(); 
@@ -105,25 +104,36 @@ public class LoginControlador extends HttpServlet {
         UsuarioDTO dto;
         dto = this.obtenerUsuario(request);
         dao = new UsuarioDAO();
-        dto = dao.read(dto);
-        //System.out.println(dto.getEntidad().getName());
-        if (dto != null) {
-            sesion = request.getSession();
-            List listaMapas = mdao.readAll();
-            String geojsonString = geojson(listaMapas);
-            //System.out.println(geojsonString);
-            sesion.setAttribute("geojsonString",geojsonString);
-            sesion.setAttribute("size",listaMapas.size());
-            
-            sesion.setAttribute("listaMapas",listaMapas);
-            sesion.setAttribute("dto", dto);
-            request.setAttribute("msje", "Bienvenido al sistema");
-            //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
-            response.sendRedirect("display.jsp");
-        }else{
-            request.setAttribute("msje", "Credenciales Incorrectas");
-            request.getRequestDispatcher("index.html").forward(request, response);
+        
+        try {
+            dto = dao.read(dto);
+            //System.out.println(dto.getEntidad().getName());
+            if (dto != null) {
+                sesion = request.getSession();
+                List listaMapas = mdao.readAll();
+                String geojsonString = geojson(listaMapas);
+                //System.out.println(geojsonString);
+                sesion.setAttribute("geojsonString",geojsonString);
+                sesion.setAttribute("size",listaMapas.size());
+
+                sesion.setAttribute("listaMapas",listaMapas);
+                sesion.setAttribute("dto", dto);
+                request.setAttribute("msje", "Bienvenido al sistema");
+                //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
+                response.sendRedirect("display.jsp");
+            }else{
+                request.setAttribute("msje", "Credenciales Incorrectas");
+                request.getRequestDispatcher("index.html").forward(request, response);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(LoginControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(LoginControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ServletException ex) {
+            Logger.getLogger(LoginControlador.class.getName()).log(Level.SEVERE, null, ex);
         }
+            
+        
             
     }
 
