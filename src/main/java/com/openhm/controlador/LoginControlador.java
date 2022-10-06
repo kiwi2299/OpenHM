@@ -50,7 +50,7 @@ public class LoginControlador extends HttpServlet {
                 response.sendRedirect("index.html");
             }
         } catch (Exception e) {
-                
+                e.printStackTrace();
                 response.sendRedirect("mensaje.jsp");
                 
         }
@@ -96,7 +96,7 @@ public class LoginControlador extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void verificar(HttpServletRequest request, HttpServletResponse response) {
+    private void verificar(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
         HttpSession sesion;
         MapaDAO mdao = new MapaDAO();
         MapaDTO mdto = new MapaDTO(); 
@@ -105,18 +105,23 @@ public class LoginControlador extends HttpServlet {
         dto = this.obtenerUsuario(request);
         dao = new UsuarioDAO();
         
-        try {
+        
             dto = dao.read(dto);
-            //System.out.println(dto.getEntidad().getName());
+            
             if (dto != null) {
+                System.out.println(dto.getEntidad().getName());
                 sesion = request.getSession();
                 List listaMapas = mdao.readAll();
-                String geojsonString = geojson(listaMapas);
-                //System.out.println(geojsonString);
-                sesion.setAttribute("geojsonString",geojsonString);
-                sesion.setAttribute("size",listaMapas.size());
+                if(!listaMapas.isEmpty()){
+                    String geojsonString = geojson(listaMapas);
+                    sesion.setAttribute("geojsonString",geojsonString);
+                    sesion.setAttribute("size",listaMapas.size());
 
-                sesion.setAttribute("listaMapas",listaMapas);
+                    sesion.setAttribute("listaMapas",listaMapas);
+                }
+                
+                //System.out.println(geojsonString);
+                
                 sesion.setAttribute("dto", dto);
                 request.setAttribute("msje", "Bienvenido al sistema");
                 //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
@@ -125,13 +130,8 @@ public class LoginControlador extends HttpServlet {
                 request.setAttribute("msje", "Credenciales Incorrectas");
                 request.getRequestDispatcher("index.html").forward(request, response);
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(LoginControlador.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(LoginControlador.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ServletException ex) {
-            Logger.getLogger(LoginControlador.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
+        
             
         
             
