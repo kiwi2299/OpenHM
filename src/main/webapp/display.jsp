@@ -160,6 +160,7 @@
                 console.log(props);
                 var cont = '<h3>NOMBRE: ' + feature.get('COUNTRY_NAME') + '</h3>';
                 cont += '<h3>DESC: ' + feature.get('DESCRIPTION') + '</h3>';
+                cont += '<h3>YEAR: ' + feature.get('SOURCE') + '</h3>';
 
                 content.innerHTML = cont;
                 popup.setPosition(evt.coordinate);
