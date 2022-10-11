@@ -139,6 +139,7 @@ public class UsuarioControlador extends HttpServlet {
 //        } else {
             try {
                 dao.create(dto);
+                dto = dao.read(dto);
             } catch (SQLException ex) {
                 Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
             }finally{
@@ -161,7 +162,7 @@ public class UsuarioControlador extends HttpServlet {
                 
                 sesion.setAttribute("dto", dto);
                 sesion.setAttribute("msj","Usuario creado");
-                sesion.setAttribute("dto", dto);
+                
                 response.sendRedirect("display.jsp");
             }
       //  }             

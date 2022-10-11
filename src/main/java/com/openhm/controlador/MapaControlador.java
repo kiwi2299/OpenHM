@@ -186,13 +186,9 @@ public class MapaControlador extends HttpServlet {
         }
             
         
-        String name = request.getParameter("name");
-        System.out.println(name);
-        ByteBuffer buffer = StandardCharsets.UTF_8.encode(name); 
-
-        String utf8EncodedString = StandardCharsets.UTF_8.decode(buffer).toString();
-         System.out.println(utf8EncodedString);
+        
         UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
+        System.out.println(dto.getEntidad().getName());
         MapaDAO mdao = new MapaDAO();
         MapaDTO mdto = new MapaDTO();
         mdto.getEntidad().setMap(map);
@@ -217,7 +213,7 @@ public class MapaControlador extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            sesion.setAttribute("msj","Mapa incluído");
+            sesion.setAttribute("msj","Mapa registrado");
             response.sendRedirect("display.jsp");
         }
     }

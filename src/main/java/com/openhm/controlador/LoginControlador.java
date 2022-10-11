@@ -124,12 +124,12 @@ public class LoginControlador extends HttpServlet {
                 //System.out.println(geojsonString);
                 
                 sesion.setAttribute("dto", dto);
-                request.setAttribute("msje", "Bienvenido al sistema");
+                sesion.setAttribute("msj", "Bienvenido al sistema");
                 //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
                 response.sendRedirect("display.jsp");
             }else{
-                request.setAttribute("msje", "Credenciales Incorrectas");
-                request.getRequestDispatcher("index.html").forward(request, response);
+                request.setAttribute("msj", "Credenciales Incorrectas");
+                response.sendRedirect("display.jsp");
             }
         
         
