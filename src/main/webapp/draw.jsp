@@ -28,6 +28,12 @@
     <div id="map" class="map"></div>
     <div class="container">
         
+        <div class="mb-3">
+            <h6>Instrucciones</h6>
+            <p>Solo se pueden registrar un Punto, LineString o Polígono a la vez. FALTA</p>
+            <p>MultiPolygon permite registrar más de un polígono como una sola forma.</p>
+            <p>Una vez se termine de dibujar, selecciona el botón de Cargar coordenadas! Esto debería ser automático</p>
+        </div>    
         
         <form  action="Mapa?accion=crear" method="post">
             <div class="mb-3">
