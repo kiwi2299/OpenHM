@@ -1,9 +1,4 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-    const raster = new ol.layer.Tile({
+const raster = new ol.layer.Tile({
           source: new ol.source.OSM(),
         });
 
@@ -66,12 +61,31 @@
         document.getElementById('save').addEventListener('click', function () {
             
             var features = source.getFeatures();
-            let feature = new ol.Feature;
-            for (feature in features) {
-                console.log(feature.getGeometry());
+            var geoString = "";
+            console.log(features.length);
+            //let feature = new ol.Feature;
+            for (var i = 0; i < features.length; i++) {
+               var feature = new ol.Feature;
+               feature = features[i];
+               console.log(feature.getGeometry());
+               
+               
+               if(i>0){
+                   console.log("div");
+                   geoString += " | "+feature.getGeometry().flatCoordinates;
+               }else{
+                   geoString = feature.getGeometry().flatCoordinates;
+               }
+                   
+               
+               
             }
-            //console.log(source.getFeatures().getGeometry());
+            
+            document.getElementById("geometry").value = geoString;
+                
+                
+            
+            console.log(document.getElementById("name").value);
         });
 
         addInteractions();
-

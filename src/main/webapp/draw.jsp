@@ -32,7 +32,7 @@
             <h6>Instrucciones</h6>
             <p>Solo se pueden registrar un Punto, LineString o Polígono a la vez. FALTA</p>
             <p>MultiPolygon permite registrar más de un polígono como una sola forma.</p>
-            <p>Una vez se termine de dibujar, selecciona el botón de Cargar coordenadas! Esto debería ser automático</p>
+            <p>Una vez se termine de dibujar, se debe seleccionar el botón de Cargar coordenadas! Esto debería ser automático?</p>
         </div>    
         
         <form  action="Mapa?accion=crear" method="post">
@@ -76,10 +76,7 @@
             <button type="submit" class="btn btn-primary">Guardar</button>
         </form>
     </div>
-    
-    
-    
-    
+  
 <!--    <form class="form-inline" action="Mapa?accion=geojson" method="post">
       
       
@@ -89,101 +86,6 @@
     <script src="https://unpkg.com/elm-pep@1.0.6/dist/elm-pep.js"></script>
     <!-- JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-    <script type="text/javascript">
-        
-    const raster = new ol.layer.Tile({
-          source: new ol.source.OSM(),
-        });
-
-        const source = new ol.source.Vector({wrapX: false});
-
-        const vector = new ol.layer.Vector({
-          source: source,
-        });
-        
-        // Limit multi-world panning to one world east and west of the real world.
-        // Geometry coordinates have to be within that range.
-        const extent = ol.proj.get('EPSG:3857').getExtent().slice();
-        extent[0] += extent[0];
-        extent[2] += extent[2];
-
-        const map = new ol.Map({
-          layers: [raster, vector],
-          target: 'map',
-          view: new ol.View({
-            center: [-11000000, 4600000],
-            zoom: 4,
-            extent,
-          }),
-        });
-        
-        const modify = new ol.interaction.Modify({source: source});
-        map.addInteraction(modify);
-
-        let snap; // global so we can remove them later
-        const typeSelect = document.getElementById('type');
-
-        let draw; // global so we can remove it later
-        function addInteractions() {
-          const value = typeSelect.value;
-          if (value !== 'None') {
-            draw = new ol.interaction.Draw({
-              source: source,
-              type: typeSelect.value,
-            });
-            map.addInteraction(draw);
-            snap = new ol.interaction.Snap({source: source});
-            map.addInteraction(snap);
-          }
-        }
-
-        /**
-         * Handle change event.
-         */
-        typeSelect.onchange = function () {
-          map.removeInteraction(draw);
-          map.removeInteraction(snap);
-          addInteractions();
-        };
-
-        document.getElementById('undo').addEventListener('click', function () {
-          draw.removeLastPoint();
-         
-        });
-        
-        document.getElementById('save').addEventListener('click', function () {
-            
-            var features = source.getFeatures();
-            var geoString = "";
-            console.log(features.length);
-            //let feature = new ol.Feature;
-            for (var i = 0; i < features.length; i++) {
-               var feature = new ol.Feature;
-               feature = features[i];
-               console.log(feature.getGeometry());
-               
-               
-               if(i>0){
-                   console.log("div");
-                   geoString += " | "+feature.getGeometry().flatCoordinates;
-               }else{
-                   geoString = feature.getGeometry().flatCoordinates;
-               }
-                   
-               
-               
-            }
-            
-            document.getElementById("geometry").value = geoString;
-                
-                
-            
-            console.log(document.getElementById("name").value);
-        });
-
-        addInteractions();
-
-
-    </script>
+    <script src="js/draw.js"></script>
   </body>
 </html>

@@ -6,19 +6,22 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!doctype html>
-<html lang="en">
+<html>
 
 <head>
     
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/css/ol.css" type="text/css">
-    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/build/ol.js"></script>
+<!--    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/build/ol.js"></script>-->
     <link rel="stylesheet" type="text/css" href="styles/timeline.css">
     <link rel="stylesheet" type="text/css" href="styles/styles.css">
+
     <!-- CSS only 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     -->
+    <!--    switcher-->
+    <link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@4.1.0/dist/ol-layerswitcher.css" />
     <!-- // Add jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="js/timeline.js"></script>
@@ -64,52 +67,68 @@
 
     <!-- JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,Object.assign,Event,URL"></script>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@main/dist/en/v7.0.0/legacy/ol.js"></script>
+    <script src="https://unpkg.com/ol-layerswitcher@4.1.0"></script>
     <script type="text/javascript">
-        	
+        
+        
 	var myview = new ol.View({
 		center: [981546161170.347, 2496866.115180862],
           zoom: 4
 	});
 	
-	var mylayer = new ol.layer.Tile({
-            source:  new ol.source.XYZ({
-                url: 'http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}'
-            })
-	});
-    
-    
-		//const geojsonObject = {"type":"GeometryCollection","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"geometries":[{"type":"Polygon","coordinates":[[[645740.014953,1986139.742962],[1350183.667629,2671015.516397],[1448023.063834,1516510.641178],[645740.014953,1986139.742962]]]}]};
-     // {"type":"GeometryCollection","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"geometries":[{"type":"Polygon","coordinates":[[[-15556556.862994775,10772535.8838538],[-13615177.357247386,6284066.466565839],[-10338128.751545794,6454907.863071609],[-8753963.074855926,5585169.844496779],[-6936831.85747637,5911321.601462341],[-7464887.08303966,8567128.765324768],[-9577107.985292818,11238466.965233175],[-15556556.862994775,10772535.8838538]]]}]}
-     
-     //
-//var geoJsonFeatures = new ol.Feature;
-	
-	
-          
-       
-        var layer = [mylayer];
-	
-        console.log(${size});
-      
-      
-            layer.push(new ol.layer.Vector({
-                    source: new ol.source.Vector({
-                        features:  new ol.format.GeoJSON().readFeatures(${geojsonString}),                                            
-                    })
-                })
-            );
-        
-        
-            
-        
-       
-
 	var map = new ol.Map({
             target: 'map',
-            layers: layer,
+            layers: [
+                new ol.layer.Group({
+                    title: 'Base maps',
+                    layers: [
+                        new ol.layer.Tile({
+                            title: 'Satelite',
+                            type: 'base',
+                            visible: true,
+                            source:  new ol.source.XYZ({
+                                attributions: ['Esri, Maxar, Earthstar Geographics, and the GIS User Community'],
+                                attributionsCollapsible: false,
+                                url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+                            })
+                        }),
+                        new ol.layer.Tile({
+                            title: 'OSM',
+                            type: 'base',
+                            visible: false,
+                            source: new ol.source.OSM(),
+                        })
+                    ]
+                }),
+                new ol.layer.Group({
+                    title: 'Overlays',
+                    fold: 'open',
+                    layers:[
+                        new ol.layer.Vector({
+                            title: 'general',
+                            source: new ol.source.Vector({
+                                features:  new ol.format.GeoJSON().readFeatures(${geojsonString}),                                            
+                            })
+                        })
+                    ]
+                })
+            ],
             view: myview
 	});
         
+        //layer switcher
+        var layerSwitcher = new ol.control.LayerSwitcher({
+            activationMode: 'click',
+            startActive: false,
+            tipLabel: 'Cambiar mapas',
+            groupSelectStyle: 'children' // Can be 'children' [default], 'group' or 'none'
+          });
+          map.addControl(layerSwitcher);
+        
+        //Popup
         var container = document.getElementById('popup');
         var content = document.getElementById('popup-content');
         var closer = document.getElementById('popup-closer');
@@ -158,6 +177,8 @@
                 //console.info(feature.getProperties());
             }
         });
+        // fin popup
+        
     </script>
     <script>
         $('#example').horizontalTimeline({
