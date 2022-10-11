@@ -35,7 +35,7 @@
     </div>
     
     <div>
-        <p>Bienvenido ${dto.entidad.name}</p>
+        <p>Bienvenido ${dto.entidad.id}</p>
         <p>${msj}</p>
         
     </div>
