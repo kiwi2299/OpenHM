@@ -15,6 +15,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +49,7 @@ public class MapaControlador extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
         String accion = request.getParameter("accion");
         try {
             if (accion != null) {
@@ -124,6 +127,7 @@ public class MapaControlador extends HttpServlet {
 //        dto.getEntidad().setName(request.getParameter("userName"));
 //        dto.getEntidad().setPassword(request.getParameter("userPass"));
 //        dto.getEntidad().setEmail(request.getParameter("userEmail"));
+        
         HttpSession sesion = request.getSession();
         String q = request.getParameter("geometry");
         String type = request.getParameter("type");
@@ -182,8 +186,12 @@ public class MapaControlador extends HttpServlet {
         }
             
         
-            
-        
+        String name = request.getParameter("name");
+        System.out.println(name);
+        ByteBuffer buffer = StandardCharsets.UTF_8.encode(name); 
+
+        String utf8EncodedString = StandardCharsets.UTF_8.decode(buffer).toString();
+         System.out.println(utf8EncodedString);
         UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
         MapaDAO mdao = new MapaDAO();
         MapaDTO mdto = new MapaDTO();
@@ -201,14 +209,15 @@ public class MapaControlador extends HttpServlet {
             mdao.create(mdto);
             List listaMapas = mdao.readAll();
             String geojsonString = geojson(listaMapas);
-            System.out.println(geojsonString);
+            //System.out.println(geojsonString);
             sesion.setAttribute("geojsonString",geojsonString);
             sesion.setAttribute("size",listaMapas.size());
-            sesion.setAttribute("geojsonString", geojsonString);
+            
             sesion.setAttribute("listaMapas",listaMapas);
         } catch (SQLException ex) {
             Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
+            sesion.setAttribute("msj","Mapa incluído");
             response.sendRedirect("display.jsp");
         }
     }

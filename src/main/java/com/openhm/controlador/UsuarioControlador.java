@@ -5,18 +5,22 @@
  */
 package com.openhm.controlador;
 
+import com.openhm.modelo.dao.MapaDAO;
 import com.openhm.modelo.dao.UsuarioDAO;
+import com.openhm.modelo.dto.MapaDTO;
 import com.openhm.modelo.dto.UsuarioDTO;
 import com.openhm.modelo.entidades.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -35,6 +39,7 @@ public class UsuarioControlador extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         String accion = request.getParameter("accion");
         try {
@@ -109,8 +114,11 @@ public class UsuarioControlador extends HttpServlet {
     }// </editor-fold>
 
     private void insertar(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession sesion = request.getSession();
         UsuarioDTO dto = new UsuarioDTO();
         UsuarioDAO dao = new UsuarioDAO();
+        MapaDAO mdao = new MapaDAO();
+        
         dto.getEntidad().setName(request.getParameter("name"));
         dto.getEntidad().setPassword(request.getParameter("password"));
         dto.getEntidad().setEmail(request.getParameter("email"));
@@ -134,8 +142,26 @@ public class UsuarioControlador extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
             }finally{
-                request.setAttribute("msj","Usuario creado");
-                request.setAttribute("dto", dto);
+                List listaMapas;
+                try {
+                    listaMapas = mdao.readAll();
+                    if(!listaMapas.isEmpty()){
+                        String geojsonString = geojson(listaMapas);
+                        sesion.setAttribute("geojsonString",geojsonString);
+                        sesion.setAttribute("size",listaMapas.size());
+
+                        sesion.setAttribute("listaMapas",listaMapas);
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                
+                //System.out.println(geojsonString);
+                
+                sesion.setAttribute("dto", dto);
+                sesion.setAttribute("msj","Usuario creado");
+                sesion.setAttribute("dto", dto);
                 response.sendRedirect("display.jsp");
             }
       //  }             
@@ -171,5 +197,24 @@ public class UsuarioControlador extends HttpServlet {
             response.sendRedirect("menuUsuario.jsp");
         }
     }
-
+    
+    private String geojson(List<MapaDTO> listaMapas){
+        // 
+        String geojsonString = "{'type':'FeatureCollection','features':"
+                + "[";
+        for (MapaDTO mapa : listaMapas) {
+            geojsonString += "{'type':'Feature','geometry':"+mapa.getEntidad().getMap()+","
+                    + "'id':"+mapa.getEntidad().getId()+","
+                    + "'properties':{"
+                        + "'COUNTRY_NAME':'"+mapa.getEntidad().getName()+"',"
+                        + "'DESCRIPTION':'"+mapa.getEntidad().getDescription()+"',"
+                        + "'SOURCE':'"+mapa.getEntidad().getSource()+"',"
+                        + "'YEAR':'"+mapa.getEntidad().getYear()+"'"
+                        + "}"
+                    + "},";
+        }
+        geojsonString += "]}";
+        
+        return geojsonString;
+    }
 }

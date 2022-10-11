@@ -20,44 +20,59 @@
       }
     </style>
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/build/ol.js"></script>
-    
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     
   </head>
   <body>
     <div id="map" class="map"></div>
-    <form class="form-inline" action="Mapa?accion=crear" method="post">
-      <label for="type">Geometry type: &nbsp;</label>
-      <select class="form-control mr-2 mb-2 mt-2" id="type" name="type">
-        <option value="Point">Point</option>
-        <option value="LineString">LineString</option>
-        <option value="Polygon">Polygon</option>
-        <option value="MultiPolygon">MultiPolygon</option>
-<!--        <option value="Circle">Circle</option>-->
-        <option value="None">None</option>
-      </select>
-      <input class="form-control mr-2 mb-2 mt-2" type="button" value="Undo" id="undo">
-      <input class="form-control mr-2 mb-2 mt-2" type="button" value="Save" id="save">
-      <input  type="text" id="geometry" name="geometry" readonly>
-      <div class="row">
-        <input  type="text" id="name" name="name" required>
-        <label for="name">Nombre</label>
-      </div>
-      <div class="row">
-        <input  type="text" id="desc" name="desc" >
-        <label for="desc">Descripción</label>
-      </div>
-      <div class="row">
-        <input  type="text" id="year" name="year" >
-        <label for="year">Año</label>
-      </div>
-      <div class="row">
-        <input  type="text" id="src" name="src" >
-        <label for="src">Fuente</label>
-      </div>
-      
-      
-      <input class="form-control mr-2 mb-2 mt-2" type="submit" value="submit" id="submit">
-    </form>
+    <div class="container">
+        
+        
+        <form  action="Mapa?accion=crear" method="post">
+            <div class="mb-3">
+                <label for="type">Geometry type: &nbsp;</label>
+                <select  class="form-select" id="type" name="type">
+                  <option value="Point">Point</option>
+                  <option value="LineString">LineString</option>
+                  <option value="Polygon">Polygon</option>
+                  <option value="MultiPolygon">MultiPolygon</option>
+          <!--        <option value="Circle">Circle</option>-->
+                  <option value="None">None</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <button type="button" class="btn btn-danger" id="undo">Deshacer</button>
+                <button type="button" class="btn btn-success" id="save">Cargar coordenadas</button>
+
+                <input  type="text" class="form-control" id="geometry" name="geometry" readonly>
+            </div>
+            
+            <div class="mb-3">
+              <label for="name">Nombre</label>
+              <input  type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp" required>
+              <div id="nameHelp" class="form-text">Ingresa el nombre del país o territorio</div>
+            </div>
+            <div class="mb-3">
+              <label for="desc">Descripción</label>
+              <input  type="text" class="form-control" id="desc" name="desc" >
+            </div>
+            <div class="mb-3">
+              <label for="year">Año</label>
+              <input  type="text" class="form-control" id="year" name="year" >
+            </div>
+            <div class="mb-3">
+              <label for="src">Fuente</label>
+              <input  type="text" class="form-control" id="src" name="src" >
+            </div>
+
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+    </div>
+    
+    
+    
     
 <!--    <form class="form-inline" action="Mapa?accion=geojson" method="post">
       
@@ -66,7 +81,8 @@
     </form>-->
     <!-- Pointer events polyfill for old browsers, see https://caniuse.com/#feat=pointer -->
     <script src="https://unpkg.com/elm-pep@1.0.6/dist/elm-pep.js"></script>
-    
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
     <script type="text/javascript">
         
     const raster = new ol.layer.Tile({
@@ -156,7 +172,7 @@
                 
                 
             
-            //console.log(source.getFeatures().getGeometry());
+            console.log(document.getElementById("name").value);
         });
 
         addInteractions();

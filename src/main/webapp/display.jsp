@@ -22,33 +22,21 @@
     <!-- // Add jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="js/timeline.js"></script>
-
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <title>Open History Mapper for Mapper</title>
 </head>
 
 <body>
     <div class="topnav">
-        <button onclick="myFunction()" class="nav-item">Iniciar sesion</button>
-        <a href="draw.jsp" >Draw</a>
+        <a class="btn btn-primary" href="draw.jsp" role="button">Draw</a>
+        
         <h1 class="nav-item">Open History Mapper</h1>
     </div>
-    <div id="myDIV" style="display: none;">
-        <form action="" class="form">
-            <h3 class="h3 mb-3 fw-normal">Iniciar sesion</h3>
-            <div class="form-floating">
-                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                <label for="floatingInput">Email address</label>
-            </div>
-
-            <div class="form-floating">
-                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                <label for="floatingPassword">Password</label>
-            </div>
-        </form>
-    </div>
+    
     <div>
         <p>Bienvenido ${dto.entidad.name}</p>
-        <input type='hidden' id='geojson' name="geojson" value="${listaMapas[1].entidad.map}">
+        <p>${msj}</p>
         
     </div>
     <div id="map" class="map"></div>
@@ -74,7 +62,8 @@
         </div>
     </div>
 
-   
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
     <script type="text/javascript">
         	
 	var myview = new ol.View({
@@ -160,7 +149,8 @@
                 console.log(props);
                 var cont = '<h3>NOMBRE: ' + feature.get('COUNTRY_NAME') + '</h3>';
                 cont += '<h3>DESC: ' + feature.get('DESCRIPTION') + '</h3>';
-                cont += '<h3>YEAR: ' + feature.get('SOURCE') + '</h3>';
+                cont += '<h3>YEAR: ' + feature.get('YEAR') + '</h3>';
+                cont += '<h3>SOURCE: ' + feature.get('SOURCE') + '</h3>';
 
                 content.innerHTML = cont;
                 popup.setPosition(evt.coordinate);
