@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -98,7 +99,7 @@ public class LoginControlador extends HttpServlet {
     }// </editor-fold>
 
     private void verificar(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
-        HttpSession sesion;
+        HttpSession  sesion = request.getSession();;
         MapaDAO mdao = new MapaDAO();
         MapaDTO mdto = new MapaDTO(); 
         UsuarioDAO dao;
@@ -111,7 +112,7 @@ public class LoginControlador extends HttpServlet {
             
             if (dto != null) {
                 System.out.println(dto.getEntidad().getName());
-                sesion = request.getSession();
+                
                 List listaMapas = mdao.readAll();
                 if(!listaMapas.isEmpty()){
                     String geojsonString = geojson(listaMapas);
@@ -126,10 +127,14 @@ public class LoginControlador extends HttpServlet {
                 sesion.setAttribute("dto", dto);
                 sesion.setAttribute("msj", "Bienvenido al sistema");
                 //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
-                response.sendRedirect("display.jsp");
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
+                dispatcher.forward(request, response);
+                //response.sendRedirect("WEB-INF/display.jsp");
             }else{
-                request.setAttribute("msj", "Credenciales Incorrectas");
-                response.sendRedirect("display.jsp");
+                dto = null;
+                sesion.setAttribute("dto", dto);
+                sesion.setAttribute("msj", "Credenciales Incorrectas");
+                response.sendRedirect("index.html?error=1");
             }
         
         

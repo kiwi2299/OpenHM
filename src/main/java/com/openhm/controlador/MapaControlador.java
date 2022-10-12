@@ -55,7 +55,7 @@ public class MapaControlador extends HttpServlet {
             if (accion != null) {
                 switch (accion) {
                     case "get":
-                        getMapa(request, response);
+                        getMapas(request, response);
                         break;
                     case "crear":
                         crear(request, response);
@@ -262,22 +262,47 @@ public class MapaControlador extends HttpServlet {
             response.sendRedirect("index.jsp");
         }
     }
+    
+    private void getMapas(HttpServletRequest request, HttpServletResponse response) throws IOException {
+       
+        MapaDAO dao = new MapaDAO();
+        
+        try {
+            List listaMapas = dao.readAll();
+            String geojsonString = geojson(listaMapas);
+            response.setContentType("text/plain");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(geojsonString);
+            //System.out.println(geojsonString);
+            //sesion.setAttribute("geojsonString",geojsonString);
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
      
     //generar string geojson con feature collection
-    private String geojson(List<MapaDTO> listaMapas){
+     private String geojson(List<MapaDTO> listaMapas){
         // 
-        String geojsonString = "{'type':'FeatureCollection','features':"
+        int size = listaMapas.size();
+        int i = 1;
+        String geojsonString = "{\"type\":\"FeatureCollection\",\"features\":"
                 + "[";
         for (MapaDTO mapa : listaMapas) {
-            geojsonString += "{'type':'Feature','geometry':"+mapa.getEntidad().getMap()+","
-                    + "'id':"+mapa.getEntidad().getId()+","
-                    + "'properties':{"
-                        + "'COUNTRY_NAME':'"+mapa.getEntidad().getName()+"',"
-                        + "'DESCRIPTION':'"+mapa.getEntidad().getDescription()+"',"
-                        + "'SOURCE':'"+mapa.getEntidad().getSource()+"',"
-                        + "'YEAR':'"+mapa.getEntidad().getYear()+"'"
-                        + "}"
-                    + "},";
+            geojsonString += "{\"type\":\"Feature\",\"geometry\":"+mapa.getEntidad().getMap()+","
+                    + "\"id\":"+mapa.getEntidad().getId()+","
+                    + "\"properties\":{"
+                        + "\"COUNTRY_NAME\":\""+mapa.getEntidad().getName()+"\","
+                        + "\"DESCRIPTION\":\""+mapa.getEntidad().getDescription()+"\","
+                        + "\"SOURCE\":\""+mapa.getEntidad().getSource()+"\","
+                        + "\"YEAR\":\""+mapa.getEntidad().getYear()+"\""
+                        + "}";
+            if(i < size){
+                geojsonString += "},";
+            }else{
+                geojsonString += "}";
+            }
+            
+            i++;
         }
         geojsonString += "]}";
         
