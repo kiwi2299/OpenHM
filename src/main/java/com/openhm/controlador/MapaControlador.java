@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -67,7 +68,9 @@ public class MapaControlador extends HttpServlet {
                         modificar(request, response);
                     case "borrar":
                         borrar(request, response);
-                    
+                    case "draw":
+                        draw(request, response);
+                        
                     default:
                         response.sendRedirect("menuCrearUsuario.jsp");
                 }
@@ -121,7 +124,7 @@ public class MapaControlador extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void crear(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void crear(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 //        UsuarioDTO dto = new UsuarioDTO();
 //        UsuarioDAO dao = new UsuarioDAO();
 //        dto.getEntidad().setName(request.getParameter("userName"));
@@ -214,7 +217,8 @@ public class MapaControlador extends HttpServlet {
             Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             sesion.setAttribute("msj","Mapa registrado");
-            response.sendRedirect("display.jsp");
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
+            dispatcher.forward(request, response);
         }
     }
 
@@ -337,6 +341,11 @@ public class MapaControlador extends HttpServlet {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
+    }
+
+    private void draw(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/draw.jsp");
+        dispatcher.forward(request, response);
     }
 
 }

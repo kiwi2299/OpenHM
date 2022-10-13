@@ -32,15 +32,64 @@
                             type: 'base',
                             visible: false,
                             source: new ol.source.OSM(),
-                        })
+                        }),
+                        
                     ]
                 }),
                 new ol.layer.Group({
-                    title: 'Overlays',
+                    title: 'Años',
                     fold: 'open',
                     layers:[
                         new ol.layer.Vector({
-                            title: 'general',
+                            title: '2022',
+                            source: new ol.source.Vector({
+                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                            })
+                        }),
+                        new ol.layer.Vector({
+                            title: '2000',
+                            source: new ol.source.Vector({
+                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                            })
+                        }),
+                        new ol.layer.Vector({
+                            title: '1900',
+                            source: new ol.source.Vector({
+                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                            })
+                        }),
+                        new ol.layer.Vector({
+                            title: '1800',
+                            source: new ol.source.Vector({
+                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                            })
+                        }),
+                        new ol.layer.Vector({
+                            title: '1700',
+                            source: new ol.source.Vector({
+                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                            })
+                        }),
+                        new ol.layer.Vector({
+                            title: '1600',
+                            source: new ol.source.Vector({
+                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                            })
+                        }),
+                        new ol.layer.Vector({
+                            title: '1500',
+                            source: new ol.source.Vector({
+                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                            })
+                        }),
+                        new ol.layer.Vector({
+                            title: '1400',
+                            source: new ol.source.Vector({
+                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                            })
+                        }),
+                        new ol.layer.Vector({
+                            title: '1300',
                             source: new ol.source.Vector({
                                 features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
                             })

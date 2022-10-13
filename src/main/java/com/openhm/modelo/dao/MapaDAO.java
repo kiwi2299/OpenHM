@@ -27,6 +27,7 @@ public class MapaDAO {
     private static final String SQL_DELETE="delete from mapa where id = ?";
     private static final String SQL_READ="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where id = ?";
     private static final String SQL_READ_ALL="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa";
+    private static final String SQL_READ_YEAR="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where year = ?";
 
     private Connection con;
     public Connection ObtenerConexion(){
@@ -167,6 +168,33 @@ public class MapaDAO {
         }
     }
 
+     public List readYear(MapaDTO dto) throws SQLException{
+        ObtenerConexion();
+        PreparedStatement cs = null;
+        ResultSet rs =null;
+        try {
+            cs = con.prepareStatement(SQL_READ_YEAR);
+            cs.setInt(1, dto.getEntidad().getYear());
+            rs = cs.executeQuery();
+            List resultados = obtenerResultados(rs);
+            if (resultados.size() > 0) {
+                return resultados;
+            }else{
+                return null;
+            }
+        } finally {
+            if(rs != null){
+                rs.close();
+            }
+            if(cs != null){
+                cs.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+     
     private List obtenerResultados(ResultSet rs) throws SQLException{
         List resultados = new ArrayList();
         while (rs.next()) {            
@@ -190,13 +218,13 @@ public class MapaDAO {
         MapaDAO dao = new MapaDAO();
         MapaDTO dto = new MapaDTO();
         Mapa entidad = new Mapa();
-        entidad.setId(2);
+        entidad.setYear(1888);
         dto.setEntidad(entidad);
         try {
             
             //dto = dao.read(dto);
             //System.out.println(dto.getEntidad().getMap());
-            System.out.println(dao.readAll());
+            System.out.println(dao.readYear(dto));
         } catch (SQLException ex) {
             Logger.getLogger(MapaDAO.class.getName()).log(Level.SEVERE, null, ex);
         }

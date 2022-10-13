@@ -32,7 +32,10 @@
 
 <body>
     <div class="topnav">
-        <a class="btn btn-primary" href="draw.jsp" role="button">Draw</a>
+        <form action="Mapa?accion=draw" method="post">
+            <button class="btn btn-primary" type="submit">Draw</button>
+        </form>
+        
         
         <h1 class="nav-item">Open History Mapper</h1>
     </div>

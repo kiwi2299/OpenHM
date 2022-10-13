@@ -102,6 +102,7 @@ public class LoginControlador extends HttpServlet {
         HttpSession  sesion = request.getSession();;
         MapaDAO mdao = new MapaDAO();
         MapaDTO mdto = new MapaDTO(); 
+        mdto.getEntidad().setYear(1888);
         UsuarioDAO dao;
         UsuarioDTO dto;
         dto = this.obtenerUsuario(request);
@@ -113,7 +114,7 @@ public class LoginControlador extends HttpServlet {
             if (dto != null) {
                 System.out.println(dto.getEntidad().getName());
                 
-                List listaMapas = mdao.readAll();
+                List listaMapas = mdao.readYear(mdto);
                 if(!listaMapas.isEmpty()){
                     String geojsonString = geojson(listaMapas);
                     sesion.setAttribute("geojsonString",geojsonString);
