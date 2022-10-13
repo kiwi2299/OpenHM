@@ -46,7 +46,7 @@ public class UsuarioControlador extends HttpServlet {
             if (accion != null) {
                 switch (accion) {
                     case "menu":
-                        response.sendRedirect("menuUsuario.jsp");
+                        response.sendRedirect("crearUsuario.jsp");
                         break;
                     case "insertar":
                         insertar(request, response);
@@ -58,7 +58,7 @@ public class UsuarioControlador extends HttpServlet {
                         borrar(request, response);
                         break;
                     default:
-                        response.sendRedirect("menuUsuario.jsp");
+                        response.sendRedirect("index.html");
                 }
             } else {
                 response.sendRedirect("index.html");

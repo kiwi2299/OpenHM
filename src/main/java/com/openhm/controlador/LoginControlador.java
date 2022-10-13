@@ -131,8 +131,8 @@ public class LoginControlador extends HttpServlet {
                 dispatcher.forward(request, response);
                 //response.sendRedirect("WEB-INF/display.jsp");
             }else{
-                dto = null;
-                sesion.setAttribute("dto", dto);
+                
+                sesion.setAttribute("dto", null);
                 sesion.setAttribute("msj", "Credenciales Incorrectas");
                 response.sendRedirect("index.html?error=1");
             }
