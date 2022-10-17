@@ -28,6 +28,7 @@ public class MapaDAO {
     private static final String SQL_READ="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where id = ?";
     private static final String SQL_READ_ALL="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa";
     private static final String SQL_READ_YEAR="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where year = ?";
+    private static final String SQL_YEARS="select year from mapa group by year order by year";
 
     private Connection con;
     public Connection ObtenerConexion(){
@@ -194,6 +195,41 @@ public class MapaDAO {
             }
         }
     }
+    /**
+     * Obtiene una lista de todos los años únicos presentes en la base de datos
+     * @return 
+     * @throws java.sql.SQLException
+     */ 
+     public List years() throws SQLException{
+        ObtenerConexion();
+        PreparedStatement cs = null;
+        ResultSet rs =null;
+        List resultados = new ArrayList();
+        try {
+            cs = con.prepareStatement(SQL_YEARS);
+            
+            rs = cs.executeQuery();
+            while (rs.next()) {                          
+                resultados.add(rs.getInt("year"));
+            }
+             
+            if (resultados.size() > 0) {
+                return resultados;
+            }else{
+                return null;
+            }
+        } finally {
+            if(rs != null){
+                rs.close();
+            }
+            if(cs != null){
+                cs.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
      
     private List obtenerResultados(ResultSet rs) throws SQLException{
         List resultados = new ArrayList();
@@ -218,13 +254,13 @@ public class MapaDAO {
         MapaDAO dao = new MapaDAO();
         MapaDTO dto = new MapaDTO();
         Mapa entidad = new Mapa();
-        entidad.setYear(1888);
-        dto.setEntidad(entidad);
+        //entidad.setYear(1888);
+        //dto.setEntidad(entidad);
         try {
             
             //dto = dao.read(dto);
             //System.out.println(dto.getEntidad().getMap());
-            System.out.println(dao.readYear(dto));
+            System.out.println(dao.years());
         } catch (SQLException ex) {
             Logger.getLogger(MapaDAO.class.getName()).log(Level.SEVERE, null, ex);
         }

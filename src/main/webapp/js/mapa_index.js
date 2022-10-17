@@ -1,7 +1,7 @@
 	
         
     var geojson;
-    $.post('Mapa?accion=get', function(geojsonString) {
+    $.post('Mapa?accion=getIndex', function(geojsonString) {
         //console.log(geojsonString);
         geojson = geojsonString;
     }).done(function(){

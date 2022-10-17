@@ -52,11 +52,20 @@ public class MapaControlador extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         String accion = request.getParameter("accion");
+        
         try {
             if (accion != null) {
                 switch (accion) {
-                    case "get":
+                    case "getMapas":
                         getMapas(request, response);
+                        break;
+                    case "getIndex":
+                        getMapasIndex(request, response);
+                        break;
+                    case "mapa":
+                        String year = request.getParameter("year");
+                        if(!year.equals(""))
+                            getMapa(request, response, year);
                         break;
                     case "crear":
                         crear(request, response);
@@ -206,13 +215,18 @@ public class MapaControlador extends HttpServlet {
         }
         try {
             mdao.create(mdto);
-            List listaMapas = mdao.readAll();
-            String geojsonString = geojson(listaMapas);
-            //System.out.println(geojsonString);
-            sesion.setAttribute("geojsonString",geojsonString);
-            sesion.setAttribute("size",listaMapas.size());
-            
-            sesion.setAttribute("listaMapas",listaMapas);
+            List y = mdao.years();
+            List geojsonList = new ArrayList();
+            for (int i = 0; i < y.size(); i++) {
+                MapaDTO mdtos = new MapaDTO();
+                int year = (int) y.get(i);
+                mdtos.getEntidad().setYear(year);
+                List listaMapas = mdao.readYear(mdtos);
+                String geojson = geojson(listaMapas);
+                mdtos.getEntidad().setMap(geojson);
+                geojsonList.add(mdtos);
+            }
+            sesion.setAttribute("geojsonList",geojsonList);
         } catch (SQLException ex) {
             Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -253,25 +267,62 @@ public class MapaControlador extends HttpServlet {
         }
     }
 
-    private void getMapa(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void getMapa(HttpServletRequest request, HttpServletResponse response, String year) throws IOException, ServletException {
         MapaDTO dto = new MapaDTO();
         MapaDAO dao = new MapaDAO();
-        dto.getEntidad().setId(Integer.parseInt(request.getParameter("mapaId")));
+        HttpSession sesion = request.getSession();
+        dto.getEntidad().setYear(Integer.parseInt(year));
         try {
-            dto = dao.read(dto);
+            List listaMapas = dao.readYear(dto);
+            String geojsonString = geojson(listaMapas);
+            sesion.setAttribute("geojsonString",geojsonString);
         } catch (SQLException ex) {
             Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
-            request.setAttribute("mapaGeoJson",dto.getEntidad().getMap());
-            response.sendRedirect("index.jsp");
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
+            dispatcher.forward(request, response);
         }
     }
     
-    private void getMapas(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void getMapas(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+       
+        MapaDAO mdao = new MapaDAO();
+        //MapaDTO mdto = new MapaDTO();
+        HttpSession sesion = request.getSession();
+        try {
+            List y = mdao.years();
+            List geojsonList = new ArrayList();
+            for (int i = 0; i < y.size(); i++) {
+                MapaDTO mdto = new MapaDTO();
+                int year = (int) y.get(i);
+                mdto.getEntidad().setYear(year);
+                List listaMapas = mdao.readYear(mdto);
+                String geojson = geojson(listaMapas);
+                mdto.getEntidad().setMap(geojson);
+                geojsonList.add(mdto);
+            }
+            for (int i = 0; i < geojsonList.size(); i++) {
+                System.out.println(geojsonList.get(i));
+                
+            }
+            
+            sesion.setAttribute("geojsonList",geojsonList);
+            //System.out.println(geojsonString);
+            //sesion.setAttribute("geojsonString",geojsonString);
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
+            dispatcher.forward(request, response);
+        }
+    }
+    
+    private void getMapasIndex(HttpServletRequest request, HttpServletResponse response) throws IOException {
        
         MapaDAO dao = new MapaDAO();
         
         try {
+            
             List listaMapas = dao.readAll();
             String geojsonString = geojson(listaMapas);
             response.setContentType("text/plain");

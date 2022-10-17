@@ -13,6 +13,7 @@ import com.openhm.modelo.entidades.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -101,8 +102,8 @@ public class LoginControlador extends HttpServlet {
     private void verificar(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
         HttpSession  sesion = request.getSession();;
         MapaDAO mdao = new MapaDAO();
-        MapaDTO mdto = new MapaDTO(); 
-        mdto.getEntidad().setYear(1888);
+        //MapaDTO mdto = new MapaDTO(); 
+        //mdto.getEntidad().setYear(1888);
         UsuarioDAO dao;
         UsuarioDTO dto;
         dto = this.obtenerUsuario(request);
@@ -112,17 +113,37 @@ public class LoginControlador extends HttpServlet {
             dto = dao.read(dto);
             
             if (dto != null) {
-                System.out.println(dto.getEntidad().getName());
+                //System.out.println(dto.getEntidad().getName());
                 
-                List listaMapas = mdao.readYear(mdto);
+               /* List listaMapas = mdao.readYear(mdto);
                 if(!listaMapas.isEmpty()){
                     String geojsonString = geojson(listaMapas);
                     sesion.setAttribute("geojsonString",geojsonString);
                     sesion.setAttribute("size",listaMapas.size());
 
                     sesion.setAttribute("listaMapas",listaMapas);
+                }*/
+                List y = mdao.years();
+                List geojsonList = new ArrayList();
+                for (int i = 0; i < y.size(); i++) {
+                    MapaDTO mdto = new MapaDTO();
+                    int year = (int) y.get(i);
+                    //System.out.println(year);
+                    mdto.getEntidad().setYear(year);
+                    List listaMapas = mdao.readYear(mdto);
+                    String geojson = geojson(listaMapas);
+                    mdto.getEntidad().setMap(geojson);
+                    //System.out.println(mdto);
+                    geojsonList.add(mdto);
                 }
                 
+//                for (int i = 0; i < geojsonList.size(); i++) {
+//                    System.out.println(geojsonList.get(i));
+//                
+//                }
+
+
+                sesion.setAttribute("geojsonList",geojsonList);
                 //System.out.println(geojsonString);
                 
                 sesion.setAttribute("dto", dto);

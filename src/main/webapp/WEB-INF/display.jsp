@@ -107,15 +107,19 @@
                     ]
                 }),
                 new ol.layer.Group({
-                    title: 'Overlays',
+                    title: 'Años',
                     fold: 'open',
                     layers:[
+                        <c:forEach items="${geojsonList}" var="mdto"> 
+                                            
                         new ol.layer.Vector({
-                            title: 'general',
+                            title: '${mdto.entidad.year}',
+                            
                             source: new ol.source.Vector({
-                                features:  new ol.format.GeoJSON().readFeatures(${geojsonString}),                                            
+                                features:  new ol.format.GeoJSON().readFeatures(${mdto.entidad.map}),                                            
                             })
-                        })
+                        }),
+                        </c:forEach>            
                     ]
                 })
             ],

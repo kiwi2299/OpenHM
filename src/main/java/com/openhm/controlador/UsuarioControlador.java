@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +46,7 @@ public class UsuarioControlador extends HttpServlet {
         try {
             if (accion != null) {
                 switch (accion) {
-                    case "menu":
+                    case "crear":
                         response.sendRedirect("crearUsuario.jsp");
                         break;
                     case "insertar":
@@ -113,7 +114,7 @@ public class UsuarioControlador extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void insertar(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void insertar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         HttpSession sesion = request.getSession();
         UsuarioDTO dto = new UsuarioDTO();
         UsuarioDAO dao = new UsuarioDAO();
@@ -163,7 +164,8 @@ public class UsuarioControlador extends HttpServlet {
                 sesion.setAttribute("dto", dto);
                 sesion.setAttribute("msj","Usuario creado");
                 
-                response.sendRedirect("display.jsp");
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
+                dispatcher.forward(request, response);
             }
       //  }             
     }
