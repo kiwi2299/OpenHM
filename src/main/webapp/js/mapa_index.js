@@ -61,7 +61,7 @@
                         new ol.layer.Vector({
                             title: geojson.overlays[3].title,
                             source: new ol.source.Vector({
-                                features:  new ol.format.GeoJSON().readFeatures(geojson.overlays[3].geojson),                                            
+                                features:  new ol.format.GeoJSON().readFeatures(geojson.overlays[3].geojson),                                        
                             })
                         }),
                         new ol.layer.Vector({
