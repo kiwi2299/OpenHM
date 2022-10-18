@@ -319,15 +319,39 @@ public class MapaControlador extends HttpServlet {
     
     private void getMapasIndex(HttpServletRequest request, HttpServletResponse response) throws IOException {
        
-        MapaDAO dao = new MapaDAO();
-        
+        MapaDAO mdao = new MapaDAO();
+        //MapaDTO mdto = new MapaDTO();
+       
+        String json = "{\"overlays\":[";
+        int count = 1;        
         try {
+            List y = mdao.years();
             
-            List listaMapas = dao.readAll();
-            String geojsonString = geojson(listaMapas);
+            for (int i = 0; i < y.size(); i++) {
+                MapaDTO mdto = new MapaDTO();
+                int year = (int) y.get(i);
+                mdto.getEntidad().setYear(year);
+                List listaMapas = mdao.readYear(mdto);
+                String geojson = geojson(listaMapas);
+                json+=" {\"title\":\""+year+"\",";
+                if(count < y.size()){
+                    json += "\"geojson\":"+geojson+"},";
+                }else{
+                    json += "\"geojson\":"+geojson+"}";
+                }
+                count++;
+            }
+            
+            
+          json += "]}";
+        
+        
+            
+           
+           
             response.setContentType("text/plain");
             response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(geojsonString);
+            response.getWriter().write(json);
             //System.out.println(geojsonString);
             //sesion.setAttribute("geojsonString",geojsonString);
         } catch (SQLException ex) {
@@ -385,11 +409,11 @@ public class MapaControlador extends HttpServlet {
             }
             
              try (FileWriter myWriter = new FileWriter(path)) {
-                 myWriter.write("Files in Java might be tricky, but it is fun enough!");
+                 myWriter.write("Contenido");
              }
-            System.out.println("Successfully wrote to the file.");
+            System.out.println("success");
         } catch (IOException e) {
-            System.out.println("An error occurred.");
+            System.out.println("error");
             e.printStackTrace();
         }
     }

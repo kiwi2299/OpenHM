@@ -2,8 +2,8 @@
         
     var geojson;
     $.post('Mapa?accion=getIndex', function(geojsonString) {
-        //console.log(geojsonString);
-        geojson = geojsonString;
+        console.log(geojsonString);
+        geojson = JSON.parse(geojsonString);
     }).done(function(){
             //console.log(geojson);
             var myview = new ol.View({
@@ -41,57 +41,45 @@
                     fold: 'open',
                     layers:[
                         new ol.layer.Vector({
-                            title: '2022',
+                            title: geojson.overlays[0].title,
                             source: new ol.source.Vector({
-                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                                features:  new ol.format.GeoJSON().readFeatures(geojson.overlays[0].geojson),                                            
                             })
                         }),
                         new ol.layer.Vector({
-                            title: '2000',
+                            title: geojson.overlays[1].title,
                             source: new ol.source.Vector({
-                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                                features:  new ol.format.GeoJSON().readFeatures(geojson.overlays[1].geojson),                                            
                             })
                         }),
                         new ol.layer.Vector({
-                            title: '1900',
+                            title: geojson.overlays[2].title,
                             source: new ol.source.Vector({
-                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                                features:  new ol.format.GeoJSON().readFeatures(geojson.overlays[2].geojson),                                            
                             })
                         }),
                         new ol.layer.Vector({
-                            title: '1800',
+                            title: geojson.overlays[3].title,
                             source: new ol.source.Vector({
-                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                                features:  new ol.format.GeoJSON().readFeatures(geojson.overlays[3].geojson),                                            
                             })
                         }),
                         new ol.layer.Vector({
-                            title: '1700',
+                            title: geojson.overlays[4].title,
                             source: new ol.source.Vector({
-                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                                features:  new ol.format.GeoJSON().readFeatures(geojson.overlays[4].geojson),                                            
                             })
                         }),
                         new ol.layer.Vector({
-                            title: '1600',
+                            title: geojson.overlays[5].title,
                             source: new ol.source.Vector({
-                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                                features:  new ol.format.GeoJSON().readFeatures(geojson.overlays[5].geojson),                                            
                             })
                         }),
                         new ol.layer.Vector({
-                            title: '1500',
+                            title: geojson.overlays[6].title,
                             source: new ol.source.Vector({
-                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
-                            })
-                        }),
-                        new ol.layer.Vector({
-                            title: '1400',
-                            source: new ol.source.Vector({
-                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
-                            })
-                        }),
-                        new ol.layer.Vector({
-                            title: '1300',
-                            source: new ol.source.Vector({
-                                features:  new ol.format.GeoJSON().readFeatures(geojson),                                            
+                                features:  new ol.format.GeoJSON().readFeatures(geojson.overlays[6].geojson),                                            
                             })
                         })
                     ]
@@ -99,6 +87,8 @@
             ],
             view: myview
 	});
+        
+        
         
         //layer switcher
         var layerSwitcher = new ol.control.LayerSwitcher({
