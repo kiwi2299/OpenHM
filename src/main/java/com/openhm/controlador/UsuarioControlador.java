@@ -13,6 +13,7 @@ import com.openhm.modelo.entidades.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -138,35 +139,64 @@ public class UsuarioControlador extends HttpServlet {
 //                response.sendRedirect("menuUsuario.jsp");
 //            }
 //        } else {
-            try {
-                dao.create(dto);
-                dto = dao.read(dto);
-            } catch (SQLException ex) {
-                Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
-            }finally{
-                List listaMapas;
-                try {
-                    listaMapas = mdao.readAll();
-                    if(!listaMapas.isEmpty()){
-                        String geojsonString = geojson(listaMapas);
-                        sesion.setAttribute("geojsonString",geojsonString);
-                        sesion.setAttribute("size",listaMapas.size());
+        try {
+            dao.create(dto);
+            dto = dao.read(dto);
+            if (dto != null) {
+                //System.out.println(dto.getEntidad().getName());
+                
+               /* List listaMapas = mdao.readYear(mdto);
+                if(!listaMapas.isEmpty()){
+                    String geojsonString = geojson(listaMapas);
+                    sesion.setAttribute("geojsonString",geojsonString);
+                    sesion.setAttribute("size",listaMapas.size());
 
-                        sesion.setAttribute("listaMapas",listaMapas);
-                    }
-                } catch (SQLException ex) {
-                    Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
+                    sesion.setAttribute("listaMapas",listaMapas);
+                }*/
+                List y = mdao.years();
+                List geojsonList = new ArrayList();
+                for (int i = 0; i < y.size(); i++) {
+                    MapaDTO mdto = new MapaDTO();
+                    int year = (int) y.get(i);
+                    //System.out.println(year);
+                    mdto.getEntidad().setYear(year);
+                    List listaMapas = mdao.readYear(mdto);
+                    String geojson = geojson(listaMapas);
+                    mdto.getEntidad().setMap(geojson);
+                    //System.out.println(mdto);
+                    geojsonList.add(mdto);
                 }
                 
-                
-                //System.out.println(geojsonString);
-                
+//                for (int i = 0; i < geojsonList.size(); i++) {
+//                    System.out.println(geojsonList.get(i));
+//                
+//                }
+
+
+                sesion.setAttribute("geojsonList",geojsonList);
                 sesion.setAttribute("dto", dto);
-                sesion.setAttribute("msj","Usuario creado");
-                
+                sesion.setAttribute("msj", "Bienvenido al sistema");
+                //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
                 dispatcher.forward(request, response);
+                
+                }else{
+                
+                sesion.setAttribute("dto", null);
+                sesion.setAttribute("msj", "Credenciales Incorrectas");
+                response.sendRedirect("index.html?error=1");
             }
+        } catch (SQLException ex) {
+            Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                
+            
+                //System.out.println(geojsonString);
+                
+                
+                //response.sendRedirect("WEB-INF/display.jsp");
+            
+            
       //  }             
     }
 

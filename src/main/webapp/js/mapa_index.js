@@ -2,10 +2,10 @@
         
     var geojson;
     $.post('Mapa?accion=getIndex', function(geojsonString) {
-        console.log(geojsonString);
+        //console.log(geojsonString);
         geojson = JSON.parse(geojsonString);
     }).done(function(){
-            //console.log(geojson);
+            console.log(geojson);
             var myview = new ol.View({
 		center: [981546161170.347, 2496866.115180862],
           zoom: 4
