@@ -175,7 +175,7 @@ public class UsuarioControlador extends HttpServlet {
 
                 sesion.setAttribute("geojsonList",geojsonList);
                 sesion.setAttribute("dto", dto);
-                sesion.setAttribute("msj", "Bienvenido al sistema");
+                sesion.setAttribute("msj", "Usuario creado");
                 //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
                 dispatcher.forward(request, response);
