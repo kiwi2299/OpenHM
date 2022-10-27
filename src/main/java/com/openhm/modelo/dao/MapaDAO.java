@@ -1,10 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.openhm.modelo.dao;
-
 
 import com.openhm.modelo.dto.MapaDTO;
 import com.openhm.modelo.entidades.Mapa;
@@ -18,10 +12,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 public class MapaDAO {
 
-    /*TODO */
     private static final String SQL_INSERT="insert into mapa (name,user_id,year,view,map,description,source,insert_date) values(?,?,?,true,ST_GeomFromText(?),?,?,CURRENT_DATE)";
     private static final String SQL_UPDATE="update mapa set name = ?, map = ? where id = ?";
     private static final String SQL_DELETE="delete from mapa where id = ?";
@@ -31,12 +23,7 @@ public class MapaDAO {
     private static final String SQL_YEARS="select year from mapa group by year order by year";
 
     private Connection con;
-    public Connection ObtenerConexion(){
-//       String usr = "postgres";
-//       String pwd = "adminadmin";
-//       String driver = "org.postgresql.Driver";
-//        String url = "jdbc:postgresql://tt2-2021-b023.ci6bwbdlosva.us-west-1.rds.amazonaws.com:5432/openhm";
-//        
+    public Connection ObtenerConexion(){       
 //         String usr = "postgres";
 //        String pwd = "postgres";
 //        String driver = "org.postgresql.Driver";
