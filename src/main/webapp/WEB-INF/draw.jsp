@@ -53,7 +53,7 @@
 
                 <input  type="text" class="form-control" id="geometry" name="geometry" readonly>
             </div>
-            
+            <input  type="hidden" class="form-control" id="id" name="id" value="">
             <div class="mb-3">
               <label for="name">Nombre</label>
               <input  type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp" required>

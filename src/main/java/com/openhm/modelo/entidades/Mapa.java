@@ -11,7 +11,7 @@ public class Mapa implements Serializable{
     private String name;
     private int user_id;
     private int year;
-    private boolean view;
+    private String view;
     private String map;
     private String description;
     private String source;
@@ -49,11 +49,11 @@ public class Mapa implements Serializable{
         this.year = year;
     }
 
-    public boolean isView() {
+    public String getView() {
         return view;
     }
 
-    public void setView(boolean view) {
+    public void setView(String view) {
         this.view = view;
     }
 

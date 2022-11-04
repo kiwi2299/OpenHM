@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 public class UsuarioDAO {
     
-    private static final String SQL_INSERT="insert into usuario (name, password, email) values(?,crypt(?,gen_salt('bf')),?)";
+    private static final String SQL_INSERT="insert into usuario (name, password, email, tipo) values(?,crypt(?,gen_salt('bf')),?,'mapper')";
     private static final String SQL_UPDATE="update usuario set name = ?, password = ?, email = ? where id = ?";
     private static final String SQL_DELETE="delete from usuario where id = ?";
     private static final String SQL_READ="select * from usuario where name = ? and password = crypt(?,password)";
@@ -173,6 +173,7 @@ public class UsuarioDAO {
             dto.getEntidad().setName(rs.getString("name"));
             dto.getEntidad().setPassword(rs.getString("password"));
             dto.getEntidad().setEmail(rs.getString("email"));
+            dto.getEntidad().setTipo(rs.getString("tipo"));
             resultados.add(dto);
         }
         return resultados;
@@ -191,8 +192,8 @@ public class UsuarioDAO {
         
         try {
            // dao.update(dto);
-            dao.create(dto);
-            System.out.println(dao.read(dto));
+            //dao.create(dto);
+            System.out.println(dao.readAll());
             if(dto != null){
                 
             }

@@ -35,7 +35,12 @@
         <form action="Mapa?accion=draw" method="post">
             <button class="btn btn-primary" type="submit">Draw</button>
         </form>
-        
+        <form action="Login?accion=cerrar" method="post">
+            <button class="btn btn-primary" type="submit">Cerrar Sesión</button>
+        </form>
+        <form action="Usuario?accion=menu" method="post">
+            <button class="btn btn-primary" type="submit">Menú usuario</button>
+        </form>
         
         <h1 class="nav-item">Open History Mapper</h1>
     </div>
@@ -174,7 +179,7 @@
                 var props = feature.getProperties();
                 console.log(props);
                 var cont = '<h3>NOMBRE: ' + feature.get('COUNTRY_NAME') + '</h3>';
-                cont += '<h3>DESC: ' + feature.get('DESCRIPTION') + '</h3>';
+                cont += '<h3>DESCRIPCIÓN: ' + feature.get('DESCRIPTION') + '</h3>';
                 cont += '<h3>YEAR: ' + feature.get('YEAR') + '</h3>';
                 cont += '<h3>SOURCE: ' + feature.get('SOURCE') + '</h3>';
 

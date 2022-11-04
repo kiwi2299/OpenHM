@@ -35,6 +35,10 @@ public class LoginControlador extends HttpServlet {
                         break;
                     case "cerrar":
                         cerrarSession(request, response);
+                        break;
+                    case "verMapa":
+                        verMapa(request, response);
+                        break;
                     default:
                         response.sendRedirect("index.html");
                 }
@@ -165,8 +169,8 @@ public class LoginControlador extends HttpServlet {
     private UsuarioDTO obtenerUsuario(HttpServletRequest request) {
         UsuarioDTO dto = new UsuarioDTO();
         
-        dto.getEntidad().setName(request.getParameter("userName"));
-        dto.getEntidad().setPassword(request.getParameter("userPass"));
+        dto.getEntidad().setName(request.getParameter("name"));
+        dto.getEntidad().setPassword(request.getParameter("password"));
         
         return dto;
     }
@@ -192,4 +196,30 @@ public class LoginControlador extends HttpServlet {
         return geojsonString;
     }
 
+    private void verMapa(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+        HttpSession  sesion = request.getSession();
+        MapaDAO mdao = new MapaDAO();
+        List y = mdao.years();
+        List geojsonList = new ArrayList();
+        
+        for (int i = 0; i < y.size(); i++) {
+            MapaDTO mdto = new MapaDTO();
+            int year = (int) y.get(i);
+            //System.out.println(year);
+            mdto.getEntidad().setYear(year);
+            List listaMapas = mdao.readYear(mdto);
+            String geojson = geojson(listaMapas);
+            mdto.getEntidad().setMap(geojson);
+            //System.out.println(mdto);
+            geojsonList.add(mdto);
+        }
+
+        sesion.setAttribute("geojsonList",geojsonList);
+        sesion.setAttribute("msj",null);
+        //System.out.println(geojsonString);
+        sesion.setAttribute("dto", null);        
+        //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
+        dispatcher.forward(request, response);
+    }
 }

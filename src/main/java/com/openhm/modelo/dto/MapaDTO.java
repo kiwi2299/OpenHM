@@ -25,7 +25,7 @@ public class MapaDTO implements Serializable{
         sb.append("name: ").append(getEntidad().getName()).append("\n");
         sb.append("userId: ").append(getEntidad().getUser_id()).append("\n");
         sb.append("year: ").append(getEntidad().getYear()).append("\n");
-        sb.append("view: ").append(getEntidad().isView()).append("\n");
+        sb.append("view: ").append(getEntidad().getView()).append("\n");
         sb.append("map: ").append(getEntidad().getMap()).append("\n");
         sb.append("description: ").append(getEntidad().getDescription()).append("\n");
         sb.append("source: ").append(getEntidad().getSource()).append("\n");

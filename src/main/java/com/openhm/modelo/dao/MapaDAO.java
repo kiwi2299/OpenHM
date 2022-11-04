@@ -1,6 +1,7 @@
 package com.openhm.modelo.dao;
 
 import com.openhm.modelo.dto.MapaDTO;
+import com.openhm.modelo.dto.UsuarioDTO;
 import com.openhm.modelo.entidades.Mapa;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,13 +14,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MapaDAO {
-
-    private static final String SQL_INSERT="insert into mapa (name,user_id,year,view,map,description,source,insert_date) values(?,?,?,true,ST_GeomFromText(?),?,?,CURRENT_DATE)";
-    private static final String SQL_UPDATE="update mapa set name = ?, map = ? where id = ?";
+//
+    private static final String SQL_INSERT="insert into mapa (name,user_id,year,view,map,description,source,insert_date,update_date) values(?,?,?,?,ST_GeomFromText(?),?,?,CURRENT_DATE,'')";
+    private static final String SQL_UPDATE="update mapa SET name=?, user_id=?, year=?, view=?, map=ST_GeomFromText(?), description=?, source=?, update_date=CURRENT_DATE where id=?";
     private static final String SQL_DELETE="delete from mapa where id = ?";
     private static final String SQL_READ="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where id = ?";
     private static final String SQL_READ_ALL="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa";
     private static final String SQL_READ_YEAR="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where year = ?";
+    private static final String SQL_READ_ALL_USER="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where user_id = ?";
     private static final String SQL_YEARS="select year from mapa group by year order by year";
 
     private Connection con;
@@ -52,9 +54,10 @@ public class MapaDAO {
             cs.setString(1, dto.getEntidad().getName());
             cs.setInt(2, dto.getEntidad().getUser_id());
             cs.setInt(3, dto.getEntidad().getYear());
-            cs.setString(4, dto.getEntidad().getMap());
-            cs.setString(5, dto.getEntidad().getDescription());
-            cs.setString(6, dto.getEntidad().getSource());
+            cs.setString(4, dto.getEntidad().getView());
+            cs.setString(5, dto.getEntidad().getMap());
+            cs.setString(6, dto.getEntidad().getDescription());
+            cs.setString(7, dto.getEntidad().getSource());
             cs.executeUpdate();
         } finally {
             if(cs != null){
@@ -69,12 +72,18 @@ public class MapaDAO {
     
     public void update(MapaDTO dto) throws SQLException{
         ObtenerConexion();
+        //"update mapa SET name=?, user_id=?, year=?, view=?, map=ST_GeomFromText(?), description=?, source=?, update_date=CURRENT_DATE where id=?";
         PreparedStatement cs = null; //Callablestatement es para stock procedures
         try {
             cs = con.prepareStatement(SQL_UPDATE);
             cs.setString(1, dto.getEntidad().getName());
-            cs.setString(2, dto.getEntidad().getMap());
-            cs.setInt(3, dto.getEntidad().getId());
+            cs.setInt(2, dto.getEntidad().getUser_id());
+            cs.setInt(3, dto.getEntidad().getYear());
+            cs.setString(4, dto.getEntidad().getView());
+            cs.setString(5, dto.getEntidad().getMap());
+            cs.setString(6, dto.getEntidad().getDescription());
+            cs.setString(7, dto.getEntidad().getSource());
+            cs.setInt(8, dto.getEntidad().getId());
             cs.executeUpdate();
         } finally {
             if(cs != null){
@@ -182,6 +191,34 @@ public class MapaDAO {
             }
         }
     }
+     
+    public List readAllUser(UsuarioDTO dto) throws SQLException{
+        ObtenerConexion();
+        PreparedStatement cs = null;
+        ResultSet rs =null;
+        try {
+            cs = con.prepareStatement(SQL_READ_ALL_USER);
+            cs.setInt(1, dto.getEntidad().getId());
+            rs = cs.executeQuery();
+            List resultados = obtenerResultados(rs);
+            if (resultados.size() > 0) {
+                return resultados;
+            }else{
+                return null;
+            }
+        } finally {
+            if(rs != null){
+                rs.close();
+            }
+            if(cs != null){
+                cs.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
     /**
      * Obtiene una lista de todos los años únicos presentes en la base de datos
      * @return 
@@ -226,7 +263,7 @@ public class MapaDAO {
             dto.getEntidad().setName(rs.getString("name"));
             dto.getEntidad().setUser_id(rs.getInt("user_id"));
             dto.getEntidad().setYear(rs.getInt("year"));
-            dto.getEntidad().setView(rs.getBoolean("view"));
+            dto.getEntidad().setView(rs.getString("view"));
             dto.getEntidad().setMap(rs.getString("ST_AsGeoJson"));
             dto.getEntidad().setDescription(rs.getString("description"));
             dto.getEntidad().setSource(rs.getString("source"));
@@ -239,7 +276,8 @@ public class MapaDAO {
     
     public static void main(String[] args) {
         MapaDAO dao = new MapaDAO();
-        MapaDTO dto = new MapaDTO();
+        UsuarioDTO dto = new UsuarioDTO();
+        dto.getEntidad().setId(3);
         Mapa entidad = new Mapa();
         //entidad.setYear(1888);
         //dto.setEntidad(entidad);
@@ -247,7 +285,7 @@ public class MapaDAO {
             
             //dto = dao.read(dto);
             //System.out.println(dto.getEntidad().getMap());
-            System.out.println(dao.years());
+            System.out.println(dao.readAllUser(dto));
         } catch (SQLException ex) {
             Logger.getLogger(MapaDAO.class.getName()).log(Level.SEVERE, null, ex);
         }

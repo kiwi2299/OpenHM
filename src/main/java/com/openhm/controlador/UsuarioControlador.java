@@ -59,6 +59,9 @@ public class UsuarioControlador extends HttpServlet {
                     case "borrar":
                         borrar(request, response);
                         break;
+                    case "menu":
+                        menu(request, response);
+                        break;
                     default:
                         response.sendRedirect("index.html");
                 }
@@ -118,12 +121,14 @@ public class UsuarioControlador extends HttpServlet {
     private void insertar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         HttpSession sesion = request.getSession();
         UsuarioDTO dto = new UsuarioDTO();
+        UsuarioDTO ndto;
         UsuarioDAO dao = new UsuarioDAO();
-        MapaDAO mdao = new MapaDAO();
+        
         
         dto.getEntidad().setName(request.getParameter("name"));
         dto.getEntidad().setPassword(request.getParameter("password"));
         dto.getEntidad().setEmail(request.getParameter("email"));
+        ndto = dto;
         /*
         TODO user, correo repetido
         */
@@ -140,64 +145,40 @@ public class UsuarioControlador extends HttpServlet {
 //            }
 //        } else {
         try {
-            dao.create(dto);
             dto = dao.read(dto);
             if (dto != null) {
-                //System.out.println(dto.getEntidad().getName());
-                
-               /* List listaMapas = mdao.readYear(mdto);
-                if(!listaMapas.isEmpty()){
-                    String geojsonString = geojson(listaMapas);
-                    sesion.setAttribute("geojsonString",geojsonString);
-                    sesion.setAttribute("size",listaMapas.size());
-
-                    sesion.setAttribute("listaMapas",listaMapas);
-                }*/
-                List y = mdao.years();
-                List geojsonList = new ArrayList();
-                for (int i = 0; i < y.size(); i++) {
-                    MapaDTO mdto = new MapaDTO();
-                    int year = (int) y.get(i);
-                    //System.out.println(year);
-                    mdto.getEntidad().setYear(year);
-                    List listaMapas = mdao.readYear(mdto);
-                    String geojson = geojson(listaMapas);
-                    mdto.getEntidad().setMap(geojson);
-                    //System.out.println(mdto);
-                    geojsonList.add(mdto);
-                }
-                
-//                for (int i = 0; i < geojsonList.size(); i++) {
-//                    System.out.println(geojsonList.get(i));
-//                
-//                }
-
-
-                sesion.setAttribute("geojsonList",geojsonList);
-                sesion.setAttribute("dto", dto);
-                sesion.setAttribute("msj", "Usuario creado");
-                //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
+                sesion.setAttribute("msj_us", "El usuario "+dto.getEntidad().getName()+" ya existe.");
+                sesion.setAttribute("msj",null);
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/crearUsuario.jsp");
                 dispatcher.forward(request, response);
+            }else{
                 
+                dao.create(ndto);
+                dto = dao.read(ndto);
+                if (dto != null) {
+
+
+                    request.setAttribute("name", dto.getEntidad().getName());
+                    request.setAttribute("password", dto.getEntidad().getPassword());
+
+                    sesion.setAttribute("msj", "Usuario creado");
+                    sesion.setAttribute("msj_us", null);
+                    //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
+                    RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Login?accion=verificar");
+                    dispatcher.forward(request, response);
+
                 }else{
-                
-                sesion.setAttribute("dto", null);
-                sesion.setAttribute("msj", "Credenciales Incorrectas");
-                response.sendRedirect("index.html?error=1");
+
+                    sesion.setAttribute("dto", null);
+                    sesion.setAttribute("msj", "No se pudo crear el usuario");
+                    response.sendRedirect("index_1.html?error=1");
+                }
             }
+            
+            
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
-        }
-                
-            
-                //System.out.println(geojsonString);
-                
-                
-                //response.sendRedirect("WEB-INF/display.jsp");
-            
-            
-      //  }             
+        }            
     }
 
     private void seleccionar(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -212,9 +193,7 @@ public class UsuarioControlador extends HttpServlet {
             request.setAttribute("dto",dto);
             
             response.sendRedirect("menuUsuario.jsp");
-        }
-        
-        
+        }  
     }
 
     private void borrar(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -249,5 +228,21 @@ public class UsuarioControlador extends HttpServlet {
         geojsonString += "]}";
         
         return geojsonString;
+    }
+
+    private void menu(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession sesion = request.getSession();
+        MapaDAO mdao = new MapaDAO();
+        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
+        try {
+            List listaMapas = mdao.readAllUser(dto);
+            sesion.setAttribute("msj", null);
+            sesion.setAttribute("msj_us", null); 
+            sesion.setAttribute("listaMapas",listaMapas);
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/menuUsuario.jsp");
+            dispatcher.forward(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
