@@ -46,8 +46,8 @@ public class LoginControlador extends HttpServlet {
                 response.sendRedirect("index.html");
             }
         } catch (Exception e) {
-                e.printStackTrace();
-                response.sendRedirect("mensaje.jsp");
+                System.out.println("Error" + e.getMessage());
+                
                 
         }
 

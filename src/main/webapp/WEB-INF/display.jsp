@@ -32,24 +32,47 @@
 
 <body>
     <div class="topnav">
-        <form action="Mapa?accion=draw" method="post">
-            <button class="btn btn-primary" type="submit">Dibujar</button>
-        </form>
-        <form action="Login?accion=cerrar" method="post">
-            <button class="btn btn-primary" type="submit">Cerrar Sesión</button>
-        </form>
-        <form action="Usuario?accion=menu" method="post">
-            <button class="btn btn-primary" type="submit">Menú usuario</button>
-        </form>
-        
         <h1 class="nav-item">Open History Mapper</h1>
     </div>
-    
-    <div>
-        <p>Bienvenido ${dto.entidad.name}</p>
-        <p>${msj}</p>
         
-    </div>
+            <c:choose>
+                <c:when test="${dto.entidad.tipo == 'mapper'}">
+                    <form action="Mapa?accion=draw" method="post">
+                        <button class="btn btn-primary" type="submit">Dibujar</button>
+                    </form>
+                    <form action="Login?accion=cerrar" method="post">
+                        <button class="btn btn-primary" type="submit">Cerrar Sesión</button>
+                    </form>
+                    <form action="Usuario?accion=menu" method="post">
+                        <button class="btn btn-primary" type="submit">Menú usuario</button>
+                    </form>
+                </c:when>
+                <c:when test="${dto.entidad.tipo == 'admin'}">
+
+                    <form action="Login?accion=cerrar" method="post">
+                        <button class="btn btn-primary" type="submit">Cerrar Sesión</button>
+                    </form>
+                    <form action="Admin?accion=menu" method="post">
+                        <button class="btn btn-primary" type="submit">Menú Admin</button>
+                    </form>
+                </c:when>
+                <c:otherwise>
+                    <form action="Usuario?accion=crear" method="post">                        
+                        <button class="btn btn-info btn-lg btn-block" type="submit">Crear usuario</button>
+                    </form>
+                </c:otherwise>
+             </c:choose>
+
+       
+        
+        
+    
+        <div>
+            <p>Bienvenido ${dto.entidad.name}</p>
+            <p>${msj}</p>
+
+        </div>
+    
     <div id="map" class="map"></div>
     <!--  pop up de informacion  -->
     <div id="popup" class="ol-popup">

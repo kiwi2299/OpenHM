@@ -69,12 +69,7 @@ public class UsuarioControlador extends HttpServlet {
                 response.sendRedirect("index.html");
             }
         } catch (IOException e) {
-            try {
-                this.getServletConfig().getServletContext().getRequestDispatcher("/mensaje.jsp").forward(request, response);
-
-            } catch (IOException | ServletException ex) {
-                System.out.println("Error" + e.getMessage());
-            }
+            System.out.println("Error" + e.getMessage());
         }
         
     }
