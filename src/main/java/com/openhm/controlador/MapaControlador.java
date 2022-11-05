@@ -456,8 +456,69 @@ public class MapaControlador extends HttpServlet {
     }
 
     private void display(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
-            dispatcher.forward(request, response);
+        HttpSession  sesion = request.getSession();;
+        MapaDAO mdao = new MapaDAO();
+        //MapaDTO mdto = new MapaDTO(); 
+        //mdto.getEntidad().setYear(1888);
+        UsuarioDAO dao;
+        UsuarioDTO dto;
+        dto = (UsuarioDTO) sesion.getAttribute("dto");
+        dao = new UsuarioDAO();
+        
+        
+        try {
+            
+             if (dto != null) {
+                //System.out.println(dto.getEntidad().getName());
+                
+               /* List listaMapas = mdao.readYear(mdto);
+                if(!listaMapas.isEmpty()){
+                    String geojsonString = geojson(listaMapas);
+                    sesion.setAttribute("geojsonString",geojsonString);
+                    sesion.setAttribute("size",listaMapas.size());
+
+                    sesion.setAttribute("listaMapas",listaMapas);
+                }*/
+                List y = mdao.years();
+                List geojsonList = new ArrayList();
+                for (int i = 0; i < y.size(); i++) {
+                    MapaDTO mdto = new MapaDTO();
+                    int year = (int) y.get(i);
+                    //System.out.println(year);
+                    mdto.getEntidad().setYear(year);
+                    List listaMapas = mdao.readYear(mdto);
+                    String geojson = geojson(listaMapas);
+                    mdto.getEntidad().setMap(geojson);
+                    //System.out.println(mdto);
+                    geojsonList.add(mdto);
+                }
+                
+//                for (int i = 0; i < geojsonList.size(); i++) {
+//                    System.out.println(geojsonList.get(i));
+//                
+//                }
+
+
+                sesion.setAttribute("geojsonList",geojsonList);
+                //System.out.println(geojsonString);
+                
+                sesion.setAttribute("dto", dto);
+                sesion.setAttribute("msj", "Bienvenido al sistema");
+                //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
+                dispatcher.forward(request, response);
+                //response.sendRedirect("WEB-INF/display.jsp");
+            }else{
+                
+                sesion.setAttribute("dto", null);
+                sesion.setAttribute("msj", null);
+                response.sendRedirect("index.html?error=2");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+           
     }
 
 }

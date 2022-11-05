@@ -170,8 +170,8 @@ public class UsuarioControlador extends HttpServlet {
                 }else{
 
                     sesion.setAttribute("dto", null);
-                    sesion.setAttribute("msj", "No se pudo crear el usuario");
-                    response.sendRedirect("index_1.html?error=1");
+                    sesion.setAttribute("msj_us", "No se pudo crear el usuario");
+                    response.sendRedirect("/crearUsuario.jsp");
                 }
             }
             
@@ -236,7 +236,7 @@ public class UsuarioControlador extends HttpServlet {
         UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
         try {
             List listaMapas = mdao.readAllUser(dto);
-            sesion.setAttribute("msj", null);
+            //sesion.setAttribute("msj", null);
             sesion.setAttribute("msj_us", null); 
             sesion.setAttribute("listaMapas",listaMapas);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/menuUsuario.jsp");

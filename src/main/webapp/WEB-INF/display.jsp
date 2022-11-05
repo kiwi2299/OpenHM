@@ -33,7 +33,7 @@
 <body>
     <div class="topnav">
         <form action="Mapa?accion=draw" method="post">
-            <button class="btn btn-primary" type="submit">Draw</button>
+            <button class="btn btn-primary" type="submit">Dibujar</button>
         </form>
         <form action="Login?accion=cerrar" method="post">
             <button class="btn btn-primary" type="submit">Cerrar Sesión</button>

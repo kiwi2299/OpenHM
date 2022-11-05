@@ -27,7 +27,7 @@
                     <th>Nombre</th>
                     <th>Descripción</th>
                     <th>Visible</th>
-                    <th colspan="2">Acciones</th>
+                    <th colspan="3">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -60,12 +60,14 @@
                                 <button type="submit" class="btn btn-primary">Editar</button>
                             </form>
                         </td>
+                        <c:if test="${mdto.entidad.view == 'No visible'}">
                         <td>
                             <form action="Mapa?accion=borrar" method="post">
                                 <input type="hidden" value="${mdto.entidad.id}" name="id"/>
                                 <button type="submit" class="btn btn-danger">Eliminar</button>
                             </form>
                         </td>
+                        </c:if>
                         <c:if test="${mdto.entidad.view == 'No visible'}">
                             <td>
                                 <form action="Admin?accion=validar" method="post">
@@ -78,16 +80,7 @@
                 </c:forEach>
             </tbody>
         </table>
-        <c:choose>
-            <c:when
-                test="${msj != null}">
-              
-                        <div class="alert alert-success" role ="alert">
-                            ${msj}
-                        </div>   
-            </c:when>
-
-        </c:choose>  
+         
         <a class="btn btn-dark" href="/openhm/Mapa?accion=display">Regresar</a>
         </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
