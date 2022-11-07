@@ -15,14 +15,17 @@ import java.util.logging.Logger;
 
 public class MapaDAO {
 //
-    private static final String SQL_INSERT="insert into mapa (name,user_id,year,view,map,description,source,insert_date,update_date) values(?,?,?,?,ST_GeomFromText(?),?,?,CURRENT_DATE,'')";
+    private static final String SQL_INSERT="insert into mapa (name,user_id,year,view,map,description,source,insert_date,update_date) values(?,?,?,?,ST_GeomFromText(?),?,?,CURRENT_DATE,NULL)";
     private static final String SQL_UPDATE="update mapa SET name=?, user_id=?, year=?, view=?, map=ST_GeomFromText(?), description=?, source=?, update_date=CURRENT_DATE where id=?";
+    private static final String SQL_UPDATE_VALIDAR="update mapa SET view='En Proceso' where id=?";
     private static final String SQL_DELETE="delete from mapa where id = ?";
-    private static final String SQL_READ="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where id = ?";
+    private static final String SQL_READ="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date, update_date from mapa where id = ?";
     private static final String SQL_READ_ALL="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa";
     private static final String SQL_READ_YEAR="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where year = ?";
+    private static final String SQL_READ_YEAR_USER="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where year = ? and user_id = ?";
     private static final String SQL_READ_ALL_USER="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where user_id = ?";
     private static final String SQL_YEARS="select year from mapa group by year order by year";
+    
 
     private Connection con;
     public Connection ObtenerConexion(){       
@@ -84,6 +87,25 @@ public class MapaDAO {
             cs.setString(6, dto.getEntidad().getDescription());
             cs.setString(7, dto.getEntidad().getSource());
             cs.setInt(8, dto.getEntidad().getId());
+            cs.executeUpdate();
+        } finally {
+            if(cs != null){
+                cs.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
+    public void updateValidar(MapaDTO dto) throws SQLException{
+        ObtenerConexion();
+        //"update mapa SET name=?, user_id=?, year=?, view=?, map=ST_GeomFromText(?), description=?, source=?, update_date=CURRENT_DATE where id=?";
+        PreparedStatement cs = null; //Callablestatement es para stock procedures
+        try {
+            cs = con.prepareStatement(SQL_UPDATE_VALIDAR);
+            cs.setInt(1, dto.getEntidad().getId());
+            
             cs.executeUpdate();
         } finally {
             if(cs != null){
@@ -172,6 +194,35 @@ public class MapaDAO {
         try {
             cs = con.prepareStatement(SQL_READ_YEAR);
             cs.setInt(1, dto.getEntidad().getYear());
+            rs = cs.executeQuery();
+            List resultados = obtenerResultados(rs);
+            if (resultados.size() > 0) {
+                return resultados;
+            }else{
+                return null;
+            }
+        } finally {
+            if(rs != null){
+                rs.close();
+            }
+            if(cs != null){
+                cs.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+     
+     
+     public List readYearUser(MapaDTO dto) throws SQLException{
+        ObtenerConexion();
+        PreparedStatement cs = null;
+        ResultSet rs =null;
+        try {
+            cs = con.prepareStatement(SQL_READ_YEAR_USER);
+            cs.setInt(1, dto.getEntidad().getYear());
+            cs.setInt(1, dto.getEntidad().getUser_id());
             rs = cs.executeQuery();
             List resultados = obtenerResultados(rs);
             if (resultados.size() > 0) {

@@ -19,6 +19,10 @@
             <h1>${dto.entidad.name}</h1>
             <h2>Tus mapas</h2>
             <h5>${msj}</h5>
+            <form action="Mapa?accion=verMapasUs" method="post">
+                <input type="hidden" value="${dto.entidad.id}" name="id"/>
+                <button type="submit" class="btn btn-primary">Ver Mapas</button>
+            </form>
             <table class="table">
             <thead>
                 <tr>
@@ -35,12 +39,8 @@
                     var="mdto"
                     items="${listaMapas}">
                     <tr>
-                        <td>
-                            <a 
-                                class ='btn btn-primary btn-xs'
-                                href="Mapa?accion=ver&id=<c:out value="${mdto.entidad.id}"/>">
-                                <c:out value="${mdto.entidad.id}"/>
-                            </a>
+                        <td>                                
+                            <c:out value="${mdto.entidad.id}"/>
                         </td>
                         <td>
                             <c:out value="${mdto.entidad.year}"/>

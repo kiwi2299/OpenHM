@@ -85,6 +85,9 @@ public class MapaControlador extends HttpServlet {
                     case "draw":
                         draw(request, response);
                         break;
+                    case "verMapasUs":
+                        verMapasUs(request, response);
+                        break;
                     default:
                         response.sendRedirect("index.html");
                 }
@@ -285,17 +288,18 @@ public class MapaControlador extends HttpServlet {
         
     }
 
-    private void borrar(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        UsuarioDTO dto = new UsuarioDTO();
-        UsuarioDAO dao = new UsuarioDAO();
-        dto.getEntidad().setId(Integer.parseInt(request.getParameter("userId")));
+    private void borrar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {       
+        MapaDAO mdao = new MapaDAO();
+        MapaDTO mdto = new MapaDTO();
+        mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
         try {
-            dao.delete(dto);
+            mdao.delete(mdto);
         } catch (SQLException ex) {
             Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            request.setAttribute("msj","Usuario borrado");
-            response.sendRedirect("menuCrearUsuario.jsp");
+        } finally {
+            request.setAttribute("msj","Mapa borrado");
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Usuario?accion=menu");
+            dispatcher.forward(request, response);
         }
     }
 
@@ -519,6 +523,61 @@ public class MapaControlador extends HttpServlet {
         }
             
            
+    }
+
+    private void verMapasUs(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession  sesion = request.getSession();;
+        MapaDAO mdao = new MapaDAO();
+        MapaDTO mdto = new MapaDTO(); 
+        
+        
+        UsuarioDTO dto = new UsuarioDTO();
+        int id = Integer.parseInt(request.getParameter("id"));
+        dto.getEntidad().setId(id);
+        mdto.getEntidad().setUser_id(id);
+       
+        
+        
+        
+        try {
+            
+            List listaMapas = mdao.readAllUser(dto);
+                //System.out.println(dto.getEntidad().getName());
+                
+               /* List listaMapas = mdao.readYear(mdto);
+                if(!listaMapas.isEmpty()){
+                    String geojsonString = geojson(listaMapas);
+                    sesion.setAttribute("geojsonString",geojsonString);
+                    sesion.setAttribute("size",listaMapas.size());
+
+                    sesion.setAttribute("listaMapas",listaMapas);
+                }*/
+                
+                
+                    //System.out.println(year);
+                    
+                    
+                    String geojson = geojson(listaMapas);
+                    mdto.getEntidad().setMap(geojson);
+                    //System.out.println(mdto);
+                    
+                
+
+                sesion.setAttribute("geojsonList",geojson);
+                //System.out.println(geojsonString);
+                //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
+                
+                //response.sendRedirect("WEB-INF/display.jsp");
+            
+                
+                
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/displayUser.jsp");
+                dispatcher.forward(request, response);
+        }
     }
 
 }

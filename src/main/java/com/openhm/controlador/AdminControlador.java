@@ -126,8 +126,21 @@ public class AdminControlador extends HttpServlet {
         }
     }
 
-    private void validar(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void validar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        MapaDAO mdao = new MapaDAO();
+        MapaDTO mdto = new MapaDTO();
+        mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
+        try {
+            mdto = mdao.read(mdto);
+            mdto.getEntidad().setView("En Proceso");
+            mdao.updateValidar(mdto);
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            request.setAttribute("msj","Mapa en Proceso de Validación");
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Usuario?accion=menu");
+            dispatcher.forward(request, response);
+        } 
     }
 
     private void aceptar(HttpServletRequest request, HttpServletResponse response) {

@@ -34,12 +34,8 @@
                     var="mdto"
                     items="${listaMapas}">
                     <tr>
-                        <td>
-                            <a 
-                                class ='btn btn-primary btn-xs'
-                                href="Mapa?accion=ver&id=<c:out value="${mdto.entidad.id}"/>">
-                                <c:out value="${mdto.entidad.id}"/>
-                            </a>
+                        <td>                          
+                            <c:out value="${mdto.entidad.id}"/>                            
                         </td>
                         <td>
                             <c:out value="${mdto.entidad.year}"/>
