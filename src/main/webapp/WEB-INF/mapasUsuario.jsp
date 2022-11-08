@@ -34,8 +34,12 @@
                     var="mdto"
                     items="${listaMapas}">
                     <tr>
-                        <td>                          
-                            <c:out value="${mdto.entidad.id}"/>                            
+                        <td>
+                            <a 
+                                class ='btn btn-primary btn-xs'
+                                href="/openhm/Mapa?accion=mapa&id=<c:out value="${mdto.entidad.id}"/>">
+                                <c:out value="${mdto.entidad.id}"/>
+                            </a>
                         </td>
                         <td>
                             <c:out value="${mdto.entidad.year}"/>
@@ -50,24 +54,21 @@
                             <c:out value="${mdto.entidad.view}"/>
                         </td>
                         <td>
-                            <form action="Mapa?accion=editar" method="post">
-                                <input type="hidden" value="${mdto.entidad.id}" name="id"/>
-                                <button type="submit" class="btn btn-primary">Editar</button>
-                            </form>
+                            
                         </td>
-                        <c:if test="${mdto.entidad.view == 'No visible'}">
+                        <c:if test="${mdto.entidad.view == 'En Proceso'}">
                         <td>
-                            <form action="Mapa?accion=borrar" method="post">
+                            <form action="Admin?accion=rechazar" method="post">
                                 <input type="hidden" value="${mdto.entidad.id}" name="id"/>
-                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                                <button type="submit" class="btn btn-danger">Rechazar</button>
                             </form>
                         </td>
                         </c:if>
-                        <c:if test="${mdto.entidad.view == 'No visible'}">
+                        <c:if test="${mdto.entidad.view == 'En Proceso'}">
                             <td>
-                                <form action="Admin?accion=validar" method="post">
+                                <form action="Admin?accion=aceptar" method="post">
                                     <input type="hidden" value="${mdto.entidad.id}" name="id"/>
-                                    <button type="submit" class="btn btn-danger">Validar</button>
+                                    <button type="submit" class="btn btn-primary">Aceptar</button>
                                 </form>
                             </td>
                         </c:if>

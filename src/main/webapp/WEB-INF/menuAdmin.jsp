@@ -18,7 +18,7 @@
     <div class="container">
         <h1>Administrador ${dto.entidad.name}</h1>
         <h2>Usuarios del sistema</h2>
-        <h5>${msj_admin}</h5>
+        
         <table class="table">
             <thead>
                 <tr>

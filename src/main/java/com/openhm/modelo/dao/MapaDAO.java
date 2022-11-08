@@ -17,11 +17,11 @@ public class MapaDAO {
 //
     private static final String SQL_INSERT="insert into mapa (name,user_id,year,view,map,description,source,insert_date,update_date) values(?,?,?,?,ST_GeomFromText(?),?,?,CURRENT_DATE,NULL)";
     private static final String SQL_UPDATE="update mapa SET name=?, user_id=?, year=?, view=?, map=ST_GeomFromText(?), description=?, source=?, update_date=CURRENT_DATE where id=?";
-    private static final String SQL_UPDATE_VALIDAR="update mapa SET view='En Proceso' where id=?";
+    private static final String SQL_UPDATE_VALIDAR="update mapa SET view=? where id=?";
     private static final String SQL_DELETE="delete from mapa where id = ?";
     private static final String SQL_READ="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date, update_date from mapa where id = ?";
     private static final String SQL_READ_ALL="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa";
-    private static final String SQL_READ_YEAR="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where year = ?";
+    private static final String SQL_READ_YEAR="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where year = ? AND view = 'Visible'";
     private static final String SQL_READ_YEAR_USER="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where year = ? and user_id = ?";
     private static final String SQL_READ_ALL_USER="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where user_id = ?";
     private static final String SQL_YEARS="select year from mapa group by year order by year";
@@ -104,7 +104,8 @@ public class MapaDAO {
         PreparedStatement cs = null; //Callablestatement es para stock procedures
         try {
             cs = con.prepareStatement(SQL_UPDATE_VALIDAR);
-            cs.setInt(1, dto.getEntidad().getId());
+            cs.setString(1, dto.getEntidad().getView());
+            cs.setInt(2, dto.getEntidad().getId());
             
             cs.executeUpdate();
         } finally {

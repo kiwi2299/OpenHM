@@ -205,7 +205,11 @@
                 cont += '<h3>DESCRIPCIÓN: ' + feature.get('DESCRIPTION') + '</h3>';
                 cont += '<h3>YEAR: ' + feature.get('YEAR') + '</h3>';
                 cont += '<h3>SOURCE: ' + feature.get('SOURCE') + '</h3>';
-
+                cont += '<h3>SOURCE: ' + feature.get('MAP_ID') + '</h3>';
+                cont+= '<form action="Mapa?accion=editar" method="post">';
+                cont+= '<input type="hidden" value="'+feature.get('MAP_ID')+'" name="id"/>';
+                cont+= '<button type="submit" class="btn btn-primary">Editar</button></form>';
+                            
                 content.innerHTML = cont;
                 popup.setPosition(evt.coordinate);
 

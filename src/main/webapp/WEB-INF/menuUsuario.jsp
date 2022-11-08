@@ -18,7 +18,7 @@
     <div class="container">
             <h1>${dto.entidad.name}</h1>
             <h2>Tus mapas</h2>
-            <h5>${msj}</h5>
+            <h5>${msj_us}</h5>
             <form action="Mapa?accion=verMapasUs" method="post">
                 <input type="hidden" value="${dto.entidad.id}" name="id"/>
                 <button type="submit" class="btn btn-primary">Ver Mapas</button>

@@ -124,10 +124,13 @@ public class LoginControlador extends HttpServlet {
                     //System.out.println(year);
                     mdto.getEntidad().setYear(year);
                     List listaMapas = mdao.readYear(mdto);
-                    String geojson = geojson(listaMapas);
-                    mdto.getEntidad().setMap(geojson);
-                    //System.out.println(mdto);
-                    geojsonList.add(mdto);
+                    if(listaMapas != null){
+                        String geojson = geojson(listaMapas);
+                        mdto.getEntidad().setMap(geojson);
+                        //System.out.println(mdto);
+                        geojsonList.add(mdto);
+                    }
+                    
                 }
                 
 //                for (int i = 0; i < geojsonList.size(); i++) {
@@ -184,6 +187,7 @@ public class LoginControlador extends HttpServlet {
             geojsonString += "{'type':'Feature','geometry':"+mapa.getEntidad().getMap()+","
                     + "'id':"+mapa.getEntidad().getId()+","
                     + "'properties':{"
+                        + "\"MAP_ID\":\""+mapa.getEntidad().getId()+"\","
                         + "'COUNTRY_NAME':'"+mapa.getEntidad().getName()+"',"
                         + "'DESCRIPTION':'"+mapa.getEntidad().getDescription()+"',"
                         + "'SOURCE':'"+mapa.getEntidad().getSource()+"',"

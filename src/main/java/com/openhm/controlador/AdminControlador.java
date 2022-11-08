@@ -131,24 +131,61 @@ public class AdminControlador extends HttpServlet {
         MapaDTO mdto = new MapaDTO();
         mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
         try {
-            mdto = mdao.read(mdto);
+           // mdto = mdao.read(mdto);
             mdto.getEntidad().setView("En Proceso");
             mdao.updateValidar(mdto);
         } catch (SQLException ex) {
             Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            request.setAttribute("msj","Mapa en Proceso de Validación");
+            request.setAttribute("msj_us","Mapa en Proceso de Validación");
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Usuario?accion=menu");
             dispatcher.forward(request, response);
         } 
     }
 
-    private void aceptar(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void aceptar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession sesion = request.getSession();
+        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("user");
+        UsuarioDAO dao = new UsuarioDAO();
+        MapaDAO mdao = new MapaDAO();
+        MapaDTO mdto = new MapaDTO();
+        mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
+        try {
+            
+            mdto.getEntidad().setView("Visible");
+            mdao.updateValidar(mdto);
+            List listaMapas = mdao.readAllUser(dto);
+            sesion.setAttribute("listaMapas",listaMapas);
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            sesion.setAttribute("msj_admin", "Mapa aceptado");    
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/mapasUsuario.jsp");
+            dispatcher.forward(request, response);
+        } 
     }
 
-    private void rechazar(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void rechazar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession sesion = request.getSession();
+        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("user");
+        UsuarioDAO dao = new UsuarioDAO();
+        MapaDAO mdao = new MapaDAO();
+        MapaDTO mdto = new MapaDTO();
+        mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
+        try {
+            
+            mdto.getEntidad().setView("No visible");
+            mdao.updateValidar(mdto);
+            List listaMapas = mdao.readAllUser(dto);
+            sesion.setAttribute("listaMapas",listaMapas);
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            sesion.setAttribute("msj_admin", "Mapa rechazado");    
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/mapasUsuario.jsp");
+            dispatcher.forward(request, response);
+        }
     }
 
     private void verMapas(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -162,7 +199,7 @@ public class AdminControlador extends HttpServlet {
             //dto pasar nombre de usuario también
             List listaMapas = mdao.readAllUser(dto);
             //sesion.setAttribute("msj", null);
-            sesion.setAttribute("msj_us", null); 
+            sesion.setAttribute("msj_admin", null); 
             sesion.setAttribute("user",dto);
             sesion.setAttribute("listaMapas",listaMapas);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/mapasUsuario.jsp");
