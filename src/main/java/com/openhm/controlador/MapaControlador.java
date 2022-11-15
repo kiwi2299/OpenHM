@@ -232,11 +232,15 @@ public class MapaControlador extends HttpServlet {
                 for (int i = 0; i < y.size(); i++) {
                     MapaDTO mdtos = new MapaDTO();
                     int year = (int) y.get(i);
+                    //System.out.println(year);
                     mdtos.getEntidad().setYear(year);
                     List listaMapas = mdao.readYear(mdtos);
-                    String geojson = geojson(listaMapas);
-                    mdtos.getEntidad().setMap(geojson);
-                    geojsonList.add(mdtos);
+                    if(listaMapas != null){
+                        String geojson = geojson(listaMapas);
+                        mdtos.getEntidad().setMap(geojson);
+                        //System.out.println(mdto);
+                        geojsonList.add(mdtos);
+                    }
                 }
                 sesion.setAttribute("geojsonList",geojsonList);
             } catch (SQLException ex) {

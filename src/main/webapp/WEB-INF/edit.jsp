@@ -34,7 +34,7 @@
         
         <h1 class="nav-item">Open History Mapper</h1>
         <form action="Usuario?accion=menu" method="post">
-            <button class="btn btn-primary" type="submit">Regresar</button>
+            <button class="btn btn-dark" type="submit">Regresar</button>
         </form>
     </div>
     

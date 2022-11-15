@@ -25,10 +25,14 @@
     
   </head>
   <body>
-      <form action="Mapa?accion=display" method="post">
-                                
-            <button type="submit" class="btn btn-dark">Regresar</button>
+    <div class="topnav">
+       
+        
+        <h1 class="nav-item">Open History Mapper</h1>
+        <form action="Usuario?accion=menu" method="post">
+            <button class="btn btn-dark" type="submit">Regresar</button>
         </form>
+    </div>
     <div id="map" class="map"></div>
     <div class="container">
         
