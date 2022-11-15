@@ -25,10 +25,6 @@
     
   </head>
   <body>
-      <form action="Mapa?accion=display" method="post">
-                                
-            <button type="submit" class="btn btn-dark">Regresar</button>
-        </form>
     <div id="map" class="map"></div>
     <div class="container">
         

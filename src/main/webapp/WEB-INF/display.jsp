@@ -37,7 +37,7 @@
         
             <c:choose>
                 <c:when test="${dto.entidad.tipo == 'mapper'}">
-                    <form action="Mapa?accion=draw" method="post">
+                    <form action="Mapa?accion=draw2" method="post">
                         <button class="btn btn-primary" type="submit">Dibujar</button>
                     </form>
                     <form action="Login?accion=cerrar" method="post">

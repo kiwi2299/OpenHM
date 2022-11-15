@@ -83,6 +83,9 @@ public class MapaControlador extends HttpServlet {
                     case "draw":
                         draw(request, response);
                         break;
+                    case "draw2":
+                        draw2(request, response);
+                        break;
                     case "verMapasUs":
                         verMapasUs(request, response);
                         break;
@@ -463,6 +466,11 @@ public class MapaControlador extends HttpServlet {
 
     private void draw(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/draw.jsp");
+        dispatcher.forward(request, response);
+    }
+    
+    private void draw2(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/draw2.jsp");
         dispatcher.forward(request, response);
     }
 
