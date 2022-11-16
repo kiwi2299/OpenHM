@@ -25,6 +25,9 @@ public class MapaDAO {
     private static final String SQL_READ_YEAR_USER="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where year = ? and user_id = ?";
     private static final String SQL_READ_ALL_USER="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where user_id = ?";
     private static final String SQL_YEARS="select year from mapa group by year order by year";
+    private static final String SQL_COUNT_YEAR="select count(id) from mapa where year=? and view = 'Visible'";
+    private static final String SQL_SEARCH="select m.id, m.name,u.name as user_id,year,view, ST_AsGeoJson(map),description,source,insert_date, update_date from mapa as m inner join usuario as u on user_id = u.id where LOWER(m.name) like LOWER(?) or LOWER(description) like LOWER(?) or cast(year as character varying) like ? or LOWER(source) like LOWER(?)";
+    
     
 
     private Connection con;
@@ -273,7 +276,7 @@ public class MapaDAO {
     
     /**
      * Obtiene una lista de todos los años únicos presentes en la base de datos
-     * @return 
+     * @return List de int
      * @throws java.sql.SQLException
      */ 
      public List years() throws SQLException{
@@ -289,6 +292,82 @@ public class MapaDAO {
                 resultados.add(rs.getInt("year"));
             }
              
+            if (resultados.size() > 0) {
+                return resultados;
+            }else{
+                return null;
+            }
+        } finally {
+            if(rs != null){
+                rs.close();
+            }
+            if(cs != null){
+                cs.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
+     /**
+     * Obtiene la cantidad de mapas de un determinado año
+     * @param year
+     * @return int
+     * @throws java.sql.SQLException
+     */
+    public int countYear(int year) throws SQLException{
+        ObtenerConexion();
+        PreparedStatement cs = null;
+        ResultSet rs =null;
+        int resultados = 0;
+        
+        try {
+            cs = con.prepareStatement(SQL_COUNT_YEAR);
+            cs.setInt(1, year);
+            rs = cs.executeQuery();
+            while (rs.next()) {                          
+                resultados = rs.getInt("count");
+            }
+             
+            if (resultados != 0) {
+                return resultados;
+            }else{
+                return 0;
+            }
+        } finally {
+            if(rs != null){
+                rs.close();
+            }
+            if(cs != null){
+                cs.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
+     /**
+     * Busca el parámetro 
+     * @param search
+     * @return List
+     * @throws java.sql.SQLException
+     */
+    public List search(String search) throws SQLException{
+        ObtenerConexion();
+        PreparedStatement cs = null;
+        ResultSet rs =null;
+        
+        
+        try {
+            cs = con.prepareStatement(SQL_SEARCH);
+            cs.setString(1, "%"+search+"%");
+            cs.setString(2, "%"+search+"%");
+            cs.setString(3, "%"+search+"%");
+            cs.setString(4, "%"+search+"%");
+            rs = cs.executeQuery();
+            List resultados = obtenerResultadosBusqueda(rs);
             if (resultados.size() > 0) {
                 return resultados;
             }else{
@@ -326,6 +405,25 @@ public class MapaDAO {
         return resultados;
     }
     
+    private List obtenerResultadosBusqueda(ResultSet rs) throws SQLException{
+        List resultados = new ArrayList();
+        while (rs.next()) {            
+            MapaDTO dto = new MapaDTO();
+            dto.getEntidad().setId(rs.getInt("id"));
+            dto.getEntidad().setName(rs.getString("name"));
+            dto.getEntidad().setUserName(rs.getString("user_id"));
+            dto.getEntidad().setYear(rs.getInt("year"));
+            dto.getEntidad().setView(rs.getString("view"));
+            dto.getEntidad().setMap(rs.getString("ST_AsGeoJson"));
+            dto.getEntidad().setDescription(rs.getString("description"));
+            dto.getEntidad().setSource(rs.getString("source"));
+            dto.getEntidad().setInsert_date(rs.getString("insert_date"));
+            
+            resultados.add(dto);
+        }
+        return resultados;
+    }
+    
     public static void main(String[] args) {
         MapaDAO dao = new MapaDAO();
         UsuarioDTO dto = new UsuarioDTO();
@@ -337,7 +435,7 @@ public class MapaDAO {
             
             //dto = dao.read(dto);
             //System.out.println(dto.getEntidad().getMap());
-            System.out.println(dao.readAllUser(dto));
+            System.out.println(dao.search("me"));
         } catch (SQLException ex) {
             Logger.getLogger(MapaDAO.class.getName()).log(Level.SEVERE, null, ex);
         }

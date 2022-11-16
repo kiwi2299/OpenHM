@@ -55,6 +55,9 @@
                     <form action="Admin?accion=menu" method="post">
                         <button class="btn btn-primary" type="submit">Menú Admin</button>
                     </form>
+                    <form action="Usuario?accion=menu" method="post">
+                        <button class="btn btn-primary" type="submit">Tus Mapas</button>
+                    </form>
                 </c:when>
                 <c:otherwise>
                     <form action="Usuario?accion=crear" method="post">                        
@@ -63,7 +66,14 @@
                 </c:otherwise>
              </c:choose>
 
-       
+       <form action="Mapa?accion=buscar" method="post">
+            <div class="mb-3">
+              <label for="name">Búsqueda</label>
+              <input  type="text" class="form-control" id="search" name="search" aria-describedby="searchHelp" required>
+              <div id="searchHelp" class="form-text">Ingresa el nombre, descripción, año o fuente</div>
+            </div>
+           <button type="submit" class="btn btn-dark">Buscar</button>
+        </form>
         
         
     

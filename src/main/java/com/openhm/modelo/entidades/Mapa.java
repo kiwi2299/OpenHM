@@ -10,15 +10,33 @@ public class Mapa implements Serializable{
     private int id;
     private String name;
     private int user_id;
+    private String userName;
     private int year;
     private String view;
     private String map;
     private String description;
     private String source;
     private String insert_date;
+    private String update_date;
+
+    public String getUpdate_date() {
+        return update_date;
+    }
+
+    public void setUpdate_date(String update_date) {
+        this.update_date = update_date;
+    }
 
     public int getId() {
         return id;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public void setId(int id) {

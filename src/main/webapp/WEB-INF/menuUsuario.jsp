@@ -19,6 +19,10 @@
             <h1>${dto.entidad.name}</h1>
             <h2>Tus mapas</h2>
             <h5>${msj_us}</h5>
+            <form action="Mapa?accion=display" method="post">
+                                
+                <button type="submit" class="btn btn-dark">Regresar</button>
+            </form> 
             <form action="Mapa?accion=verMapasUs" method="post">
                 <input type="hidden" value="${dto.entidad.id}" name="id"/>
                 <button type="submit" class="btn btn-primary">Ver Mapas</button>
@@ -60,7 +64,7 @@
                                 <button type="submit" class="btn btn-primary">Editar</button>
                             </form>
                         </td>
-                        <c:if test="${mdto.entidad.view == 'No visible'}">
+                        <c:if test="${mdto.entidad.view == 'No visible' || mdto.entidad.view == 'En Proceso'}">
                         <td>
                             <form action="Mapa?accion=borrar" method="post">
                                 <input type="hidden" value="${mdto.entidad.id}" name="id"/>
@@ -80,10 +84,7 @@
                 </c:forEach>
             </tbody>
         </table>
-        <form action="Mapa?accion=display" method="post">
-                                
-            <button type="submit" class="btn btn-dark">Regresar</button>
-        </form> 
+        
         
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>

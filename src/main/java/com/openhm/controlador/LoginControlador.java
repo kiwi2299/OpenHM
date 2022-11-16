@@ -106,7 +106,7 @@ public class LoginControlador extends HttpServlet {
             dto = dao.read(dto);
             
             if (dto != null) {
-                //System.out.println(dto.getEntidad().getName());
+                System.out.println(dto.getEntidad().getTipo());
                 
                /* List listaMapas = mdao.readYear(mdto);
                 if(!listaMapas.isEmpty()){
@@ -124,7 +124,9 @@ public class LoginControlador extends HttpServlet {
                     //System.out.println(year);
                     mdto.getEntidad().setYear(year);
                     List listaMapas = mdao.readYear(mdto);
+                    
                     if(listaMapas != null){
+                        System.out.println("año "+year+" "+listaMapas.size());
                         String geojson = geojson(listaMapas);
                         mdto.getEntidad().setMap(geojson);
                         //System.out.println(mdto);

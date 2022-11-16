@@ -89,6 +89,9 @@ public class MapaControlador extends HttpServlet {
                     case "verMapasUs":
                         verMapasUs(request, response);
                         break;
+                    case "buscar":
+                        buscar(request, response);
+                        break;
                     default:
                         response.sendRedirect("index.html");
                 }
@@ -227,41 +230,50 @@ public class MapaControlador extends HttpServlet {
         if(request.getParameter("id").equals("")){
             try {
                 mdao.create(mdto);
-                List y = mdao.years();
-                List geojsonList = new ArrayList();
-                for (int i = 0; i < y.size(); i++) {
-                    MapaDTO mdtos = new MapaDTO();
-                    int year = (int) y.get(i);
-                    //System.out.println(year);
-                    mdtos.getEntidad().setYear(year);
-                    List listaMapas = mdao.readYear(mdtos);
-                    if(listaMapas != null){
-                        String geojson = geojson(listaMapas);
-                        mdtos.getEntidad().setMap(geojson);
-                        //System.out.println(mdto);
-                        geojsonList.add(mdtos);
-                    }
-                }
-                sesion.setAttribute("geojsonList",geojsonList);
+                
             } catch (SQLException ex) {
                 Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
-                sesion.setAttribute("msj","Mapa registrado");
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
-                dispatcher.forward(request, response);
-            }
-        }else{
-            try {
-                //update
-                mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
-                mdao.update(mdto);
-            } catch (SQLException ex) {
-                Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                sesion.setAttribute("msj_us","Mapa actualizado");
+                sesion.setAttribute("msj_us","Mapa registrado");
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Usuario?accion=menu");
                 dispatcher.forward(request, response);
             }
+        }else{//update
+            if(dto.getEntidad().getTipo().equals("admin")){
+                System.out.println("admin aqio");
+                try {
+                    mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
+                    mdto.getEntidad().setView("Visible");
+                    mdao.update(mdto);
+                } catch (SQLException ex) {
+                    Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                sesion.setAttribute("msj","Mapa actualizado");
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Mapa?accion=display");
+                dispatcher.forward(request, response);
+            }else{
+                try {
+                
+                mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
+                MapaDTO newdto = mdto;
+                newdto = mdao.read(newdto);
+                if(newdto.getEntidad().getView().equals("Visible")){
+                    mdao.create(mdto);
+                    sesion.setAttribute("msj_us","Mapa registrado");
+                }else{
+                    mdao.update(mdto);
+                    sesion.setAttribute("msj_us","Mapa actualizado");
+                }
+                        
+                } catch (SQLException ex) {
+                    Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+
+                    RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Usuario?accion=menu");
+                    dispatcher.forward(request, response);
+                }
+            }
+            
         }
         
     }
@@ -272,25 +284,26 @@ public class MapaControlador extends HttpServlet {
         HttpSession sesion = request.getSession();
         int id = Integer.parseInt(request.getParameter("id"));
         mdto.getEntidad().setId(id);
-        
-        
-        try {
-            mdto = mdao.read(mdto);
-            List geojsonList = new ArrayList();
-            geojsonList.add(mdto);
-            String geojson = geojson(geojsonList);
-            sesion.setAttribute("geojson",geojson);
-            sesion.setAttribute("mdto",mdto);
-            //System.out.println(geojsonString);
-            //sesion.setAttribute("geojsonString",geojsonString);
-        } catch (SQLException ex) {
-            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/edit.jsp");
-            dispatcher.forward(request, response);
-        }
-        
-        
+        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
+        if(dto == null){
+            ver(request,response, mdto);
+        }else{
+            try {
+                mdto = mdao.read(mdto);
+                List geojsonList = new ArrayList();
+                geojsonList.add(mdto);
+                String geojson = geojson(geojsonList);
+                sesion.setAttribute("geojson",geojson);
+                sesion.setAttribute("mdto",mdto);
+                //System.out.println(geojsonString);
+                //sesion.setAttribute("geojsonString",geojsonString);
+            } catch (SQLException ex) {
+                Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+            }finally{
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/edit.jsp");
+                dispatcher.forward(request, response);
+            }
+        }   
     }
 
     private void borrar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {       
@@ -302,7 +315,7 @@ public class MapaControlador extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            request.setAttribute("msj","Mapa borrado");
+            request.setAttribute("msj_us","Mapa borrado");
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Usuario?accion=menu");
             dispatcher.forward(request, response);
         }
@@ -474,12 +487,29 @@ public class MapaControlador extends HttpServlet {
     }
     
     private void draw2(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/draw2.jsp");
+        HttpSession  sesion = request.getSession();
+        MapaDAO mdao = new MapaDAO();
+        int year = 2022;
+        String syear = request.getParameter("drawyear");
+        if(syear != null){
+            year = Integer.parseInt(syear);
+            
+        }
+             
+        try {
+            System.out.println(year);
+            
+            sesion.setAttribute("year",year);
+            sesion.setAttribute("count",mdao.countYear(year));
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/draw2.jsp");
         dispatcher.forward(request, response);
     }
 
     private void display(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession  sesion = request.getSession();;
+        HttpSession  sesion = request.getSession();
         MapaDAO mdao = new MapaDAO();
         //MapaDTO mdto = new MapaDTO(); 
         //mdto.getEntidad().setYear(1888);
@@ -597,6 +627,40 @@ public class MapaControlador extends HttpServlet {
             Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/displayUser.jsp");
+                dispatcher.forward(request, response);
+        }
+    }
+
+    private void buscar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession  sesion = request.getSession();;
+        MapaDAO mdao = new MapaDAO();
+        
+        try {
+            String search = request.getParameter("search");
+            List listaMapas = mdao.search(search);
+            sesion.setAttribute("listaMapas",listaMapas);
+            sesion.setAttribute("search",search);
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/busqueda.jsp");
+                dispatcher.forward(request, response);
+        }
+    }
+
+    private void ver(HttpServletRequest request, HttpServletResponse response, MapaDTO mdto) throws ServletException, IOException {
+        HttpSession  sesion = request.getSession();;
+        MapaDAO mdao = new MapaDAO();
+        try {
+            mdto = mdao.read(mdto);
+            List listaMapas = new ArrayList();
+            listaMapas.add(mdto);        
+            String geojson = geojson(listaMapas);
+            sesion.setAttribute("geojsonList",geojson);
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/displayInvitado.jsp");
                 dispatcher.forward(request, response);
         }
     }
