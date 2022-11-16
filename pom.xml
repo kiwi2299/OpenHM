@@ -32,55 +32,17 @@
             <version>1.2.6</version>
         </dependency>
          <!-- Provides map projections -->
+         <!-- Se esta usando org.apache.commons.lang3.StringUtils.join;  y split en MapaControlador -->
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-epsg-hsql</artifactId>
             <version>${geotools.version}</version>
         </dependency>
-        <!-- Provides support for PostGIS. Note the different groupId -->
-        <dependency>
-            <groupId>org.geotools.jdbc</groupId>
-            <artifactId>gt-jdbc-postgis</artifactId>
-            <version>${geotools.version}</version>
-        </dependency>
-        <!-- Provides support for shapefiles -->
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-shapefile</artifactId>
-            <version>${geotools.version}</version>
-        </dependency>
-        <!-- Provides GUI components -->
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-swing</artifactId>
-            <version>${geotools.version}</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/net.postgis/postgis-jdbc -->
-        <dependency>
-            <groupId>net.postgis</groupId>
-            <artifactId>postgis-jdbc</artifactId>
-            <version>2.5.1</version>
-        </dependency>
         
         
     </dependencies>
     
-    <repositories>
-       <repository>
-         <id>osgeo</id>
-         <name>OSGeo Release Repository</name>
-         <url>https://repo.osgeo.org/repository/release/</url>
-         <snapshots><enabled>false</enabled></snapshots>
-         <releases><enabled>true</enabled></releases>
-       </repository>
-       <repository>
-         <id>osgeo-snapshot</id>
-         <name>OSGeo Snapshot Repository</name>
-         <url>https://repo.osgeo.org/repository/snapshot/</url>
-         <snapshots><enabled>true</enabled></snapshots>
-         <releases><enabled>false</enabled></releases>
-       </repository>
-     </repositories>
+    
 
      <build>
         <plugins>
