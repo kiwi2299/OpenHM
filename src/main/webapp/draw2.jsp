@@ -102,27 +102,29 @@
         const raster = new ol.layer.Tile({
           source: new ol.source.OSM(),
         });
-
+        
+        var source = new ol.source.Vector({wrapX: false});
+        var vector = new ol.layer.Vector({
+            source: source,
+            title: 'Dibujo'
+          });
+                          
         <c:forEach items="${geojsonList}" var="mdto"> 
             <c:choose>
                 <c:when test="${mdto.entidad.year == year}">
                     
 
-                       var source = new ol.source.Vector({
+                       source = new ol.source.Vector({
                             features:  new ol.format.GeoJSON().readFeatures(${mdto.entidad.map}),                                            
                         });
-                        const vector = new ol.layer.Vector({
+                        vector = new ol.layer.Vector({
                             source: source,
                             title: '${mdto.entidad.year}'
                           });
                 </c:when>
                 <c:otherwise>
                      
-                        var source = new ol.source.Vector({wrapX: false});
-                        const vector = new ol.layer.Vector({
-                            source: source,
-                            title: 'Dibujo'
-                          });
+                        
                 </c:otherwise>
             </c:choose>                       
         </c:forEach>  
