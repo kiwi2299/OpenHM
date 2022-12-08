@@ -56,6 +56,9 @@ public class AdminControlador extends HttpServlet {
                     case "menu":
                         menu(request, response);
                         break;
+                    case "borrar":
+                        borrar(request, response);
+                        break;
                     default:
                         response.sendRedirect("index.html");
                 }
@@ -206,6 +209,30 @@ public class AdminControlador extends HttpServlet {
             dispatcher.forward(request, response);
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void borrar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {  
+        HttpSession sesion = request.getSession();
+        MapaDAO mdao = new MapaDAO();
+        MapaDTO mdto = new MapaDTO();
+        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
+        mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
+        try {
+            mdao.delete(mdto);
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if(dto.getEntidad().getTipo().equals("mapper")){
+                request.setAttribute("msj_us","Mapa en proceso de eliminación");
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Usuario?accion=menu");
+                dispatcher.forward(request, response);
+            }else if(dto.getEntidad().getTipo().equals("admin")){
+                request.setAttribute("msj_admin","Mapa borrado");
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/mapasUsuario.jsp");
+                dispatcher.forward(request, response);
+            }
+                
         }
     }
 }

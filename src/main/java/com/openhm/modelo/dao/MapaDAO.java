@@ -32,17 +32,17 @@ public class MapaDAO {
 
     private Connection con;
     public Connection ObtenerConexion(){       
-//         String usr = "postgres";
-//        String pwd = "postgres";
-//        String driver = "org.postgresql.Driver";
-//        String url = "jdbc:postgresql://localhost:5432/postgres";
+         String usr = "postgres";
+        String pwd = "postgres";
+        String driver = "org.postgresql.Driver";
+        String url = "jdbc:postgresql://localhost:5432/postgres";
         //?sslmode=required
         
         //heroku
-        String usr = "ctkofwkznexjio";
-       String pwd = "5b65ec04731aa5e62263934fc82cf236f9f2f6be3ffe5e73d7bfcacb9ed2cead";
-       String driver = "org.postgresql.Driver";
-        String url = "jdbc:postgresql://ec2-3-219-19-205.compute-1.amazonaws.com:5432/db924bd23if0r2";
+//        String usr = "ctkofwkznexjio";
+//       String pwd = "5b65ec04731aa5e62263934fc82cf236f9f2f6be3ffe5e73d7bfcacb9ed2cead";
+//       String driver = "org.postgresql.Driver";
+//        String url = "jdbc:postgresql://ec2-3-219-19-205.compute-1.amazonaws.com:5432/db924bd23if0r2";
         try{
             Class.forName(driver);
             con = DriverManager.getConnection(url,usr,pwd);
@@ -191,7 +191,7 @@ public class MapaDAO {
         }
     }
 
-     public List readYear(MapaDTO dto) throws SQLException{
+    public List readYear(MapaDTO dto) throws SQLException{
         ObtenerConexion();
         PreparedStatement cs = null;
         ResultSet rs =null;
@@ -219,7 +219,7 @@ public class MapaDAO {
     }
      
      
-     public List readYearUser(MapaDTO dto) throws SQLException{
+    public List readYearUser(MapaDTO dto) throws SQLException{
         ObtenerConexion();
         PreparedStatement cs = null;
         ResultSet rs =null;
@@ -279,7 +279,7 @@ public class MapaDAO {
      * @return List de int
      * @throws java.sql.SQLException
      */ 
-     public List years() throws SQLException{
+    public List years() throws SQLException{
         ObtenerConexion();
         PreparedStatement cs = null;
         ResultSet rs =null;

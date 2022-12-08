@@ -85,3 +85,6 @@ h1{
 .ol-popup-closer:after{
     content: "X";
 }
+.popover-body {
+    min-width: 276px;
+}

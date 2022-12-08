@@ -18,8 +18,7 @@
     <div class="container">
         <h1>Administrador ${dto.entidad.name}</h1>
         <h2>Usuarios del sistema</h2>
-        <form action="Mapa?accion=display" method="post">
-                                
+        <form action="Mapa?accion=display" method="post">            
             <button type="submit" class="btn btn-dark">Regresar</button>
         </form>
         <table class="table">
@@ -27,6 +26,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
+                    <th>Activo</th>
                     <th colspan="1">Acciones</th>
                 </tr>
             </thead>
@@ -35,15 +35,14 @@
                     var="mdto"
                     items="${listaUsuarios}">
                     <tr>
-                        <td>
-                            <a 
-                                class ='btn btn-primary btn-xs'
-                                href="Usuario?accion=ver&id=<c:out value="${mdto.entidad.id}"/>">
-                                <c:out value="${mdto.entidad.id}"/>
-                            </a>
+                        <td>    
+                            <c:out value="${mdto.entidad.id}"/>
                         </td>
                         <td>
                             <c:out value="${mdto.entidad.name}"/>
+                        </td>
+                        <td>
+                            <c:out value="${mdto.entidad.activo}"/>
                         </td>
                         <td>
                             <form action="Admin?accion=verMapas" method="post">

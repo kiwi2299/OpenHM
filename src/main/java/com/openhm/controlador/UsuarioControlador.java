@@ -53,6 +53,9 @@ public class UsuarioControlador extends HttpServlet {
                     case "insertar":
                         insertar(request, response);
                         break;
+                    case "update":
+                        update(request, response);
+                        break;
                     case "seleccionar":
                         seleccionar(request, response);
                         break;
@@ -62,8 +65,11 @@ public class UsuarioControlador extends HttpServlet {
                     case "menu":
                         menu(request, response);
                         break;
+                    case "gestion":
+                        gestion(request, response);
+                        break;
                     default:
-                        response.sendRedirect("index.html");
+                        response.sendRedirect("index.html?error=3");
                 }
             } else {
                 response.sendRedirect("index.html");
@@ -140,7 +146,7 @@ public class UsuarioControlador extends HttpServlet {
 //            }
 //        } else {
         try {
-            dto = dao.read(dto);
+            dto = dao.readUser(dto);
             if (dto != null) {
                 sesion.setAttribute("msj_us", "El usuario "+dto.getEntidad().getName()+" ya existe.");
                 sesion.setAttribute("msj",null);
@@ -175,6 +181,89 @@ public class UsuarioControlador extends HttpServlet {
             Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
         }            
     }
+    
+    private void update(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        HttpSession sesion = request.getSession();
+        UsuarioDTO ndto;
+        int query = 0;
+        int check = 0;
+        UsuarioDAO dao = new UsuarioDAO();
+        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
+        UsuarioDTO adto = new UsuarioDTO();
+        adto.setEntidad(dto.getEntidad());
+        System.out.println(dto);
+        int id = Integer.parseInt(request.getParameter("id"));
+        if(dto.getEntidad().getId() == id){
+            String name = request.getParameter("name");
+            String pass = request.getParameter("password");
+            String email = request.getParameter("email");
+            if(!name.equals("")){
+                check = 1;
+                dto.getEntidad().setName(request.getParameter("name"));
+            }
+            
+            if(!pass.equals("")){
+                dto.getEntidad().setPassword(request.getParameter("password"));
+            }else{
+                query = 1;
+            }
+            
+            if(!email.equals("")){
+                dto.getEntidad().setEmail(request.getParameter("email"));
+            }
+            ndto = dto;
+            try {
+                if(check == 1){
+                    dto = dao.readUser(dto);
+                    if (dto != null) {
+                        System.out.println(adto);
+                        sesion.setAttribute("dto", adto);
+                        sesion.setAttribute("msj_us", "El usuario "+dto.getEntidad().getName()+" ya existe.");
+                        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/gestionUsuario.jsp");
+                        dispatcher.forward(request, response);
+                    }else{
+                        if(query == 0)
+                            dao.update(ndto);
+                        else
+                            dao.updateNoPass(ndto);
+        //                dto = dao.read(ndto);
+        //                if (dto != null) {
+                        sesion.setAttribute("msj_us", "Usuario modificado");
+                        //sesion.setAttribute("dto", dto);
+                        //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
+                        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/gestionUsuario.jsp");
+                        dispatcher.forward(request, response);
+                    }    
+                }else{
+                    if(query == 0)
+                        dao.update(ndto);
+                    else
+                        dao.updateNoPass(ndto);
+    //                dto = dao.read(ndto);
+    //                if (dto != null) {
+                    sesion.setAttribute("msj_us", "Usuario modificado");
+                    //sesion.setAttribute("dto", dto);
+                    //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
+                    RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/gestionUsuario.jsp");
+                    dispatcher.forward(request, response);
+    //                }else{
+//                    sesion.setAttribute("msj_us", "No se pudo modificar el usuario");
+//                    RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/gestionUsuario.jsp");
+//                    dispatcher.forward(request, response);
+//                }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
+            }            
+            
+        }else{
+            sesion.setAttribute("dto", null);
+            sesion.setAttribute("msj", "Sesión terminada");
+            response.sendRedirect("index.html?error=2");
+        }
+        
+        
+    }
 
     private void seleccionar(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UsuarioDTO dto = new UsuarioDTO();
@@ -192,16 +281,18 @@ public class UsuarioControlador extends HttpServlet {
     }
 
     private void borrar(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession sesion = request.getSession();
         UsuarioDTO dto = new UsuarioDTO();
         UsuarioDAO dao = new UsuarioDAO();
-        dto.getEntidad().setId(Integer.parseInt(request.getParameter("userId")));
+        dto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
         try {
             dao.delete(dto);
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
-            request.setAttribute("msj","Usuario borrado");
-            response.sendRedirect("menuUsuario.jsp");
+            sesion.setAttribute("dto", null);
+            sesion.setAttribute("msj", "Sesión terminada");
+            response.sendRedirect("index.html?error=4");
         }
     }
     
@@ -229,15 +320,42 @@ public class UsuarioControlador extends HttpServlet {
         HttpSession sesion = request.getSession();
         MapaDAO mdao = new MapaDAO();
         UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
-        try {
-            List listaMapas = mdao.readAllUser(dto);
-            //sesion.setAttribute("msj", null);
-            sesion.setAttribute("msj_us", null); 
-            sesion.setAttribute("listaMapas",listaMapas);
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/menuUsuario.jsp");
-            dispatcher.forward(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
+        if(dto == null){
+            sesion.setAttribute("dto", null);
+            sesion.setAttribute("msj", "Sesión terminada");
+            response.sendRedirect("index.html?error=2");
+        }else{
+            try {
+                List listaMapas = mdao.readAllUser(dto);
+                //sesion.setAttribute("msj", null);
+                sesion.setAttribute("msj_us", null); 
+                sesion.setAttribute("listaMapas",listaMapas);
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/menuUsuario.jsp");
+                dispatcher.forward(request, response);
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+        
     }
+
+    private void gestion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession sesion = request.getSession();
+        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
+        UsuarioDAO dao = new UsuarioDAO();
+        int id = Integer.parseInt(request.getParameter("id"));
+        if(dto.getEntidad().getId() == id){
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/gestionUsuario.jsp");
+            dispatcher.forward(request, response);
+            sesion.setAttribute("dto", dto);
+            sesion.setAttribute("msj_us", null);
+        }else{
+            sesion.setAttribute("dto", null);
+            sesion.setAttribute("msj", "Sesión terminada");
+            response.sendRedirect("index.html?error=2");
+        }
+        
+    }
+
+    
 }

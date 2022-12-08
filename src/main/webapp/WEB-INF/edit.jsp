@@ -65,7 +65,7 @@
             <div class="mb-3">
               <label for="name">ID</label>
               <input  type="text" class="form-control" id="id" name="id" value="${mdto.entidad.id}"  readonly>
-              
+              <input  type="hidden" class="form-control" id="user_id" name="user_id" value="${mdto.entidad.user_id}" >
             </div>
             <div class="mb-3">
               <label for="name">Nombre</label>

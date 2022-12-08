@@ -12,6 +12,15 @@ public class Usuario implements Serializable{
     private String password;
     private String email;
     private String tipo;
+    private boolean activo;
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
 
     public String getTipo() {
         return tipo;

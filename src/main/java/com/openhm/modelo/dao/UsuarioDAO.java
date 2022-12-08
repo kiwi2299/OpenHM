@@ -21,28 +21,26 @@ import java.util.logging.Logger;
 
 public class UsuarioDAO {
     
-    private static final String SQL_INSERT="insert into usuario (name, password, email, tipo) values(?,crypt(?,gen_salt('bf')),?,'mapper')";
-    private static final String SQL_UPDATE="update usuario set name = ?, password = ?, email = ? where id = ?";
-    private static final String SQL_DELETE="delete from usuario where id = ?";
-    private static final String SQL_READ="select * from usuario where name = ? and password = crypt(?,password)";
+    private static final String SQL_INSERT="insert into usuario (name, password, email, tipo,activo) values(?,crypt(?,gen_salt('bf')),?,'mapper',true)";
+    private static final String SQL_UPDATE="update usuario set name = ?, password = crypt(?,gen_salt('bf')), email = ? where id = ?";
+    private static final String SQL_UPDATE_NOPASS="update usuario set name = ?, email = ? where id = ?";
+    private static final String SQL_DELETE="update usuario set activo = false where id = ?";
+    private static final String SQL_READ="select * from usuario where name = ? and password = crypt(?,password) and activo = true";
+    private static final String SQL_READ_USER="select * from usuario where name = ?";
     private static final String SQL_READ_ALL="select * from usuario";
 
     private Connection con;
     public Connection ObtenerConexion(){
-//       String usr = "postgres";
-//       String pwd = "postgres";
-//       String driver = "org.postgresql.Driver";
-//        String url = "jdbc:postgresql://localhost:5432/postgres";
-        
-//        String usr = "postgres";
-//       String pwd = "adminadmin";
-//       String driver = "org.postgresql.Driver";
-//        String url = "jdbc:postgresql://tt2-2021-b023.ci6bwbdlosva.us-west-1.rds.amazonaws.com:5432/openhm";
-        //heroku
-        String usr = "ctkofwkznexjio";
-       String pwd = "5b65ec04731aa5e62263934fc82cf236f9f2f6be3ffe5e73d7bfcacb9ed2cead";
+       String usr = "postgres";
+       String pwd = "postgres";
        String driver = "org.postgresql.Driver";
-        String url = "jdbc:postgresql://ec2-3-219-19-205.compute-1.amazonaws.com:5432/db924bd23if0r2";
+        String url = "jdbc:postgresql://localhost:5432/postgres";
+        
+        //heroku
+//        String usr = "ctkofwkznexjio";
+//       String pwd = "5b65ec04731aa5e62263934fc82cf236f9f2f6be3ffe5e73d7bfcacb9ed2cead";
+//       String driver = "org.postgresql.Driver";
+//        String url = "jdbc:postgresql://ec2-3-219-19-205.compute-1.amazonaws.com:5432/db924bd23if0r2";
         
         try{
             Class.forName(driver);
@@ -82,6 +80,25 @@ public class UsuarioDAO {
             cs.setString(2, dto.getEntidad().getPassword());
             cs.setString(3, dto.getEntidad().getEmail());
             cs.setInt(4, dto.getEntidad().getId());
+            cs.executeUpdate();
+        } finally {
+            if(cs != null){
+                cs.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
+    public void updateNoPass(UsuarioDTO dto) throws SQLException{
+        ObtenerConexion();
+        PreparedStatement cs = null; //Callablestatement es para stock procedures
+        try {
+            cs = con.prepareStatement(SQL_UPDATE_NOPASS);
+            cs.setString(1, dto.getEntidad().getName());
+            cs.setString(2, dto.getEntidad().getEmail());
+            cs.setInt(3, dto.getEntidad().getId());
             cs.executeUpdate();
         } finally {
             if(cs != null){
@@ -139,6 +156,34 @@ public class UsuarioDAO {
         }
     }
     
+    public UsuarioDTO readUser(UsuarioDTO dto) throws SQLException{
+        ObtenerConexion();
+        PreparedStatement cs = null;
+        ResultSet rs =null;
+        try {
+            cs = con.prepareStatement(SQL_READ_USER);
+            cs.setString(1, dto.getEntidad().getName());
+            //cs.setString(3, dto.getEntidad().getEmail());
+            rs = cs.executeQuery();
+            List resultados = obtenerResultados(rs);
+            if (resultados.size() > 0) {
+                return (UsuarioDTO) resultados.get(0);
+            }else{
+                return null;
+            }
+        } finally {
+            if(rs != null){
+                rs.close();
+            }
+            if(cs != null){
+                cs.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
     public List readAll() throws SQLException{
         ObtenerConexion();
         PreparedStatement cs = null;
@@ -174,6 +219,7 @@ public class UsuarioDAO {
             dto.getEntidad().setPassword(rs.getString("password"));
             dto.getEntidad().setEmail(rs.getString("email"));
             dto.getEntidad().setTipo(rs.getString("tipo"));
+            dto.getEntidad().setActivo(rs.getBoolean("activo"));
             resultados.add(dto);
         }
         return resultados;

@@ -1,7 +1,7 @@
 <%-- 
     Document   : menuUsuario
     Created on : 22/08/2022, 01:02:19 PM
-    Author     : Usuario
+    Author     : kiwir
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -27,6 +27,10 @@
                 <input type="hidden" value="${dto.entidad.id}" name="id"/>
                 <button type="submit" class="btn btn-primary">Ver Mapas</button>
             </form>
+            <form action="Usuario?accion=gestion" method="post">
+                <input type="hidden" value="${dto.entidad.id}" name="id"/>
+                <button type="submit" class="btn btn-primary">Gestión de Cuenta</button>
+            </form>
             <table class="table">
             <thead>
                 <tr>
@@ -35,7 +39,7 @@
                     <th>Nombre</th>
                     <th>Descripción</th>
                     <th>Visible</th>
-                    <th colspan="3">Acciones</th>
+                    <th colspan="4">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -77,6 +81,22 @@
                                 <form action="Admin?accion=validar" method="post">
                                     <input type="hidden" value="${mdto.entidad.id}" name="id"/>
                                     <button type="submit" class="btn btn-danger">Validar</button>
+                                </form>
+                            </td>
+                        </c:if>
+                        <c:if test="${mdto.entidad.view == 'Visible'}">
+                            <td>
+                                <form action="Admin?accion=borrar" method="post">
+                                    <input type="hidden" value="${mdto.entidad.id}" name="id"/>
+                                    <button type="submit" class="btn btn-danger">Solicitar eliminación</button>
+                                </form>
+                            </td>
+                        </c:if>
+                        <c:if test="${mdto.entidad.view == 'Eliminar'}">
+                            <td>
+                                <form action="Admin?accion=borrar" method="post">
+                                    <input type="hidden" value="${mdto.entidad.id}" name="id"/>
+                                    <button type="submit" class="btn btn-danger">Cancelar eliminación</button>
                                 </form>
                             </td>
                         </c:if>

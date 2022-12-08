@@ -1,14 +1,10 @@
-<%-- 
-    Document   : display
-    Created on : 12/07/2022, 01:47:39 PM
-    Author     : kiwir
---%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>Draw Features</title>
     
@@ -19,23 +15,59 @@
         width: 100%;
       }
     </style>
+    <!-- jQuery -->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/build/ol.js"></script>
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <!--    switcher-->
     <link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@4.1.0/dist/ol-layerswitcher.css" />
+    <!-- ol-ext -->
+    <link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" />
+    <script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
   </head>
   <body>
+      
     <div id="map" class="map"></div>
     <div class="container">
         
+        <div class="mb-3">
+            <form action="Mapa?accion=display" method="post">
+                                
+                <button type="submit" class="btn btn-dark">Regresar</button>
+            </form>
+            <form action="Mapa?accion=draw" method="post">
+                <label for="drawyear">Cambiar de año</label>
+                <select  class="form-select" id="drawyear" name="drawyear">
+                    <c:forEach
+                        var="y"
+                        items="${listaYears}">
+
+                        <option value="${y}"><c:out value="${y}"/></option>
+
+
+
+                    </c:forEach>
+                </select>
+                <button type="submit" class="btn btn-primary">Cambiar año</button>
+            </form>
+        </div> 
         <div class="mb-3">
             <h6>Instrucciones</h6>
             <p>Solo se pueden registrar un Punto, LineString o Polígono a la vez. FALTA</p>
             <p>MultiPolygon permite registrar más de un polígono como una sola forma.</p>
             <p>Una vez se termine de dibujar, se debe seleccionar el botón de Cargar coordenadas! Esto debería ser automático?</p>
         </div>    
-        
+        <div class="options" >
+                <h2>Opciones:</h2>
+                <ul>
+                  <input id="draw" type="radio" name="toggle" checked="checked" onchange="toggle(!$(this).prop('checked'))" />
+                  <label for="draw"> dibujar polígono</label>
+                  <br/>
+                  <input id="drawhole" type="radio" name="toggle" onchange="toggle($(this).prop('checked'))" />
+                  <label for="drawhole"> dibujar agujero</label>
+                </ul>
+        </div>
         <form  action="Mapa?accion=crear" method="post">
             <div class="mb-3">
                 <label for="type">Geometry type: &nbsp;</label>
@@ -48,6 +80,7 @@
                   <option value="None">None</option>
                 </select>
             </div>
+            
             <div class="mb-3">
                 <button type="button" class="btn btn-danger" id="undo">Deshacer</button>
                 <button type="button" class="btn btn-success" id="save">Cargar coordenadas</button>
@@ -122,10 +155,6 @@
                             title: '${mdto.entidad.year}'
                           });
                 </c:when>
-                <c:otherwise>
-                     
-                        
-                </c:otherwise>
             </c:choose>                       
         </c:forEach>  
                        
@@ -187,7 +216,7 @@
         let snap; // global so we can remove them later
         const typeSelect = document.getElementById('type');
 
-        let draw; // global so we can remove it later
+        var draw; // global so we can remove it later
         function addInteractions() {
           const value = typeSelect.value;
           if (value !== 'None') {
@@ -200,7 +229,18 @@
             map.addInteraction(snap);
           }
         }
+        //drawhole
+        var drawhole = new ol.interaction.DrawHole ({
+            layers: [ vector ]
+        });
+        drawhole.setActive(false);
+        map.addInteraction(drawhole);
 
+        function toggle(active) {
+            draw.setActive(!active);
+            drawhole.setActive(active);
+        }
+        //fin drawhole
         /**
          * Handle change event.
          */
@@ -217,32 +257,53 @@
         
         document.getElementById('save').addEventListener('click', function () {
             
+            
             var features = source.getFeatures();
             var geoString = "";
             console.log(features.length);
-            console.log(${count});
+            
+            var count = 0;
             //let feature = new ol.Feature;
-            for (var i = ${count}; i < features.length; i++) {
+            for (var i = 0; i < features.length; i++) {
                var feature = new ol.Feature;
                feature = features[i];
-               console.log(feature.getGeometry());
-               
-               
-               if(i>${count}){
-                   console.log("div");
-                   geoString += " | "+feature.getGeometry().flatCoordinates;
-               }else{
-                   geoString = feature.getGeometry().flatCoordinates;
-               }
+               console.log(feature.getId());
+               if(typeof feature.getId() === 'undefined'){
+                   const value = typeSelect.value;
+                   console.log(value);
+                    if (value !== 'Polygon') {
+                        geoString = feature.getGeometry().flatCoordinates;
+                    }else{
+                        console.log('aqio!!');
+                        count++;
+                        if(count>1){
+                             console.log("div");
+                             geoString += " | ";
+                              for(var j = 0; j < feature.getGeometry().getLinearRingCount();j++){
+                                  console.log(feature.getGeometry().getLinearRing(j).flatCoordinates);
+                                  if(j>0){
+                                      console.log("anillin");
+                                      geoString += " | "+feature.getGeometry().getLinearRing(j).flatCoordinates;
+                                  }else{
+                                      geoString += feature.getGeometry().getLinearRing(j).flatCoordinates;
+                                  }
+                              }
+                         }else if(count === 1){
+                              for(var j = 0; j < feature.getGeometry().getLinearRingCount();j++){
+                                  console.log(feature.getGeometry().getLinearRing(j).flatCoordinates);
+                                  if(j>0){
+                                      console.log("anillin");
+                                      geoString += " | "+feature.getGeometry().getLinearRing(j).flatCoordinates;
+                                  }else{
+                                      geoString += feature.getGeometry().getLinearRing(j).flatCoordinates;
+                                  }
+                              }
+                         }
+                    }
                    
-               
-               
+               }
             }
-            
             document.getElementById("geometry").value = geoString;
-                
-                
-            
             console.log(document.getElementById("name").value);
         });
 
@@ -256,6 +317,25 @@
             groupSelectStyle: 'children' // Can be 'children' [default], 'group' or 'none'
           });
           map.addControl(layerSwitcher);
+        // fin ls
+        
+        //erase
+        var select = new ol.interaction.Select();
+
+        window.addEventListener('keydown', function (event) {
+            // A
+            if (event.key === "a") {
+                map.addInteraction(select);
+            }
+        });
+        window.addEventListener('keyup', function (event) {
+            if (event.key === "a") {
+                var selectedFeatures = select.getFeatures();
+                //selectedFeatures.clear();
+                map.removeInteraction(select);
+            }
+        });
+        //fin erase
     </script>
   </body>
 </html>

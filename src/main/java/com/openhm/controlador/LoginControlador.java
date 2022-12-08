@@ -206,19 +206,23 @@ public class LoginControlador extends HttpServlet {
         HttpSession  sesion = request.getSession();
         MapaDAO mdao = new MapaDAO();
         List y = mdao.years();
-        List geojsonList = new ArrayList();
-        
-        for (int i = 0; i < y.size(); i++) {
-            MapaDTO mdto = new MapaDTO();
-            int year = (int) y.get(i);
-            //System.out.println(year);
-            mdto.getEntidad().setYear(year);
-            List listaMapas = mdao.readYear(mdto);
-            String geojson = geojson(listaMapas);
-            mdto.getEntidad().setMap(geojson);
-            //System.out.println(mdto);
-            geojsonList.add(mdto);
-        }
+                List geojsonList = new ArrayList();
+                for (int i = 0; i < y.size(); i++) {
+                    MapaDTO mdto = new MapaDTO();
+                    int year = (int) y.get(i);
+                    //System.out.println(year);
+                    mdto.getEntidad().setYear(year);
+                    List listaMapas = mdao.readYear(mdto);
+                    
+                    if(listaMapas != null){
+                        System.out.println("año "+year+" "+listaMapas.size());
+                        String geojson = geojson(listaMapas);
+                        mdto.getEntidad().setMap(geojson);
+                        //System.out.println(mdto);
+                        geojsonList.add(mdto);
+                    }
+                    
+                }
 
         sesion.setAttribute("geojsonList",geojsonList);
         sesion.setAttribute("msj",null);

@@ -61,18 +61,30 @@
                             
                         </td>
                         <c:if test="${mdto.entidad.view == 'En Proceso'}">
-                        <td>
-                            <form action="Admin?accion=rechazar" method="post">
-                                <input type="hidden" value="${mdto.entidad.id}" name="id"/>
-                                <button type="submit" class="btn btn-danger">Rechazar</button>
-                            </form>
-                        </td>
-                        </c:if>
-                        <c:if test="${mdto.entidad.view == 'En Proceso'}">
+                            <td>
+                                <form action="Admin?accion=rechazar" method="post">
+                                    <input type="hidden" value="${mdto.entidad.id}" name="id"/>
+                                    <button type="submit" class="btn btn-danger">Rechazar</button>
+                                </form>
+                            </td>
                             <td>
                                 <form action="Admin?accion=aceptar" method="post">
                                     <input type="hidden" value="${mdto.entidad.id}" name="id"/>
                                     <button type="submit" class="btn btn-primary">Aceptar</button>
+                                </form>
+                            </td>
+                        </c:if>
+                        <c:if test="${mdto.entidad.view == 'Eliminar'}">
+                            <td>
+                                <form action="Mapa?accion=borrar" method="post">
+                                    <input type="hidden" value="${mdto.entidad.id}" name="id"/>
+                                    <button type="submit" class="btn btn-primary">Aceptar</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="Admin?accion=borrar" method="post">
+                                    <input type="hidden" value="${mdto.entidad.id}" name="id"/>
+                                    <button type="submit" class="btn btn-primary">Rechazar</button>
                                 </form>
                             </td>
                         </c:if>

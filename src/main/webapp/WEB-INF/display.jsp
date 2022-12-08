@@ -24,7 +24,6 @@
     <link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@4.1.0/dist/ol-layerswitcher.css" />
     <!-- // Add jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
-    <script src="js/timeline.js"></script>
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <title>Open History Mapper for Mapper</title>
@@ -34,18 +33,24 @@
     <div class="topnav">
         <h1 class="nav-item">Open History Mapper</h1>
     </div>
-        
+        <div class="row">
             <c:choose>
                 <c:when test="${dto.entidad.tipo == 'mapper'}">
-                    <form action="Mapa?accion=draw2" method="post">
-                        <button class="btn btn-primary" type="submit">Dibujar</button>
-                    </form>
-                    <form action="Login?accion=cerrar" method="post">
-                        <button class="btn btn-primary" type="submit">Cerrar Sesión</button>
-                    </form>
-                    <form action="Usuario?accion=menu" method="post">
-                        <button class="btn btn-primary" type="submit">Menú usuario</button>
-                    </form>
+                    <div class="col-2">
+                        <form action="Mapa?accion=draw" method="post">
+                            <button class="btn btn-primary" type="submit">Dibujar</button>
+                        </form>
+                    </div>
+                    <div class="col-2">
+                        <form action="Login?accion=cerrar" method="post">
+                            <button class="btn btn-primary" type="submit">Cerrar Sesión</button>
+                        </form>
+                    </div>
+                    <div class="col-2">
+                        <form action="Usuario?accion=menu" method="post">
+                            <button class="btn btn-primary" type="submit">Menú usuario</button>
+                        </form>
+                    </div>
                 </c:when>
                 <c:when test="${dto.entidad.tipo == 'admin'}">
 
@@ -65,7 +70,7 @@
                     </form>
                 </c:otherwise>
              </c:choose>
-
+        </div>
        <form action="Mapa?accion=buscar" method="post">
             <div class="mb-3">
               <label for="name">Búsqueda</label>
@@ -84,28 +89,17 @@
         </div>
     
     <div id="map" class="map"></div>
+    <div style="display: none;">
+      
+      <!-- Popup -->
+      <div id="popup2"></div>
+    </div>
     <!--  pop up de informacion  -->
     <div id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer"></a>
         <div id="popup-content"></div>
     </div>
     <!--  fin pop up de informacion  -->
-    <div class="horizontal-timeline" id="example">
-        <div class="events-content">
-            <ol>
-                <li class="selected" data-horizontal-timeline='{"date": "01/01/1300"}'></li>
-                <li data-horizontal-timeline='{"date": "01/01/1400"}'></li>
-                <li data-horizontal-timeline='{"date": "01/01/1500"}'></li>
-                <li data-horizontal-timeline='{"date": "01/01/1600"}'></li>
-                <li data-horizontal-timeline='{"date": "01/01/1700"}'></li>
-                <li data-horizontal-timeline='{"date": "01/01/1800"}'></li>
-                <li data-horizontal-timeline='{"date": "01/01/1900"}'></li>
-                <li data-horizontal-timeline='{"date": "01/01/2000"}'></li>
-                <li data-horizontal-timeline='{"date": "01/01/2022"}'></li>
-            </ol>
-        </div>
-    </div>
-
     <!-- JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
     <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
@@ -197,7 +191,7 @@
         map.addOverlay(popup);
         
        
-        
+        const element = popup.getElement();
         map.on('singleclick', function(evt){
             //var feature = new ol.Feature;
             var feature = map.forEachFeatureAtPixel(evt.pixel,
@@ -211,39 +205,36 @@
                 //var coord = feature.getGeometry().flatCoordinates;
                 var props = feature.getProperties();
                 console.log(props);
-                var cont = '<h3>NOMBRE: ' + feature.get('COUNTRY_NAME') + '</h3>';
-                cont += '<h3>DESCRIPCIÓN: ' + feature.get('DESCRIPTION') + '</h3>';
-                cont += '<h3>YEAR: ' + feature.get('YEAR') + '</h3>';
-                cont += '<h3>SOURCE: ' + feature.get('SOURCE') + '</h3>';
-                cont += '<h3>SOURCE: ' + feature.get('MAP_ID') + '</h3>';
+                
+                var cont = '<p>Nombre: ' + feature.get('COUNTRY_NAME') + '</p>';
+                cont += '<p>DESCRIPCIÓN: ' + feature.get('DESCRIPTION') + '</p>';
+                cont += '<p>YEAR: ' + feature.get('YEAR') + '</p>';
+                cont += '<p>SOURCE: ' + feature.get('SOURCE') + '</p>';
+                //cont += '<h3>ID: ' + feature.get('MAP_ID') + '</h3>';
                 cont+= '<form action="Mapa?accion=editar" method="post">';
                 cont+= '<input type="hidden" value="'+feature.get('MAP_ID')+'" name="id"/>';
                 cont+= '<button type="submit" class="btn btn-primary">Editar</button></form>';
-                            
+                /* let popover = bootstrap.Popover.getInstance(element);
+                if (popover) {
+                  popover.dispose();
+                }
+                popover = new bootstrap.Popover(element, {
+                  animation: false,
+                  container: element,
+                  content: cont,
+                  html: true,
+                  placement: 'top',
+                  title: feature.get('COUNTRY_NAME')
+                });
+                popover.show();   */        
                 content.innerHTML = cont;
                 popup.setPosition(evt.coordinate);
-
+                
                 //console.info(feature.getProperties());
             }
         });
-        // fin popup
-        
-    </script>
-    <script>
-        $('#example').horizontalTimeline({
-            dateDisplay: "year"
-        });
-
-    </script>
-
-    <script>
-        // esta pedazo de codigo mandara a llamar la funcion para recuperar
-        function showtest() {
-            alert("Mostrar las capas de vectores referentes a esta fecha");
-        }
+        // fin popup  
     </script>
     <script src="js/main.js"></script>
-
 </body>
-
 </html>

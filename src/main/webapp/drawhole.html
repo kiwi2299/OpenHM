@@ -58,6 +58,9 @@
       <input id="drawhole" type="radio" name="toggle" onchange="toggle($(this).prop('checked'))" />
       <label for="drawhole"> draw hole</label>
     </ul>
+    <button type="button" class="btn btn-success" id="save">Cargar coordenadas</button>
+
+                <input  type="text" class="form-control" id="geometry" name="geometry" readonly>
   </div>
   
 
@@ -85,7 +88,7 @@
       source: new ol.source.Vector()
     })
     map.addLayer(vector);
-    vector.getSource().addFeature(new ol.Feature(new ol.geom.Polygon([[[34243, 6305749], [-288626, 5757848], [210354, 5576845], [34243, 6305749]]])));
+    //vector.getSource().addFeature(new ol.Feature(new ol.geom.Polygon([[[34243, 6305749], [-288626, 5757848], [210354, 5576845], [34243, 6305749]]])));
     /*
     var select = new ol.interaction.Select();
     function setSelect(b) {
@@ -110,6 +113,61 @@
       draw.setActive(!active);
       drawhole.setActive(active);
     }
+    
+    document.getElementById('save').addEventListener('click', function () {
+            
+            var features = vector.getSource().getFeatures();
+            var geoString = "";
+            console.log(features.length);
+            //let feature = new ol.Feature;
+            for (var i = 0; i < features.length; i++) {
+               var feature = new ol.Feature;
+               feature = features[i];
+               console.log(feature.getGeometry().getLinearRingCount());
+               if(i>0){
+                   console.log("div");
+                   geoString += " | ";
+                    for(var j = 0; j < feature.getGeometry().getLinearRingCount();j++){
+                        console.log(feature.getGeometry().getLinearRing(j).flatCoordinates);
+                        if(j>0){
+                            console.log("anillin");
+                            geoString += " # "+feature.getGeometry().getLinearRing(j).flatCoordinates;
+                        }else{
+                            geoString += feature.getGeometry().getLinearRing(j).flatCoordinates;
+                        }
+                    }
+               }else{
+                    for(var j = 0; j < feature.getGeometry().getLinearRingCount();j++){
+                        console.log(feature.getGeometry().getLinearRing(j).flatCoordinates);
+                        if(j>0){
+                            console.log("anillin");
+                            geoString += " # "+feature.getGeometry().getLinearRing(j).flatCoordinates;
+                        }else{
+                            geoString += feature.getGeometry().getLinearRing(j).flatCoordinates;
+                        }
+                    }
+               }
+               
+//               var poly = new ol.geom.Polygon();
+//               poly = feature.getGeometry();
+//               console.log(poly.getLinearRingCount());
+//               if(i>0){
+//                   console.log("div");
+//                   geoString += " | ";
+//               }else{
+//                   //geoString = feature.getGeometry().flatCoordinates;
+//               }
+                   
+               
+               
+            }
+            
+            document.getElementById("geometry").value = geoString;
+                
+                
+            
+           
+        });
 
   </script>
 </body>
