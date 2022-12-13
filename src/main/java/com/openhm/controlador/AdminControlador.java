@@ -59,6 +59,15 @@ public class AdminControlador extends HttpServlet {
                     case "borrar":
                         borrar(request, response);
                         break;
+                    case "solBorrar":
+                        solBorrar(request, response);
+                        break;
+                    case "activar":
+                        activar(request, response);
+                        break;
+                    case "desactivar":
+                        desactivar(request, response);
+                        break;
                     default:
                         response.sendRedirect("index.html");
                 }
@@ -212,27 +221,100 @@ public class AdminControlador extends HttpServlet {
         }
     }
     
+    
+    private void solBorrar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {  
+        HttpSession sesion = request.getSession();
+        MapaDAO mdao = new MapaDAO();
+        MapaDTO mdto = new MapaDTO();
+        String msj = "";
+        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
+        mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
+        try {
+            mdto = mdao.read(mdto);
+            if(mdto.getEntidad().getView().equals("Visible")){
+                mdto.getEntidad().setView("Eliminar");
+                mdao.updateValidar(mdto);
+                List listaMapas = mdao.readAllUser(dto);
+                sesion.setAttribute("listaMapas",listaMapas);
+                msj = "Mapa en proceso de eliminación";
+            }else if(mdto.getEntidad().getView().equals("Eliminar")){
+                mdto.getEntidad().setView("Visible");
+                mdao.updateValidar(mdto);
+                List listaMapas = mdao.readAllUser(dto);
+                sesion.setAttribute("listaMapas",listaMapas);
+                msj = "Eliminación cancelada";
+            }
+            //mdao.delete(mdto);
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            request.setAttribute("msj_us",msj);
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Usuario?accion=menu");
+            dispatcher.forward(request, response);
+        }
+    }
+    
     private void borrar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {  
         HttpSession sesion = request.getSession();
         MapaDAO mdao = new MapaDAO();
         MapaDTO mdto = new MapaDTO();
-        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
+        String msj = "";
+        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("user");
         mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
         try {
             mdao.delete(mdto);
+            List listaMapas = mdao.readAllUser(dto);
+            sesion.setAttribute("listaMapas",listaMapas);
+            msj = "Mapa eliminado";
         } catch (SQLException ex) {
             Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            if(dto.getEntidad().getTipo().equals("mapper")){
-                request.setAttribute("msj_us","Mapa en proceso de eliminación");
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Usuario?accion=menu");
-                dispatcher.forward(request, response);
-            }else if(dto.getEntidad().getTipo().equals("admin")){
-                request.setAttribute("msj_admin","Mapa borrado");
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/mapasUsuario.jsp");
-                dispatcher.forward(request, response);
-            }
-                
+            request.setAttribute("msj_admin",msj);
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/mapasUsuario.jsp");
+            dispatcher.forward(request, response);
+        }
+    }
+    private void desactivar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {  
+        HttpSession sesion = request.getSession();
+        MapaDAO mdao = new MapaDAO();
+        MapaDTO mdto = new MapaDTO();
+        String msj = "";
+        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("user");
+        mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
+        try {
+            mdto.getEntidad().setView("No visible");
+            mdao.updateValidar(mdto);
+            List listaMapas = mdao.readAllUser(dto);
+            sesion.setAttribute("listaMapas",listaMapas);
+            msj = "Mapa retirado";
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            request.setAttribute("msj_admin",msj);
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/mapasUsuario.jsp");
+            dispatcher.forward(request, response);
+        }
+    }
+    
+    private void activar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {  
+        HttpSession sesion = request.getSession();
+        MapaDAO mdao = new MapaDAO();
+        MapaDTO mdto = new MapaDTO();
+        String msj = "";
+        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("user");
+        mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
+        try {
+            mdto.getEntidad().setView("Visible");
+            mdao.updateValidar(mdto);
+            List listaMapas = mdao.readAllUser(dto);
+            sesion.setAttribute("listaMapas",listaMapas);
+            msj = "Mapa activado";
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            request.setAttribute("msj_admin",msj);
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/mapasUsuario.jsp");
+            dispatcher.forward(request, response);
         }
     }
 }

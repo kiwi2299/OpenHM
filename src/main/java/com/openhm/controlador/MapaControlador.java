@@ -245,7 +245,7 @@ public class MapaControlador extends HttpServlet {
                 mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
                 MapaDTO newdto = mdto;
                 newdto = mdao.read(newdto);
-                if(newdto.getEntidad().getView().equals("Visible")){
+                if(newdto.getEntidad().getView().equals("Visible") || newdto.getEntidad().getView().equals("Eliminar")){
                     mdao.create(mdto);
                     sesion.setAttribute("msj_us","Mapa registrado");
                 }else{
@@ -380,7 +380,7 @@ public class MapaControlador extends HttpServlet {
                 mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
                 MapaDTO newdto = mdto;
                 newdto = mdao.read(newdto);
-                if(newdto.getEntidad().getView().equals("Visible")){
+                if(newdto.getEntidad().getView().equals("Visible") || newdto.getEntidad().getView().equals("Eliminar")){
                     mdao.create(mdto);
                     sesion.setAttribute("msj_us","Mapa registrado");
                 }else{

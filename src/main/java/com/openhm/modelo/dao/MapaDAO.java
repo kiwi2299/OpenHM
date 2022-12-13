@@ -21,11 +21,11 @@ public class MapaDAO {
     private static final String SQL_DELETE="delete from mapa where id = ?";
     private static final String SQL_READ="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date, update_date from mapa where id = ?";
     private static final String SQL_READ_ALL="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa";
-    private static final String SQL_READ_YEAR="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where year = ? AND view = 'Visible'";
+    private static final String SQL_READ_YEAR="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where (year = ? AND view = 'Visible') or (year = ? and view = 'Eliminar')";
     private static final String SQL_READ_YEAR_USER="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where year = ? and user_id = ?";
     private static final String SQL_READ_ALL_USER="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where user_id = ?";
     private static final String SQL_YEARS="select year from mapa group by year order by year";
-    private static final String SQL_COUNT_YEAR="select count(id) from mapa where year=? and view = 'Visible'";
+    private static final String SQL_COUNT_YEAR="select count(id) from mapa where (year=? and view = 'Visible') or (year = ? and view = 'Eliminar')";
     private static final String SQL_SEARCH="select m.id, m.name,u.name as user_id,year,view, ST_AsGeoJson(map),description,source,insert_date, update_date from mapa as m inner join usuario as u on user_id = u.id where LOWER(m.name) like LOWER(?) or LOWER(description) like LOWER(?) or cast(year as character varying) like ? or LOWER(source) like LOWER(?)";
     
     
@@ -198,6 +198,7 @@ public class MapaDAO {
         try {
             cs = con.prepareStatement(SQL_READ_YEAR);
             cs.setInt(1, dto.getEntidad().getYear());
+            cs.setInt(2, dto.getEntidad().getYear());
             rs = cs.executeQuery();
             List resultados = obtenerResultados(rs);
             if (resultados.size() > 0) {
@@ -325,6 +326,7 @@ public class MapaDAO {
         try {
             cs = con.prepareStatement(SQL_COUNT_YEAR);
             cs.setInt(1, year);
+            cs.setInt(2, year);
             rs = cs.executeQuery();
             while (rs.next()) {                          
                 resultados = rs.getInt("count");

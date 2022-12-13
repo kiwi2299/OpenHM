@@ -60,6 +60,22 @@
                         <td>
                             
                         </td>
+                        <c:if test="${mdto.entidad.view == 'No visible'}">
+                            <td>
+                                <form action="Admin?accion=activar" method="post">
+                                    <input type="hidden" value="${mdto.entidad.id}" name="id"/>
+                                    <button type="submit" class="btn btn-primary">Activar</button>
+                                </form>
+                            </td>
+                        </c:if>
+                        <c:if test="${mdto.entidad.view == 'Visible'}">
+                            <td>
+                                <form action="Admin?accion=desactivar" method="post">
+                                    <input type="hidden" value="${mdto.entidad.id}" name="id"/>
+                                    <button type="submit" class="btn btn-danger">Retirar</button>
+                                </form>
+                            </td>
+                        </c:if>
                         <c:if test="${mdto.entidad.view == 'En Proceso'}">
                             <td>
                                 <form action="Admin?accion=rechazar" method="post">
@@ -76,15 +92,15 @@
                         </c:if>
                         <c:if test="${mdto.entidad.view == 'Eliminar'}">
                             <td>
-                                <form action="Mapa?accion=borrar" method="post">
+                                <form action="Admin?accion=borrar" method="post">
                                     <input type="hidden" value="${mdto.entidad.id}" name="id"/>
-                                    <button type="submit" class="btn btn-primary">Aceptar</button>
+                                    <button type="submit" class="btn btn-danger">Retirar</button>
                                 </form>
                             </td>
                             <td>
-                                <form action="Admin?accion=borrar" method="post">
+                                <form action="Admin?accion=aceptar" method="post">
                                     <input type="hidden" value="${mdto.entidad.id}" name="id"/>
-                                    <button type="submit" class="btn btn-primary">Rechazar</button>
+                                    <button type="submit" class="btn btn-primary">Cancelar retiro</button>
                                 </form>
                             </td>
                         </c:if>

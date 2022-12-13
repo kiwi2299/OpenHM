@@ -80,23 +80,23 @@
                             <td>
                                 <form action="Admin?accion=validar" method="post">
                                     <input type="hidden" value="${mdto.entidad.id}" name="id"/>
-                                    <button type="submit" class="btn btn-danger">Validar</button>
+                                    <button type="submit" class="btn btn-primary">Validar</button>
                                 </form>
                             </td>
                         </c:if>
                         <c:if test="${mdto.entidad.view == 'Visible'}">
                             <td>
-                                <form action="Admin?accion=borrar" method="post">
+                                <form action="Admin?accion=solBorrar" method="post">
                                     <input type="hidden" value="${mdto.entidad.id}" name="id"/>
-                                    <button type="submit" class="btn btn-danger">Solicitar eliminación</button>
+                                    <button type="submit" class="btn btn-danger">Solicitar retiro</button>
                                 </form>
                             </td>
                         </c:if>
                         <c:if test="${mdto.entidad.view == 'Eliminar'}">
                             <td>
-                                <form action="Admin?accion=borrar" method="post">
+                                <form action="Admin?accion=solBorrar" method="post">
                                     <input type="hidden" value="${mdto.entidad.id}" name="id"/>
-                                    <button type="submit" class="btn btn-danger">Cancelar eliminación</button>
+                                    <button type="submit" class="btn btn-primary">Cancelar retiro</button>
                                 </form>
                             </td>
                         </c:if>
