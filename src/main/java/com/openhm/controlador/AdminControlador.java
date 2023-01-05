@@ -38,7 +38,15 @@ public class AdminControlador extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         String accion = request.getParameter("accion");
-        try {
+        HttpSession sesion = request.getSession();
+        
+        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
+        if(dto==null){
+            System.out.println("dto es null");
+            sesion.setAttribute("msj", "Sesión terminada");
+            response.sendRedirect("index.html?error=2");
+        }else
+            try {
             if (accion != null) {
                 switch (accion) {
                     case "validar":
@@ -120,22 +128,29 @@ public class AdminControlador extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
     
     private void menu(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
         HttpSession sesion = request.getSession();
         UsuarioDAO dao = new UsuarioDAO();
         UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
-        try {
-            List listaUsuarios = dao.readAll();
-            //sesion.setAttribute("msj", null);
-            sesion.setAttribute("msj_admin", null); 
-            sesion.setAttribute("listaUsuarios",listaUsuarios);
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/menuAdmin.jsp");
+                
+        if(dto.getEntidad().getTipo().equals("admin")){
+            try {
+                List listaUsuarios = dao.readAll();
+                //sesion.setAttribute("msj", null);
+                request.setAttribute("msj_admin", null); 
+                sesion.setAttribute("listaUsuarios",listaUsuarios);
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/menuAdmin.jsp");
+                dispatcher.forward(request, response);
+            } catch (SQLException ex) {
+                Logger.getLogger(AdminControlador.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
             dispatcher.forward(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(AdminControlador.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
 
     private void validar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

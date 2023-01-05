@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 public class MapaDAO {
 //
     private static final String SQL_INSERT="insert into mapa (name,user_id,year,view,map,description,source,insert_date,update_date) values(?,?,?,?,ST_GeomFromText(?),?,?,CURRENT_DATE,NULL)";
+    private static final String SQL_INSERT_LOAD="insert into mapa (name,user_id,year,view,map,description,source,insert_date,update_date) values(?,?,?,?,ST_Transform(ST_SetSRID(ST_GeomFromText(?),?),3857),?,?,CURRENT_DATE,NULL)";
     private static final String SQL_UPDATE="update mapa SET name=?, user_id=?, year=?, view=?, map=ST_GeomFromText(?), description=?, source=?, update_date=CURRENT_DATE where id=?";
     private static final String SQL_UPDATE_VALIDAR="update mapa SET view=? where id=?";
     private static final String SQL_DELETE="delete from mapa where id = ?";
@@ -23,7 +24,7 @@ public class MapaDAO {
     private static final String SQL_READ_ALL="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa";
     private static final String SQL_READ_YEAR="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where (year = ? AND view = 'Visible') or (year = ? and view = 'Eliminar')";
     private static final String SQL_READ_YEAR_USER="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where year = ? and user_id = ?";
-    private static final String SQL_READ_ALL_USER="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where user_id = ?";
+    private static final String SQL_READ_ALL_USER="select id, name,user_id,year,view, ST_AsGeoJson(map),description,source,insert_date from mapa where user_id = ? order by view";
     private static final String SQL_YEARS="select year from mapa group by year order by year";
     private static final String SQL_COUNT_YEAR="select count(id) from mapa where (year=? and view = 'Visible') or (year = ? and view = 'Eliminar')";
     private static final String SQL_SEARCH="select m.id, m.name,u.name as user_id,year,view, ST_AsGeoJson(map),description,source,insert_date, update_date from mapa as m inner join usuario as u on user_id = u.id where LOWER(m.name) like LOWER(?) or LOWER(description) like LOWER(?) or cast(year as character varying) like ? or LOWER(source) like LOWER(?)";
@@ -32,17 +33,13 @@ public class MapaDAO {
 
     private Connection con;
     public Connection ObtenerConexion(){       
-         String usr = "postgres";
-        String pwd = "postgres";
-        String driver = "org.postgresql.Driver";
-        String url = "jdbc:postgresql://localhost:5432/postgres";
+//         String usr = "postgres";
+//        String pwd = "postgres";
+//        String driver = "org.postgresql.Driver";
+//        String url = "jdbc:postgresql://localhost:5432/postgres";
         //?sslmode=required
         
-        //heroku
-//        String usr = "ctkofwkznexjio";
-//       String pwd = "5b65ec04731aa5e62263934fc82cf236f9f2f6be3ffe5e73d7bfcacb9ed2cead";
-//       String driver = "org.postgresql.Driver";
-//        String url = "jdbc:postgresql://ec2-3-219-19-205.compute-1.amazonaws.com:5432/db924bd23if0r2";
+        
         try{
             Class.forName(driver);
             con = DriverManager.getConnection(url,usr,pwd);
@@ -64,6 +61,30 @@ public class MapaDAO {
             cs.setString(5, dto.getEntidad().getMap());
             cs.setString(6, dto.getEntidad().getDescription());
             cs.setString(7, dto.getEntidad().getSource());
+            cs.executeUpdate();
+        } finally {
+            if(cs != null){
+                cs.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
+    public void load(MapaDTO dto, int srid) throws SQLException{
+        ObtenerConexion();
+        PreparedStatement cs = null;
+        try {
+            cs = con.prepareStatement(SQL_INSERT_LOAD);
+            cs.setString(1, dto.getEntidad().getName());
+            cs.setInt(2, dto.getEntidad().getUser_id());
+            cs.setInt(3, dto.getEntidad().getYear());
+            cs.setString(4, dto.getEntidad().getView());
+            cs.setString(5, dto.getEntidad().getMap());
+            cs.setInt(6, srid);
+            cs.setString(7, dto.getEntidad().getDescription());
+            cs.setString(8, dto.getEntidad().getSource());
             cs.executeUpdate();
         } finally {
             if(cs != null){
@@ -361,7 +382,7 @@ public class MapaDAO {
         PreparedStatement cs = null;
         ResultSet rs =null;
         
-        
+       
         try {
             cs = con.prepareStatement(SQL_SEARCH);
             cs.setString(1, "%"+search+"%");
@@ -428,16 +449,16 @@ public class MapaDAO {
     
     public static void main(String[] args) {
         MapaDAO dao = new MapaDAO();
-        UsuarioDTO dto = new UsuarioDTO();
-        dto.getEntidad().setId(3);
-        Mapa entidad = new Mapa();
+        MapaDTO dto = new MapaDTO();
+        dto.getEntidad().setId(66);
+       // Mapa entidad = new Mapa();
         //entidad.setYear(1888);
         //dto.setEntidad(entidad);
         try {
             
-            //dto = dao.read(dto);
-            //System.out.println(dto.getEntidad().getMap());
-            System.out.println(dao.search("me"));
+            dto = dao.read(dto);
+            System.out.println(dto);
+            //System.out.println(dao.search("me"));
         } catch (SQLException ex) {
             Logger.getLogger(MapaDAO.class.getName()).log(Level.SEVERE, null, ex);
         }

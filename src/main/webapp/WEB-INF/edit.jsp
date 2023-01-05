@@ -10,40 +10,133 @@
 
 <head>
     
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Draw Features</title>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/css/ol.css" type="text/css">
-<!--    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/build/ol.js"></script>-->
-    <link rel="stylesheet" type="text/css" href="styles/styles.css">
-
-    <!-- CSS only 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-    -->
+    <style>
+      .map {
+        height: 800px;
+        width: 100%;
+      }
+    </style>
+    <!-- jQuery -->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/build/ol.js"></script>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <!--    switcher-->
     <link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@4.1.0/dist/ol-layerswitcher.css" />
-    <!-- // Add jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
-    <!-- CSS only -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <title>Open History Mapper for Mapper</title>
+    <!-- ol-ext -->
+    <link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" />
+    <script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
 </head>
 
 <body>
-    <div class="topnav">
-       
-        
-        <h1 class="nav-item">Open History Mapper</h1>
-        <form action="Usuario?accion=menu" method="post">
-            <button class="btn btn-dark" type="submit">Regresar</button>
-        </form>
-    </div>
+    <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light ">
+            <a class="navbar-brand" href="/Mapa?accion=display"><h1>OpenHM</h1></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <c:choose>
+                        <c:when test="${dto.entidad.tipo == 'mapper'}">
+                            <li class="nav-item">
+                                <div class="btn-group">
+                                    <form action="Mapa?accion=draw" method="post">
+                                        <button class="btn btn-success" type="submit">Dibujar un mapa</button>
+                                    </form>
+                                    <form action="Mapa?accion=loader" method="post">
+
+                                        <button type="submit" class="btn btn-dark">Cargar un mapa</button>
+                                    </form>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    ${dto.entidad.name}
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                  <a class="dropdown-item" href="/Usuario?accion=menu">Mis mapas</a>
+                                  <a class="dropdown-item" href="/Usuario?accion=gestion">Mi cuenta</a>
+                                  <div class="dropdown-divider"></div>
+                                  <a class="dropdown-item" href="/Login?accion=cerrar">Cerrar sesión</a>
+                                </div>
+                            </li>
+                        </c:when>
+                        <c:when test="${dto.entidad.tipo == 'admin'}">
+                            <li class="nav-item">
+                                <div class="btn-group">
+                                    <form action="Mapa?accion=draw" method="post">
+                                        <button class="btn btn-success" type="submit">Dibujar un mapa</button>
+                                    </form>
+                                    <form action="Mapa?accion=loader" method="post">
+                                        <button type="submit" class="btn btn-dark">Cargar un mapa</button>
+                                    </form>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Administrador ${dto.entidad.name}
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="/Admin?accion=menu">Ver Usuarios</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="/Usuario?accion=menu">Mis mapas</a>
+                                    <a class="dropdown-item" href="/Usuario?accion=gestion">Mi cuenta</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="/Login?accion=cerrar">Cerrar sesión</a>
+                                </div>
+                            </li>
+                        </c:when>
+                        <c:otherwise>
+                            <li class="nav-item">
+                                <div class="btn-group">
+                                    <form action="Usuario?accion=crear" method="post">
+                                        <button class="btn btn-success" type="submit">Crear una cuenta</button>
+                                    </form>
+                                    <form action="Login?accion=cerrar" method="post">
+                                        <button type="submit" class="btn btn-dark">Salir</button>
+                                    </form>
+                                </div>
+                            </li>
+
+                        </c:otherwise>
+                     </c:choose>
+                        
+                    
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <form class="d-flex" role="search" action="Login?accion=buscar" method="post">
+                            <input class="form-control me-2" type="search" id="search" name="search" placeholder="Nombre, descripción, año, fuente" aria-label="Search">
+                            <button class="btn btn-outline-success" type="submit">Buscar</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </nav>
     
-    <div>
-        <p>Editar con ${dto.entidad.name}</p>
-    </div>
+    
     <div id="map" class="map"></div>
-    <div class="container">
-        
+    
+        <div class="options" >
+                <h2>Opciones:</h2>
+                <ul>
+                  <input id="draw" type="radio" name="toggle" checked="checked" onchange="toggle(!$(this).prop('checked'))" />
+                  <label for="draw"> dibujar polígono</label>
+                  <br/>
+                  <input id="drawhole" type="radio" name="toggle" onchange="toggle($(this).prop('checked'))" />
+                  <label for="drawhole"> dibujar agujero</label>
+                </ul>
+        </div>
         <form  action="Mapa?accion=crear" method="post">
             <div class="mb-3">
                 <label for="type">Geometry type: &nbsp;</label>
@@ -60,7 +153,7 @@
                 <button type="button" class="btn btn-danger" id="undo">Deshacer</button>
                 <button type="button" class="btn btn-success" id="save">Cargar coordenadas</button>
 
-                <input  type="text" class="form-control" id="geometry" name="geometry" readonly>
+                <input  type="text" class="form-control" id="geometry" name="geometry" required>
             </div>
             <div class="mb-3">
               <label for="name">ID</label>
@@ -92,105 +185,26 @@
   
     
 
+    <!-- Pointer events polyfill for old browsers, see https://caniuse.com/#feat=pointer -->
+    <script src="https://unpkg.com/elm-pep@1.0.6/dist/elm-pep.js"></script>
     <!-- JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
-    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,Object.assign,Event,URL"></script>
-    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@main/dist/en/v7.0.0/legacy/ol.js"></script>
     <script src="https://unpkg.com/ol-layerswitcher@4.1.0"></script>
     <script type="text/javascript">
-        
-        
-//	var myview = new ol.View({
-//		center: [981546161170.347, 2496866.115180862],
-//          zoom: 4
-//	});
-//        
-//        const source =  new ol.layer.Vector({
-//                            source: new ol.source.Vector({
-//                                features:  new ol.format.GeoJSON().readFeatures(${geojson}),                                            
-//                            })
-//                        });
-//	
-//	var map = new ol.Map({
-//            target: 'map',
-//            layers: [
-//                new ol.layer.Group({
-//                    title: 'Base maps',
-//                    layers: [
-//                        new ol.layer.Tile({
-//                            title: 'Satelite',
-//                            type: 'base',
-//                            visible: true,
-//                            source:  new ol.source.XYZ({
-//                                attributions: ['Esri, Maxar, Earthstar Geographics, and the GIS User Community'],
-//                                attributionsCollapsible: false,
-//                                url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-//                            })
-//                        }),
-//                        new ol.layer.Tile({
-//                            title: 'OSM',
-//                            type: 'base',
-//                            visible: false,
-//                            source: new ol.source.OSM(),
-//                        })
-//                    ]
-//                }),
-//                new ol.layer.Group({
-//                    title: 'Edición',
-//                    fold: 'open',
-//                    layers:[source]
-//                })
-//            ],
-//            view: myview
-//	});
-        
-        //modify
-//        const select = new ol.interaction.Select({
-//            wrapX: false,
-//        });
-//        
-//        const modify = new ol.interaction.Modify({
-//            features: select.getFeatures(),
-//        });
-//        map.addInteraction(select);
-//        map.addInteraction(modify);
-        //Add Modify Control to map
-        
-          //Remove previous interactions
-         // map.removeInteractions();
-
-//          //Select Features
-//          let select = new ol.interaction.Select({
-//            layers: [source],
-//            
-//          });
-//
-//          //Add Modify Control to map
-//          let modify = new ol.interaction.Modify({
-//            features: select.getFeatures()  
-//          });
-//
-//          map.addInteraction(select);
-//          map.addInteraction(modify);
-        
-        //fin modify
-        
-        
-        
-        
+          
         //draw
-        const raster = new ol.layer.Tile({
-          source: new ol.source.OSM(),
-        });
+        //var raster = new ol.layer.Tile({
+        //  source: new ol.source.OSM(),
+        //});
+        
 
-        const source =  new ol.source.Vector({
-                               features:  new ol.format.GeoJSON().readFeatures(${geojson}),                                            
-                           });
+        var source =  new ol.source.Vector({
+            features:  new ol.format.GeoJSON().readFeatures(${geojson}),                                            
+        });
                         
 
-        const vector = new ol.layer.Vector({
-          source: source,
+        var vector = new ol.layer.Vector({
+            source: source,
         });
         
         // Limit multi-world panning to one world east and west of the real world.
@@ -198,16 +212,62 @@
         const extent = ol.proj.get('EPSG:3857').getExtent().slice();
         extent[0] += extent[0];
         extent[2] += extent[2];
-
-        const map = new ol.Map({
-          layers: [raster, vector],
-          target: 'map',
-          view: new ol.View({
-            center: [-11000000, 4600000],
-            zoom: 4,
-            extent,
-          }),
-        });
+        
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Group({
+                    title: 'Mapas Base',
+                    layers: [
+                        new ol.layer.Tile({
+                            title: 'Satelite',
+                            type: 'base',
+                            visible: false,
+                            source:  new ol.source.XYZ({
+                                attributions: ['Esri, Maxar, Earthstar Geographics, and the GIS User Community'],
+                                attributionsCollapsible: false,
+                                url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+                            })
+                        }),
+                        new ol.layer.Tile({
+                            title: 'OSM',
+                            type: 'base',
+                            visible: true,
+                            source: new ol.source.OSM(),
+                        })
+                    ]
+                }),
+                new ol.layer.Group({
+                    title: 'Modificación',
+                    fold: 'open',
+                    layers:[ vector
+                                   
+                    ]
+                }),
+                new ol.layer.Group({
+                    title: 'Capas',
+                    fold: 'open',
+                    layers:[
+                        <c:forEach items="${geojsonList}" var="mdto"> 
+                                            
+                        new ol.layer.Vector({
+                            visible: false,
+                            title: '${mdto.entidad.year}',
+                            
+                            source: new ol.source.Vector({
+                                features:  new ol.format.GeoJSON().readFeatures(${mdto.entidad.map}),                                            
+                            })
+                        }),
+                        </c:forEach>            
+                    ]
+                })
+            ],
+            view: new ol.View({
+                center: [-11000000, 4600000],
+                zoom: 4,
+                extent,
+            }),
+	});
         
         const modify = new ol.interaction.Modify({source: source});
         map.addInteraction(modify);
@@ -215,7 +275,7 @@
         let snap; // global so we can remove them later
         const typeSelect = document.getElementById('type');
 
-        let draw; // global so we can remove it later
+        var draw; // global so we can remove it later
         function addInteractions() {
           const value = typeSelect.value;
           if (value !== 'None') {
@@ -228,6 +288,18 @@
             map.addInteraction(snap);
           }
         }
+        //drawhole
+        var drawhole = new ol.interaction.DrawHole ({
+            layers: [ vector ]
+        });
+        drawhole.setActive(false);
+        map.addInteraction(drawhole);
+
+        function toggle(active) {
+            draw.setActive(!active);
+            drawhole.setActive(active);
+        }
+        //fin drawhole
 
         /**
          * Handle change event.
@@ -248,28 +320,80 @@
             var features = source.getFeatures();
             var geoString = "";
             console.log(features.length);
+            
+            var count = 0;
             //let feature = new ol.Feature;
             for (var i = 0; i < features.length; i++) {
                var feature = new ol.Feature;
                feature = features[i];
-               console.log(feature.getGeometry());
-               
-               
-               if(i>0){
-                   console.log("div");
-                   geoString += " | "+feature.getGeometry().flatCoordinates;
-               }else{
-                   geoString = feature.getGeometry().flatCoordinates;
-               }
+               console.log(feature.getId());
+               //if(typeof feature.getId() === 'undefined' || feature.getId() === ${mdto.entidad.id}){
+                   const value = typeSelect.value;
+                   console.log(value);
+                    if (value === 'Polygon') {
+                       
+                        console.log('POLY');
+                        count++;
+                        if(count>1){
+                            console.log("div");
+                            geoString += " | ";
+                            for(var j = 0; j < feature.getGeometry().getLinearRingCount();j++){
+                                console.log(feature.getGeometry().getLinearRing(j).flatCoordinates);
+                                if(j>0){
+                                    console.log("anillin");
+                                    geoString += " | "+feature.getGeometry().getLinearRing(j).flatCoordinates;
+                                }else{
+                                    geoString += feature.getGeometry().getLinearRing(j).flatCoordinates;
+                                }
+                            }
+                        }else if(count === 1){
+                            for(var j = 0; j < feature.getGeometry().getLinearRingCount();j++){
+                                console.log(feature.getGeometry().getLinearRing(j).flatCoordinates);
+                                if(j>0){
+                                    console.log("anillin");
+                                    geoString += " | "+feature.getGeometry().getLinearRing(j).flatCoordinates;
+                                }else{
+                                    geoString += feature.getGeometry().getLinearRing(j).flatCoordinates;
+                                }
+                            }
+                        }
+                    }else if(value === 'MultiPolygon'){
+                        console.log('MULTIPoly');
+                        var mp = ol.geom.MultiPolygon;
+                        mp = feature.getGeometry();
+                        var polygons = feature.getGeometry().getCoordinates();
+                        console.log(polygons);
+                        polygons.forEach(function(polygon){
+                            //multiPolygon.appendPolygon(polygon);
+                            for(var j = 0; j<polygon.length;j++ ){
+                                
+                                if(j>0){
+                                    console.log("div");
+                                    geoString += " | "+ polygon[j];
+                                }else{
+                                    if(i>0){
+                                        console.log("div2");
+                                        geoString += " | "+ polygon[j];
+                                    }else{
+                                        geoString += polygon[j];
+                                    }
+                                    
+                                }
+                            }
+                            
+                             console.log(polygon.length);
+                        });
+                         //console.log(feature.getGeometry().getPolygons().getPolygon(1));
+                        //console.log(mp.getProperties());
+                             
+                         
+                    }else if(value === 'Point' || value === 'LineString'){
+                        geoString = feature.getGeometry().flatCoordinates;
+                    }
                    
-               
-               
+              // }
             }
-            
             document.getElementById("geometry").value = geoString;
-                
-                
-            
             console.log(document.getElementById("name").value);
         });
 
@@ -281,8 +405,47 @@
             startActive: false,
             tipLabel: 'Cambiar mapas',
             groupSelectStyle: 'children' // Can be 'children' [default], 'group' or 'none'
-          });
-          map.addControl(layerSwitcher);
+        });
+        map.addControl(layerSwitcher);
+        //fin ls
+         //borrar selected feature
+        
+        var selectInteraction = new ol.interaction.Select({
+            condition: ol.events.condition.pointerMove,
+            wrapX: false
+        });
+        
+        map.addInteraction(selectInteraction);
+        selectInteraction.setActive(false);
+        
+
+        
+        var bool = false;
+          var deleteFeature = function(evt){
+           if(evt.keyCode === 46){
+            var selectCollection = selectInteraction.getFeatures();
+            console.log(selectCollection.getLength());
+            if (selectCollection.getLength() > 0) {
+                console.log(selectCollection.item(0));
+                source.removeFeature(selectCollection.item(0));
+            }
+           }
+           if(evt.keyCode === 16){
+               bool = !bool;
+               draw.setActive(bool);
+               modify.setActive(bool);
+               selectInteraction.setActive(!bool); 
+           }
+          };
+          
+          var drawFunc = function(evt){
+              if(evt.keyCode === 16){
+               draw.setActive(true);
+           }
+          }
+          document.addEventListener('keydown', deleteFeature, false)
+          //document.addEventListener('keyup', drawFunc, false)
+        //fin erase
     </script>
     
 

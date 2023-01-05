@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +40,12 @@ public class LoginControlador extends HttpServlet {
                         break;
                     case "verMapa":
                         verMapa(request, response);
+                        break;
+                    case "buscar":
+                        buscar(request, response);
+                        break;
+                    case "ver":
+                        ver(request, response);
                         break;
                     default:
                         response.sendRedirect("index.html");
@@ -145,7 +153,7 @@ public class LoginControlador extends HttpServlet {
                 //System.out.println(geojsonString);
                 
                 sesion.setAttribute("dto", dto);
-                sesion.setAttribute("msj", "Bienvenido al sistema");
+                //sesion.setAttribute("msj", null);
                 //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
                 dispatcher.forward(request, response);
@@ -153,7 +161,7 @@ public class LoginControlador extends HttpServlet {
             }else{
                 
                 sesion.setAttribute("dto", null);
-                sesion.setAttribute("msj", "Credenciales Incorrectas");
+                sesion.setAttribute("msj", null);
                 response.sendRedirect("index.html?error=1");
             }
         
@@ -232,4 +240,51 @@ public class LoginControlador extends HttpServlet {
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
         dispatcher.forward(request, response);
     }
+    
+    private void buscar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession  sesion = request.getSession();
+        MapaDAO mdao = new MapaDAO();
+        
+        try {
+            String search = request.getParameter("search");
+            search = search.trim();
+            List listaMapas = mdao.search(search);
+            sesion.setAttribute("listaMapas",listaMapas);
+            sesion.setAttribute("search",search);
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/busqueda.jsp");
+                dispatcher.forward(request, response);
+        }
+    }
+    
+    private void ver(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        MapaDAO mdao = new MapaDAO();
+        MapaDTO mdto = new MapaDTO();
+        HttpSession sesion = request.getSession();
+        int id = Integer.parseInt(request.getParameter("id"));
+        mdto.getEntidad().setId(id);
+        
+        
+        try {
+            mdto = mdao.read(mdto);
+            List geojsonList = new ArrayList();
+            geojsonList.add(mdto);
+            String geojson = geojson(geojsonList);
+           // System.out.println(geojson);
+            sesion.setAttribute("geojson",geojson);
+            sesion.setAttribute("mdto",mdto);
+            //System.out.println(geojsonString);
+            //sesion.setAttribute("geojsonString",geojsonString);
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view.jsp");
+            dispatcher.forward(request, response);
+        }
+        
+    }
+
+    
 }

@@ -51,7 +51,9 @@ h1{
     border: 1px solid #cccccc;
     bottom: 12px;
     left: -50px;
-    min-width: 280px;
+    max-width: 280px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
 }
 
 .ol-popup:after, .ol-popup:before {

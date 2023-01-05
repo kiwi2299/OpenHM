@@ -1,26 +1,26 @@
-<%-- 
-    Document   : gestionUsuario
-    Created on : 02/12/2022, 03:49:19 PM
-    Author     : kiwir
---%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Gestión de cuenta</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loader</title>
+    
+   
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
   </head>
   <body>
+      
+    
     <div class="container-fluid">
-        	<nav class="navbar navbar-expand-lg navbar-light bg-light ">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light ">
             <a class="navbar-brand" href="/Mapa?accion=display"><h1>OpenHM</h1></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -105,75 +105,51 @@
                 </ul>
             </div>
         </nav>
-        <div class="text-center">
-            <h2>Tu cuenta</h2>
-            <h5>${msj_us}</h5>
-        </div>
-            
-           
-            <form action="Usuario?accion=borrar" method="post">
-                <input type="hidden" value="${dto.entidad.id}" name="id"/>            
-                <button type="submit" class="btn btn-danger">Borrar Cuenta</button>
-            </form> 
-            <form action="Usuario?accion=update" method="post">
-                <input type="hidden" value="${dto.entidad.id}" name="id"/>
-            <table class="table">
-            <thead>
-                <tr>
-                    <th>Campo</th>
-                    <th>Valor</th>
-                    <th colspan="3">Modificar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>                                
-                        Nombre de Usuario
-                    </td>
-                    <td>                                
-                        <c:out value="${dto.entidad.name}"/>
-                    </td>
-                    <td>    
-                        
-                        <input type="text" class="form-control" id="name" name="name"/>
-                        
-                    </td>
-                </tr>
-                <tr>
-                    <td>                                
-                        Contraseña
-                    </td>
-                    <td>                                
-                        <c:out value="********"/>
-                    </td>
-                    <td>    
-                        
-                            <input type="text" class="form-control" id="password" name="password"/>
-                            
-                    </td>
-                </tr>
-                <tr>
-                    <td>                                
-                        Correo
-                    </td>
-                    <td>                                
-                        <c:out value="${dto.entidad.email}"/>
-                    </td>
-                    <td>    
-                        
-                            <input type="email" class="form-control" id="email" name="email"/>
-                            
-                    </td>
-                </tr>
-            </tbody>
-            
-        </table>
-                    <button type="submit" class="btn btn-danger">Cambiar</button>
-        </form>
-
+        <h5>${msj_us}</h5>
         
+           
+        <form  action="Mapa?accion=load" method="post">
+            <div class="mb-3">
+                <label for="type">Tipo de Geometría: &nbsp;</label>
+                <select  class="form-select" id="type" name="type">
+                    <option value="Polygon">Polygon</option>
+                  <option value="Point">Point</option>
+                  <option value="LineString">LineString</option>
+                  
+                  <option value="MultiPolygon">MultiPolygon</option>
+          <!--        <option value="Circle">Circle</option>-->
+                  <option value="None">Ninguno</option>
+                </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="name">Coordenadas</label>
+              <input  type="text" class="form-control" id="geometry" name="geometry" aria-describedby="geoHelp" required>
+              <div id="geoHelp" class="form-text">Ingresa las coordenadas de la geometría</div>
+            </div>
+            <div class="mb-3">
+              <label for="name">Nombre</label>
+              <input  type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp" required>
+              <div id="nameHelp" class="form-text">Ingresa el nombre del país o territorio</div>
+            </div>
+            <div class="mb-3">
+              <label for="desc">Descripción</label>
+              <input  type="text" class="form-control" id="desc" name="desc" >
+            </div>
+            <div class="mb-3">
+              <label for="year">Año</label>
+              <input  type="text" class="form-control" id="year" name="year" >
+            </div>
+            <div class="mb-3">
+              <label for="src">Fuente</label>
+              <input  type="text" class="form-control" id="src" name="src" >
+            </div>
+
+
+            <button type="submit" class="btn btn-success">Guardar</button>
+        </form>
     </div>
+    <!-- JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
   </body>
-</html>
 </html>

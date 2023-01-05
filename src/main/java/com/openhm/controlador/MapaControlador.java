@@ -42,55 +42,61 @@ public class MapaControlador extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         String accion = request.getParameter("accion");
-        
-        try {
-            if (accion != null) {
-                switch (accion) {
-                    case "getMapas":
-                        getMapas(request, response);
-                        break;
-                    case "display":
-                        display(request, response);
-                        break;
-                    case "getIndex":
-                        getMapasIndex(request, response);
-                        break;
-                    case "mapa":
-                        getMapa(request, response);
-                        break;
-                    case "crear":
-                        crear(request, response);
-                        break;
-                    case "geojson":
-                        geojsonFile();
-                        break;
-                    case "editar":
-                        editar(request, response);
-                        break;
-                    case "borrar":
-                        borrar(request, response);
-                        break;
-                    case "draw":
-                        draw2(request, response);
-                        break;
-                    case "verMapasUs":
-                        verMapasUs(request, response);
-                        break;
-                    case "buscar":
-                        buscar(request, response);
-                        break;
-                    default:
-                        response.sendRedirect("index.html");
+        HttpSession sesion = request.getSession();
+        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
+        if(dto == null){
+            sesion.setAttribute("msj", "Sesión terminada");
+            response.sendRedirect("index.html?error=2");
+        }else{
+            try {
+                if (accion != null) {
+                    switch (accion) {
+                        case "getMapas":
+                            getMapas(request, response);
+                            break;
+                        case "display":
+                            display(request, response);
+                            break;
+                        case "getIndex":
+                            getMapasIndex(request, response);
+                            break;
+                        case "mapa":
+                            getMapa(request, response);
+                            break;
+                        case "crear":
+                            crear(request, response);
+                            break;
+                        case "load":
+                            load(request, response);
+                            break;
+                        case "geojson":
+                            geojsonFile();
+                            break;
+                        case "editar":
+                            editar(request, response);
+                            break;
+                        case "borrar":
+                            borrar(request, response);
+                            break;
+                        case "draw":
+                            draw2(request, response);
+                            break;
+                        case "verMapasUs":
+                            verMapasUs(request, response);
+                            break;
+                        case "loader":
+                            loader(request, response);
+                            break;
+                        default:
+                            response.sendRedirect("index.html");
+                    }
+                } else {
+                    response.sendRedirect("index.html");
                 }
-            } else {
-                response.sendRedirect("index.html");
-            }
-        } catch (IOException e) {
-            
+            } catch (IOException e) {
                 System.out.println("Error" + e.getMessage());
-            
-        }
-        
+            }
+        }   
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -141,6 +147,14 @@ public class MapaControlador extends HttpServlet {
         
         HttpSession sesion = request.getSession();
         String q = request.getParameter("geometry");
+        if(q == null){
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Usuario?accion=menu");
+                    dispatcher.forward(request, response);
+        }else{
+        
+        
+        q = q.replace("[", "");
+        q = q.replace("]", "");
         String type = request.getParameter("type");
         String map = "";
         if(type.equals("MultiPolygon")){
@@ -197,7 +211,7 @@ public class MapaControlador extends HttpServlet {
         }
             
         
-        
+        System.out.println(map);
         UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
         //System.out.println(dto.getEntidad().getName());
         MapaDAO mdao = new MapaDAO();
@@ -207,21 +221,33 @@ public class MapaControlador extends HttpServlet {
         //System.out.println(request.getParameter("name"));
         mdto.getEntidad().setDescription(request.getParameter("desc"));
         mdto.getEntidad().setView("No visible");
-        mdto.getEntidad().setSource(request.getParameter("src"));
+        //mdto.getEntidad().setSource(request.getParameter("src"));
+        
+        
         mdto.getEntidad().setUser_id(dto.getEntidad().getId());
-        if(request.getParameter("year").equals("")){
-            mdto.getEntidad().setYear(2022);
+        if(request.getParameter("src").equals("")){
+            mdto.getEntidad().setSource("https://www.davidrumsey.com/luna/servlet/detail/RUMSEY~8~1~201946~3000983:Map-Of-The-World-");
         }else{
-            mdto.getEntidad().setYear(Integer.parseInt(request.getParameter("year")));
+            mdto.getEntidad().setSource(request.getParameter("src"));
         }
+        if(request.getParameter("year").equals("")){
+            mdto.getEntidad().setYear(1900);
+        }else{
+            String st = request.getParameter("year");
+            st = st.trim();
+            st = st.replaceAll("\\s+","");
+            mdto.getEntidad().setYear(Integer.parseInt(st));
+        }
+        String mensaje = "";
         if(request.getParameter("id").equals("")){
             try {
                 mdao.create(mdto);
-                
+                mensaje = "Mapa registrado";
             } catch (SQLException ex) {
                 Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+                mensaje = ex.getMessage();
             } finally {
-                sesion.setAttribute("msj_us","Mapa registrado");
+                request.setAttribute("msj_us",mensaje);
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Usuario?accion=menu");
                 dispatcher.forward(request, response);
             }
@@ -233,40 +259,44 @@ public class MapaControlador extends HttpServlet {
                     mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
                     mdto.getEntidad().setView("Visible");
                     mdao.update(mdto);
+                    mensaje = "Mapa actualizado";
                 } catch (SQLException ex) {
                     Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+                    mensaje = ex.getMessage();
+                } finally{
+                    request.setAttribute("msj",mensaje);
+                    RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Mapa?accion=display");
+                    dispatcher.forward(request, response);
                 }
-                sesion.setAttribute("msj","Mapa actualizado");
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Mapa?accion=display");
-                dispatcher.forward(request, response);
             }else{
                 try {
                 
-                mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
-                MapaDTO newdto = mdto;
-                newdto = mdao.read(newdto);
-                if(newdto.getEntidad().getView().equals("Visible") || newdto.getEntidad().getView().equals("Eliminar")){
-                    mdao.create(mdto);
-                    sesion.setAttribute("msj_us","Mapa registrado");
-                }else{
-                    mdao.update(mdto);
-                    sesion.setAttribute("msj_us","Mapa actualizado");
-                }
+                    mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
+                    MapaDTO newdto = mdto;
+                    newdto = mdao.read(newdto);
+                    if(newdto.getEntidad().getView().equals("Visible") || newdto.getEntidad().getView().equals("Eliminar")){
+                        mdao.create(mdto);
+                        mensaje = "Mapa registrado";
+                    }else{
+                        mdao.update(mdto);
+                        mensaje = "Mapa actualizado";
+                    }
                         
                 } catch (SQLException ex) {
-                    Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+                    mensaje = ex.getMessage();
                 } finally {
-
+                    request.setAttribute("msj_us",mensaje);
                     RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Usuario?accion=menu");
                     dispatcher.forward(request, response);
                 }
             }
             
         }
+        }
         
     }
     
-    private void crear2(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    private void load(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 //        UsuarioDTO dto = new UsuarioDTO();
 //        UsuarioDAO dao = new UsuarioDAO();
 //        dto.getEntidad().setName(request.getParameter("userName"));
@@ -277,9 +307,39 @@ public class MapaControlador extends HttpServlet {
         String q = request.getParameter("geometry");
         String type = request.getParameter("type");
         String map = "";
-        if(type.equals("Polygon")){
-            String[] div = split(q,'|');
-            System.out.println(div);
+         System.out.println(q);
+        if(type.equals("MultiPolygon")){
+            //quitar corchetes
+            int parse = 0;
+            char[] newc = new char[q.length()];
+            for (int i = 0; i < q.length(); i++) {
+                newc[i] = q.charAt(i);
+                //System.out.println(parse);
+                if(newc[i] == '['){
+                    parse++;
+                    
+                }else if(newc[i] == ']'){
+                    
+                    parse--;
+                }
+                if(parse == 0 && i>0){
+                    newc[i] = '|';
+                    System.out.println("Posicion "+i+" va |");
+                }
+                        
+            }
+            String b = new String(newc);
+            System.out.println(b);
+            /*String[] div = split(b,'|');
+            for(String aux: div){
+                System.out.println("hello");
+                System.out.println(aux);
+            }*/
+            b = b.replace("[", "");
+            b = b.replace("]", "");
+            
+            //preparar geom
+            String[] div = split(b,'|');
             String parent = "";
             for (int i = 0; i < div.length; i++) {
                 
@@ -306,6 +366,9 @@ public class MapaControlador extends HttpServlet {
             String geo = join(jn,',');
             map = type+"(("+geo+"))";
         }else{
+            q = q.replace("[", "");
+            q = q.replace("]", "");
+            //System.out.println(geo);
             String[] se = split(q,',');
             ArrayList<String> jn = new ArrayList<>();
             String aux = "";
@@ -319,18 +382,21 @@ public class MapaControlador extends HttpServlet {
             }
 
             String geo = join(jn,',');
-            //System.out.println(geo);
-
              
             if(type.equals("Point") || type.equals("LineString")){
                  map = type+"("+geo+")";
+            }else if(type.equals("Polygon")){
+                 map = type+"(("+geo+"))";
             }else if(type.equals("Circle")){
                 System.out.println("todo");
-            }//else if(type.equals("Polygon")){
-               //  map = type+"(("+geo+"))";
-            //}
+            }
         }
-            
+        
+        
+        System.out.println(map);
+        
+        
+         
         
         
         UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
@@ -345,60 +411,25 @@ public class MapaControlador extends HttpServlet {
         mdto.getEntidad().setSource(request.getParameter("src"));
         mdto.getEntidad().setUser_id(dto.getEntidad().getId());
         if(request.getParameter("year").equals("")){
-            mdto.getEntidad().setYear(2022);
+            mdto.getEntidad().setYear(2023);
         }else{
-            mdto.getEntidad().setYear(Integer.parseInt(request.getParameter("year")));
+            String st = request.getParameter("year");
+            st = st.trim();
+            st = st.replaceAll("\\s+","");
+            mdto.getEntidad().setYear(Integer.parseInt(st));
         }
-        if(request.getParameter("id").equals("")){
-            try {
-                mdao.create(mdto);
-                
-            } catch (SQLException ex) {
-                Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                sesion.setAttribute("msj_us","Mapa registrado");
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Usuario?accion=menu");
-                dispatcher.forward(request, response);
-            }
-        }else{//update
-            if(dto.getEntidad().getTipo().equals("admin")){
-                System.out.println("admin aqio");
-                mdto.getEntidad().setUser_id(Integer.parseInt(request.getParameter("user_id")));
-                try {
-                    mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
-                    mdto.getEntidad().setView("Visible");
-                    mdao.update(mdto);
-                } catch (SQLException ex) {
-                    Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                sesion.setAttribute("msj","Mapa actualizado");
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Mapa?accion=display");
-                dispatcher.forward(request, response);
-            }else{
-                try {
-                
-                mdto.getEntidad().setId(Integer.parseInt(request.getParameter("id")));
-                MapaDTO newdto = mdto;
-                newdto = mdao.read(newdto);
-                if(newdto.getEntidad().getView().equals("Visible") || newdto.getEntidad().getView().equals("Eliminar")){
-                    mdao.create(mdto);
-                    sesion.setAttribute("msj_us","Mapa registrado");
-                }else{
-                    mdao.update(mdto);
-                    sesion.setAttribute("msj_us","Mapa actualizado");
-                }
-                        
-                } catch (SQLException ex) {
-                    Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
-                } finally {
-
-                    RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Usuario?accion=menu");
-                    dispatcher.forward(request, response);
-                }
-            }
-            
-        }
-        
+        String mensaje = "";
+        try {
+            mdao.load(mdto,4326);
+            mensaje = "Mapa registrado";
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+            mensaje = ex.getMessage();
+        } finally {
+            request.setAttribute("msj_us",mensaje);
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/Mapa?accion=loader");
+            dispatcher.forward(request, response);
+        } 
     }
 
     private void editar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -407,27 +438,25 @@ public class MapaControlador extends HttpServlet {
         HttpSession sesion = request.getSession();
         int id = Integer.parseInt(request.getParameter("id"));
         mdto.getEntidad().setId(id);
-        UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
-        if(dto == null){
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/crearUsuario.jsp");
+        
+        
+        try {
+            mdto = mdao.read(mdto);
+            List geojsonList = new ArrayList();
+            geojsonList.add(mdto);
+            String geojson = geojson(geojsonList);
+           // System.out.println(geojson);
+            sesion.setAttribute("geojson",geojson);
+            sesion.setAttribute("mdto",mdto);
+            //System.out.println(geojsonString);
+            //sesion.setAttribute("geojsonString",geojsonString);
+        } catch (SQLException ex) {
+            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/edit.jsp");
             dispatcher.forward(request, response);
-        }else{
-            try {
-                mdto = mdao.read(mdto);
-                List geojsonList = new ArrayList();
-                geojsonList.add(mdto);
-                String geojson = geojson(geojsonList);
-                sesion.setAttribute("geojson",geojson);
-                sesion.setAttribute("mdto",mdto);
-                //System.out.println(geojsonString);
-                //sesion.setAttribute("geojsonString",geojsonString);
-            } catch (SQLException ex) {
-                Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
-            }finally{
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/edit.jsp");
-                dispatcher.forward(request, response);
-            }
-        }   
+        }
+        
     }
 
     private void borrar(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {       
@@ -605,15 +634,17 @@ public class MapaControlador extends HttpServlet {
         }
     }
 
-    private void draw(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/draw.jsp");
+    private void loader(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        HttpSession  sesion = request.getSession();
+        sesion.setAttribute("msj_us", null);
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/loader.jsp");
         dispatcher.forward(request, response);
     }
     
     private void draw2(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         HttpSession  sesion = request.getSession();
         MapaDAO mdao = new MapaDAO();
-        int year = 2022;
+        int year = 2023;
         String syear = request.getParameter("drawyear");
         if(syear != null){
             year = Integer.parseInt(syear);
@@ -683,7 +714,7 @@ public class MapaControlador extends HttpServlet {
                 //System.out.println(geojsonString);
                 
                 sesion.setAttribute("dto", dto);
-                sesion.setAttribute("msj", "Bienvenido al sistema");
+                sesion.setAttribute("msj", null);
                 //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/display.jsp");
                 dispatcher.forward(request, response);
@@ -720,26 +751,26 @@ public class MapaControlador extends HttpServlet {
             List listaMapas = mdao.readAllUser(dto);
                 //System.out.println(dto.getEntidad().getName());
                 
-               /* List listaMapas = mdao.readYear(mdto);
-                if(!listaMapas.isEmpty()){
-                    String geojsonString = geojson(listaMapas);
-                    sesion.setAttribute("geojsonString",geojsonString);
-                    sesion.setAttribute("size",listaMapas.size());
-
-                    sesion.setAttribute("listaMapas",listaMapas);
-                }*/
                 
-                
-                    //System.out.println(year);
-                    
-                    
+                if(listaMapas != null){
                     String geojson = geojson(listaMapas);
                     mdto.getEntidad().setMap(geojson);
                     //System.out.println(mdto);
                     
                 
 
-                sesion.setAttribute("geojsonList",geojson);
+                    sesion.setAttribute("geojsonList",geojson);
+                }else{
+                    String geojson = "{}";
+                    sesion.setAttribute("geojsonList",geojson);
+                }
+                    
+                
+                
+                    //System.out.println(year);
+                    
+                    
+                    
                 //System.out.println(geojsonString);
                 //this.getServletConfig().getServletContext().getRequestDispatcher("/views/display.jsp").forward(request, response);
                 
@@ -756,38 +787,6 @@ public class MapaControlador extends HttpServlet {
         }
     }
 
-    private void buscar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession  sesion = request.getSession();;
-        MapaDAO mdao = new MapaDAO();
-        
-        try {
-            String search = request.getParameter("search");
-            List listaMapas = mdao.search(search);
-            sesion.setAttribute("listaMapas",listaMapas);
-            sesion.setAttribute("search",search);
-        } catch (SQLException ex) {
-            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/busqueda.jsp");
-                dispatcher.forward(request, response);
-        }
-    }
-
-    private void ver(HttpServletRequest request, HttpServletResponse response, MapaDTO mdto) throws ServletException, IOException {
-        HttpSession  sesion = request.getSession();;
-        MapaDAO mdao = new MapaDAO();
-        try {
-            mdto = mdao.read(mdto);
-            List listaMapas = new ArrayList();
-            listaMapas.add(mdto);        
-            String geojson = geojson(listaMapas);
-            sesion.setAttribute("geojsonList",geojson);
-        } catch (SQLException ex) {
-            Logger.getLogger(MapaControlador.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/displayInvitado.jsp");
-                dispatcher.forward(request, response);
-        }
-    }
+    
 
 }

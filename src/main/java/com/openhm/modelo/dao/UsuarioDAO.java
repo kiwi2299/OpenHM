@@ -31,16 +31,12 @@ public class UsuarioDAO {
 
     private Connection con;
     public Connection ObtenerConexion(){
-       String usr = "postgres";
-       String pwd = "postgres";
-       String driver = "org.postgresql.Driver";
-        String url = "jdbc:postgresql://localhost:5432/postgres";
-        
-        //heroku
-//        String usr = "ctkofwkznexjio";
-//       String pwd = "5b65ec04731aa5e62263934fc82cf236f9f2f6be3ffe5e73d7bfcacb9ed2cead";
+//       String usr = "postgres";
+//       String pwd = "postgres";
 //       String driver = "org.postgresql.Driver";
-//        String url = "jdbc:postgresql://ec2-3-219-19-205.compute-1.amazonaws.com:5432/db924bd23if0r2";
+//        String url = "jdbc:postgresql://localhost:5432/postgres";
+        
+    
         
         try{
             Class.forName(driver);

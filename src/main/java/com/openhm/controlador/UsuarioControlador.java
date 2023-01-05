@@ -130,21 +130,7 @@ public class UsuarioControlador extends HttpServlet {
         dto.getEntidad().setPassword(request.getParameter("password"));
         dto.getEntidad().setEmail(request.getParameter("email"));
         ndto = dto;
-        /*
-        TODO user, correo repetido
-        */
-//        if (!request.getParameter("userId").isEmpty() || !request.getParameter("userId").equals("0")) {
-//            dto.getEntidad().setId(Integer.parseInt(request.getParameter("userId")));
-//            try {
-//                dao.update(dto);
-//            } catch (SQLException ex) {
-//                Logger.getLogger(UsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
-//            }finally{
-//                request.setAttribute("msj","Usuario actualizado");
-//                request.setAttribute("dto", dto);
-//                response.sendRedirect("menuUsuario.jsp");
-//            }
-//        } else {
+        
         try {
             dto = dao.readUser(dto);
             if (dto != null) {
@@ -343,8 +329,8 @@ public class UsuarioControlador extends HttpServlet {
         HttpSession sesion = request.getSession();
         UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
         UsuarioDAO dao = new UsuarioDAO();
-        int id = Integer.parseInt(request.getParameter("id"));
-        if(dto.getEntidad().getId() == id){
+       // int id = Integer.parseInt(request.getParameter("id"));
+        if(dto != null){
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/gestionUsuario.jsp");
             dispatcher.forward(request, response);
             sesion.setAttribute("dto", dto);
