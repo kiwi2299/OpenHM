@@ -54,6 +54,7 @@
                                   <a class="dropdown-item" href="/Usuario?accion=menu">Mis mapas</a>
                                   <a class="dropdown-item" href="/Usuario?accion=gestion">Mi cuenta</a>
                                   <div class="dropdown-divider"></div>
+                                  <a class="dropdown-item" target="_blank" href="https://drive.google.com/drive/folders/15NQ8R9FkoPnXj_49mS3lC5gu_Xyy4YXv?usp=sharing">Consultar documentación</a>
                                   <a class="dropdown-item" href="/Login?accion=cerrar">Cerrar sesión</a>
                                 </div>
                             </li>
@@ -89,9 +90,15 @@
                                     <form action="Usuario?accion=crear" method="post">
                                         <button class="btn btn-success" type="submit">Crear una cuenta</button>
                                     </form>
-                                    <form action="Login?accion=cerrar" method="post">
-                                        <button type="submit" class="btn btn-dark">Salir</button>
-                                    </form>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Invitado
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" target="_blank" href="https://drive.google.com/drive/folders/15NQ8R9FkoPnXj_49mS3lC5gu_Xyy4YXv?usp=sharing">Consultar documentación</a>
+                                    <a class="dropdown-item" href="/Login?accion=cerrar">Cerrar sesión</a>
                                 </div>
                             </li>
 

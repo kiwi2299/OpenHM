@@ -125,10 +125,15 @@ public class UsuarioControlador extends HttpServlet {
         UsuarioDTO ndto;
         UsuarioDAO dao = new UsuarioDAO();
         
-        
-        dto.getEntidad().setName(request.getParameter("name"));
-        dto.getEntidad().setPassword(request.getParameter("password"));
-        dto.getEntidad().setEmail(request.getParameter("email"));
+        String name = request.getParameter("name");
+        String pass = request.getParameter("password");
+        String email = request.getParameter("email");
+        name = name.trim();
+        pass = pass.trim();
+        email = email.trim();
+        dto.getEntidad().setName(name);
+        dto.getEntidad().setPassword(pass);
+        dto.getEntidad().setEmail(email);
         ndto = dto;
         
         try {
@@ -183,6 +188,9 @@ public class UsuarioControlador extends HttpServlet {
             String name = request.getParameter("name");
             String pass = request.getParameter("password");
             String email = request.getParameter("email");
+            name = name.trim();
+            pass = pass.trim();
+            email = email.trim();
             if(!name.equals("")){
                 check = 1;
                 dto.getEntidad().setName(request.getParameter("name"));

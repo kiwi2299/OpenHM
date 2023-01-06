@@ -64,6 +64,7 @@
                                   <a class="dropdown-item" href="/Usuario?accion=menu">Mis mapas</a>
                                   <a class="dropdown-item" href="/Usuario?accion=gestion">Mi cuenta</a>
                                   <div class="dropdown-divider"></div>
+                                  <a class="dropdown-item" target="_blank" href="https://drive.google.com/drive/folders/15NQ8R9FkoPnXj_49mS3lC5gu_Xyy4YXv?usp=sharing">Consultar documentación</a>
                                   <a class="dropdown-item" href="/Login?accion=cerrar">Cerrar sesión</a>
                                 </div>
                             </li>

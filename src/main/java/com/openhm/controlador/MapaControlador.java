@@ -217,9 +217,12 @@ public class MapaControlador extends HttpServlet {
         MapaDAO mdao = new MapaDAO();
         MapaDTO mdto = new MapaDTO();
         mdto.getEntidad().setMap(map);
-        mdto.getEntidad().setName(request.getParameter("name"));
-        //System.out.println(request.getParameter("name"));
-        mdto.getEntidad().setDescription(request.getParameter("desc"));
+        String name = request.getParameter("name");
+        name = name.trim();
+        mdto.getEntidad().setName(name);
+        String desc = request.getParameter("desc");
+        desc = desc.trim();
+        mdto.getEntidad().setDescription(desc);
         mdto.getEntidad().setView("No visible");
         //mdto.getEntidad().setSource(request.getParameter("src"));
         
@@ -228,7 +231,9 @@ public class MapaControlador extends HttpServlet {
         if(request.getParameter("src").equals("")){
             mdto.getEntidad().setSource("https://www.davidrumsey.com/luna/servlet/detail/RUMSEY~8~1~201946~3000983:Map-Of-The-World-");
         }else{
-            mdto.getEntidad().setSource(request.getParameter("src"));
+            String source = request.getParameter("src");
+            source = source.trim();
+            mdto.getEntidad().setSource(source);
         }
         if(request.getParameter("year").equals("")){
             mdto.getEntidad().setYear(1900);
@@ -404,11 +409,16 @@ public class MapaControlador extends HttpServlet {
         MapaDAO mdao = new MapaDAO();
         MapaDTO mdto = new MapaDTO();
         mdto.getEntidad().setMap(map);
-        mdto.getEntidad().setName(request.getParameter("name"));
-        //System.out.println(request.getParameter("name"));
-        mdto.getEntidad().setDescription(request.getParameter("desc"));
+        String name = request.getParameter("name");
+        name = name.trim();
+        mdto.getEntidad().setName(name);
+        String desc = request.getParameter("desc");
+        desc = desc.trim();
+        mdto.getEntidad().setDescription(desc);
         mdto.getEntidad().setView("No visible");
-        mdto.getEntidad().setSource(request.getParameter("src"));
+        String source = request.getParameter("src");
+            source = source.trim();
+            mdto.getEntidad().setSource(source);
         mdto.getEntidad().setUser_id(dto.getEntidad().getId());
         if(request.getParameter("year").equals("")){
             mdto.getEntidad().setYear(2023);
