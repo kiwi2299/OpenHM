@@ -36,7 +36,7 @@ public class UsuarioDAO {
 //       String driver = "org.postgresql.Driver";
 //        String url = "jdbc:postgresql://localhost:5432/postgres";
         
-        
+      
         
         try{
             Class.forName(driver);

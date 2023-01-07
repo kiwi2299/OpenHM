@@ -42,8 +42,7 @@ public class AdminControlador extends HttpServlet {
         
         UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
         if(dto==null){
-            System.out.println("dto es null");
-            sesion.setAttribute("msj", "Sesión terminada");
+            
             response.sendRedirect("index.html?error=2");
         }else
             try {

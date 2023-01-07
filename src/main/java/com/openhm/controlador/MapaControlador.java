@@ -45,7 +45,7 @@ public class MapaControlador extends HttpServlet {
         HttpSession sesion = request.getSession();
         UsuarioDTO dto = (UsuarioDTO)sesion.getAttribute("dto");
         if(dto == null){
-            sesion.setAttribute("msj", "Sesión terminada");
+            
             response.sendRedirect("index.html?error=2");
         }else{
             try {
