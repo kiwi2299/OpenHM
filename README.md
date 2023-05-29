@@ -1,6 +1,6 @@
 # OpenHM
-Open History Mapper repository
+Open History Mapper source repository.
 
-applicacion web para representacion de mapas historicos
+Historical Web Atlas.
 
-By Rafa y Victor
+Copyright (C) 2023 Rafael Agustin Escudero Robles,ESCOM-IPN.
